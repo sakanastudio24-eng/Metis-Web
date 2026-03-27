@@ -1,0 +1,14 @@
+.DS_Store
+.next
+node_modules
+.env
+.env.local
+.env.*.local
+dist
+coverage
+__pycache__
+*.pyc
+.pytest_cache
+.venv
+Metis Figma Design.zip
+tsconfig.tsbuildinfo
