@@ -1,0 +1,169 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&family=Jua&display=swap");
+
+:root {
+  color-scheme: dark;
+  --bg: #09111b;
+  --text: #fff5f0;
+  --muted: rgba(255, 245, 240, 0.66);
+  --card: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --brand: #dc5e5e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.hidden {
+  display: none;
+}
+
+.auth-shell,
+.legal-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background:
+    radial-gradient(circle at top left, rgba(220, 94, 94, 0.18), transparent 40%),
+    linear-gradient(180deg, #101923 0%, #0a1018 100%);
+}
+
+.auth-card,
+.legal-card {
+  width: min(720px, 100%);
+  border-radius: 28px;
+  background: rgba(12, 22, 35, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.35);
+  padding: 32px;
+}
+
+.auth-eyebrow,
+.legal-eyebrow {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(220, 94, 94, 0.12);
+  border: 1px solid rgba(220, 94, 94, 0.28);
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-card h1,
+.legal-card h1 {
+  margin: 18px 0 12px;
+  font-family: "DM Serif Display", serif;
+  font-size: clamp(36px, 5vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.auth-card p,
+.legal-card p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.auth-stack {
+  display: grid;
+  gap: 14px;
+  margin: 24px 0 28px;
+}
+
+.auth-stack div {
+  display: grid;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+}
+
+.auth-stack strong {
+  font-size: 13px;
+}
+
+.auth-stack span {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.auth-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.auth-actions a,
+.legal-card a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  text-decoration: none;
+}
+
+.legal-card a {
+  margin-top: 10px;
+}
+
+@media (min-width: 1280px) {
+  .xl\:block {
+    display: block;
+  }
+}
+
+@media (max-width: 1279px) {
+  .metis-shell {
+    flex-direction: column;
+    gap: 0 !important;
+  }
+}
+
+@media (max-width: 959px) {
+  .metis-grid-2,
+  .metis-grid-2-tight,
+  .metis-footer-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .auth-card,
+  .legal-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
+}
