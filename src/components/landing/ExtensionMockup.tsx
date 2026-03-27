@@ -13,6 +13,7 @@ import {
   Crown,
   Activity,
 } from "lucide-react";
+import { frontFacingCopy } from "@/content/frontFacingCopy";
 
 const METIS_RED = "#dc5e5e";
 const DARK_BG = "#0c1623";
@@ -102,6 +103,8 @@ const SEVERITY_ICONS = {
 };
 
 export function ExtensionMockup({ state }: { state: MockupState }) {
+  const copy = frontFacingCopy.mockup;
+
   return (
     <div
       style={{
@@ -142,10 +145,10 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
           </div>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ fontFamily: "Jua, sans-serif", fontSize: 13, color: "white" }}>Metis Scan</span>
+              <span style={{ fontFamily: "Jua, sans-serif", fontSize: 13, color: "white" }}>{copy.title}</span>
             </div>
             <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", margin: 0, marginTop: 1 }}>
-              metis.zward.studio · just now
+              {copy.subtitle}
             </p>
           </div>
         </div>
@@ -204,7 +207,7 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
               </AnimatePresence>
             </div>
             <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", margin: 0, marginBottom: 4 }}>
-              Cost Risk Score
+              {copy.scoreLabel}
             </p>
             <AnimatePresence mode="wait">
               <motion.p
@@ -214,7 +217,9 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
                 transition={{ duration: 0.4 }}
                 style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", margin: 0 }}
               >
-                ~<span style={{ color: "white", fontWeight: 600 }}>${state.costMin}–${state.costMax}</span>/month est. waste
+                {copy.monthlyWastePrefix}
+                <span style={{ color: "white", fontWeight: 600 }}>${state.costMin}–${state.costMax}</span>
+                {copy.monthlyWasteSuffix}
               </motion.p>
             </AnimatePresence>
           </div>
@@ -269,7 +274,7 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
             transition={{ duration: 2, repeat: Infinity }}
           />
           <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)" }}>
-            Live · 3 pages sampled · metis.zward.studio
+            {copy.liveSampleLabel}
           </span>
         </div>
         <div
@@ -281,7 +286,7 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
             background: "rgba(255,255,255,0.02)",
           }}
         >
-          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>Session cost</span>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>{copy.sessionCostLabel}</span>
           <AnimatePresence mode="wait">
             <motion.span
               key={state.sessionCost}
@@ -306,7 +311,7 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
           }}
         >
           <Zap size={9} style={{ color: "#6366f1", flexShrink: 0 }} />
-          <span style={{ fontSize: 9, color: "rgba(255,255,255,0.35)" }}>At 10k users →</span>
+          <span style={{ fontSize: 9, color: "rgba(255,255,255,0.35)" }}>{copy.scaleProjectionLabel}</span>
           <AnimatePresence mode="wait">
             <motion.span
               key={state.costMin}
@@ -315,7 +320,7 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
               exit={{ opacity: 0 }}
               style={{ fontFamily: "Jua, sans-serif", fontSize: 10, color: "#a5b4fc" }}
             >
-              ~${(state.costMin * 10).toLocaleString()}/month
+              {copy.monthlyProjectionValue(state.costMin)}
             </motion.span>
           </AnimatePresence>
         </div>
@@ -334,7 +339,7 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
               letterSpacing: "0.1em",
             }}
           >
-            {state.issues.length > 0 ? `${state.issues.length} Issues · By Severity` : "No Issues Detected"}
+            {state.issues.length > 0 ? copy.issuesLabel.withIssues(state.issues.length) : copy.issuesLabel.empty}
           </span>
         </div>
 
@@ -358,7 +363,7 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
                 }}
               >
                 <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e" }} />
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.6)" }}>All issues resolved</span>
+                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.6)" }}>{copy.insightEmpty}</span>
               </motion.div>
             ) : (
               state.issues.map((issue, i) => {

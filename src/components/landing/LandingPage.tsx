@@ -47,6 +47,7 @@ import {
   Terminal,      // code terminal
   BookOpen,      // guide / docs
 } from "lucide-react";
+import { frontFacingCopy, landingAnalysis, mockupStates, siteLinks } from "@/content/frontFacingCopy";
 import { ExtensionMockup, MockupState } from "./ExtensionMockup";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -63,11 +64,23 @@ const TEXT_R      = "#dc5e5e";   // red text used on cream/hero section
 const TEXT_R_DIM  = "rgba(180,50,50,0.6)";
 const CARD_BG     = "rgba(0,0,0,0.10)";
 const CARD_BD     = "rgba(255,255,255,0.18)";
-const WARD_STUDIO_URL = "https://zward.studio";
-const REPO_URL = "https://github.com/sakanastudio24-eng/Metis-Web";
-const CHROME_WAITLIST_URL = "/sign-up";
-const PRIVACY_URL = "/privacy";
-const TERMS_URL = "/terms";
+const FEATURE_ICONS = {
+  activity: Activity,
+  trendingDown: TrendingDown,
+  zap: Zap,
+  shield: Shield,
+} as const;
+const GUIDE_STEP_ICONS = {
+  activity: Activity,
+  bot: Bot,
+  code2: Code2,
+  checkCheck: CheckCheck,
+} as const;
+const FOOTER_LINK_ICONS = {
+  externalLink: ExternalLink,
+  github: Github,
+} as const;
+const CHROME_WAITLIST_URL = siteLinks.waitlistUrl;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SECTION KEYS
@@ -81,113 +94,13 @@ type SectionKey = "hero" | "product" | "guide" | "problem" | "design" | "fixes" 
 // Each key maps to a snapshot of the ExtensionMockup's visible state.
 // The sticky sidebar animates between these as the user scrolls.
 // ─────────────────────────────────────────────────────────────────────────────
-const SECTION_STATES: Record<SectionKey, MockupState> = {
-  // Hero — first impression; moderate risk to set expectation
-  hero: {
-    score: 72, riskLabel: "Moderate Risk", riskColor: "#f97316",
-    riskBg: "rgba(249,115,22,0.2)",
-    quickInsight: "High request count and AI usage detected",
-    costMin: 22, costMax: 40, sessionCost: "$0.0042",
-    issues: [
-      { title: "Duplicate API Requests", severity: "critical", color: "#ef4444", saving: 8 },
-      { title: "Memory Leak Pattern",    severity: "critical", color: "#ef4444", saving: 5 },
-      { title: "AI API Call Frequency",  severity: "moderate", color: "#f97316", saving: 11 },
-    ],
-  },
-  // Product section — shows a slightly cleaned up state
-  product: {
-    score: 68, riskLabel: "Moderate Risk", riskColor: "#f97316",
-    riskBg: "rgba(249,115,22,0.2)",
-    quickInsight: "Moderate cost inefficiencies across 5 issues",
-    costMin: 18, costMax: 34, sessionCost: "$0.0038",
-    issues: [
-      { title: "Duplicate API Requests", severity: "critical", color: "#ef4444", saving: 8 },
-      { title: "Memory Leak Pattern",    severity: "critical", color: "#ef4444", saving: 5 },
-      { title: "Unoptimized Images",     severity: "moderate", color: "#f97316", saving: 4 },
-    ],
-  },
-  // AI Guide — calm, low issues: Metis is guiding the migration
-  guide: {
-    score: 55, riskLabel: "Moderate Risk", riskColor: "#f97316",
-    riskBg: "rgba(249,115,22,0.2)",
-    quickInsight: "AI guide active — migration in progress",
-    costMin: 14, costMax: 26, sessionCost: "$0.0029",
-    issues: [
-      { title: "AI API Call Frequency",  severity: "moderate", color: "#f97316", saving: 11 },
-      { title: "Missing Cache Headers",  severity: "low",      color: "#eab308", saving: 2 },
-    ],
-  },
-  // Problem section — worst state; illustrates the pain point
-  problem: {
-    score: 88, riskLabel: "High Risk", riskColor: "#ef4444",
-    riskBg: "rgba(239,68,68,0.2)",
-    quickInsight: "Severe API overuse and memory pressure detected",
-    costMin: 38, costMax: 71, sessionCost: "$0.0089",
-    issues: [
-      { title: "Duplicate API Requests", severity: "critical", color: "#ef4444", saving: 8 },
-      { title: "Memory Leak Pattern",    severity: "critical", color: "#ef4444", saving: 5 },
-      { title: "AI API Call Frequency",  severity: "moderate", color: "#f97316", saving: 11 },
-      { title: "Unoptimized Images",     severity: "moderate", color: "#f97316", saving: 4 },
-      { title: "Missing Cache Headers",  severity: "low",      color: "#eab308", saving: 2 },
-    ],
-  },
-  // Design system section — clean, design-focused state
-  design: {
-    score: 42, riskLabel: "Low Risk", riskColor: "#eab308",
-    riskBg: "rgba(234,179,8,0.2)",
-    quickInsight: "Design system tokens loaded — 1 style issue",
-    costMin: 8, costMax: 15, sessionCost: "$0.0018",
-    issues: [
-      { title: "Missing Cache Headers", severity: "low", color: "#eab308", saving: 2 },
-    ],
-  },
-  // Fixes section — after applying top 2 fixes; improving
-  fixes: {
-    score: 44, riskLabel: "Low Risk", riskColor: "#eab308",
-    riskBg: "rgba(234,179,8,0.2)",
-    quickInsight: "2 minor issues remain — fixes applied to critical items",
-    costMin: 9, costMax: 17, sessionCost: "$0.0021",
-    issues: [
-      { title: "AI API Call Frequency",  severity: "moderate", color: "#f97316", saving: 11 },
-      { title: "Missing Cache Headers",  severity: "low",      color: "#eab308", saving: 2 },
-    ],
-  },
-  // Solution — optimised; minimal risk; happy path
-  solution: {
-    score: 24, riskLabel: "Minimal Risk", riskColor: "#22c55e",
-    riskBg: "rgba(34,197,94,0.2)",
-    quickInsight: "Site is well-optimized — low cost risk detected",
-    costMin: 3, costMax: 7, sessionCost: "$0.0008",
-    issues: [],
-  },
-};
+const SECTION_STATES: Record<SectionKey, MockupState> = mockupStates;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NAV SECTIONS
 // Drives the floating pill nav links (excludes "hero" — logo click goes there).
 // ─────────────────────────────────────────────────────────────────────────────
-const NAV_SECTIONS: { key: SectionKey; label: string }[] = [
-  { key: "product",  label: "Product"  },
-  { key: "guide",    label: "AI Guide" },
-  { key: "problem",  label: "Problem"  },
-  { key: "design",   label: "Design"   },
-  { key: "fixes",    label: "Fixes"    },
-  { key: "solution", label: "Solution" },
-];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// TECH STACK
-// Displayed as a scrolling strip in the Hero.
-// Update this array when the stack changes.
-// ─────────────────────────────────────────────────────────────────────────────
-const TECH_STACK = [
-  { label: "Next.js",     color: "#000000", bg: "rgba(0,0,0,0.08)",         border: "rgba(0,0,0,0.15)",         dot: "#000" },
-  { label: "React",       color: "#61dafb", bg: "rgba(97,218,251,0.08)",    border: "rgba(97,218,251,0.25)",    dot: "#61dafb" },
-  { label: "Python",      color: "#3b82f6", bg: "rgba(59,130,246,0.08)",    border: "rgba(59,130,246,0.25)",    dot: "#3b82f6" },
-  { label: "TypeScript",  color: "#2563eb", bg: "rgba(37,99,235,0.08)",     border: "rgba(37,99,235,0.25)",     dot: "#2563eb" },
-  { label: "FastAPI",     color: "#10b981", bg: "rgba(16,185,129,0.08)",    border: "rgba(16,185,129,0.25)",    dot: "#10b981" },
-  { label: "Tailwind",    color: "#38bdf8", bg: "rgba(56,189,248,0.08)",    border: "rgba(56,189,248,0.25)",    dot: "#38bdf8" },
-];
+const NAV_SECTIONS: readonly { key: SectionKey; label: string }[] = frontFacingCopy.nav.sections;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STICKY NAV
@@ -281,7 +194,7 @@ function StickyNav({
             <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 13, color: "white", lineHeight: 1 }}>M</span>
           </div>
           <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 16, color: textMain, letterSpacing: "-0.02em", lineHeight: 1 }}>
-            Metis
+            {frontFacingCopy.brand.name}
           </span>
         </button>
 
@@ -339,7 +252,7 @@ function StickyNav({
             boxShadow: "0 2px 10px rgba(220,94,94,0.28)",
           }}
         >
-          Try free
+          {frontFacingCopy.nav.primaryCta}
           <ArrowRight size={12} />
         </motion.button>
       </div>
@@ -354,6 +267,8 @@ function StickyNav({
 //           stats → tech stack strip → scroll nudge
 // ─────────────────────────────────────────────────────────────────────────────
 function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
+  const copy = frontFacingCopy.hero;
+
   return (
     <section
       id="hero"
@@ -385,7 +300,7 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
         >
           <Crown size={11} style={{ color: RED }} />
           <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, color: RED }}>
-            Now in beta — shaped around the extension that already exists
+            {copy.badge}
           </span>
         </div>
       </motion.div>
@@ -405,7 +320,7 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
           marginBottom: 28,
         }}
       >
-        Metis
+        {frontFacingCopy.brand.name}
       </motion.h1>
 
       {/* Italic quote tagline */}
@@ -424,9 +339,9 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
           maxWidth: 560,
         }}
       >
-        &ldquo;Every session has a price.
+        &ldquo;{copy.quote[0]}
         <br />
-        Most teams never see the bill.&rdquo;
+        {copy.quote[1]}&rdquo;
       </motion.p>
 
       {/* Primary + secondary CTAs */}
@@ -447,7 +362,7 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
             cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
           }}
         >
-          Start for free
+          {copy.ctas.primary}
           <ArrowRight size={15} />
         </motion.button>
         <motion.button
@@ -462,7 +377,7 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
           }}
           onClick={() => document.getElementById("product")?.scrollIntoView({ behavior: "smooth", block: "start" })}
         >
-          Watch a scan
+          {copy.ctas.secondary}
           <ChevronRight size={15} />
         </motion.button>
       </motion.div>
@@ -486,12 +401,12 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
           transition={{ duration: 2, repeat: Infinity }}
         />
         <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_R_DIM }}>
-          This page&apos;s current Metis score:&nbsp;
-          <span style={{ fontFamily: "Jua, sans-serif", fontSize: 14, color: RED }}>42</span>
-          <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 600, color: "#22c55e" }}>Minimal Risk</span>
+          {copy.liveChip.prefix}&nbsp;
+          <span style={{ fontFamily: "Jua, sans-serif", fontSize: 14, color: RED }}>{copy.liveChip.score}</span>
+          <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 600, color: "#22c55e" }}>{copy.liveChip.risk}</span>
         </span>
         <div style={{ width: 1, height: 18, background: "rgba(220,94,94,0.18)" }} />
-        <span style={{ fontSize: 11, color: TEXT_R_DIM }}>Live page sample</span>
+        <span style={{ fontSize: 11, color: TEXT_R_DIM }}>{copy.liveChip.sample}</span>
       </motion.div>
 
       {/* Stats row */}
@@ -501,13 +416,9 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
         transition={{ delay: 1.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         style={{ display: "flex", alignItems: "center", gap: 40, marginTop: 52, flexWrap: "wrap", justifyContent: "center" }}
       >
-        {[
-          { val: "< 2s", label: "time to first signal" },
-          { val: "5+",   label: "pages sampled in a live run" },
-          { val: "$0",   label: "to understand the first report" },
-        ].map(({ val, label }) => (
+        {copy.stats.map(({ value, label }) => (
           <div key={label} style={{ textAlign: "center" }}>
-            <div style={{ fontFamily: "Jua, sans-serif", fontSize: 26, color: RED, lineHeight: 1 }}>{val}</div>
+            <div style={{ fontFamily: "Jua, sans-serif", fontSize: 26, color: RED, lineHeight: 1 }}>{value}</div>
             <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_R_DIM, marginTop: 4 }}>{label}</div>
           </div>
         ))}
@@ -527,10 +438,10 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
           fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 600,
           color: TEXT_R_DIM, textTransform: "uppercase", letterSpacing: "0.1em",
         }}>
-          Product stack
+          {copy.stackLabel}
         </span>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-          {TECH_STACK.map(({ label, color, bg, border, dot }) => (
+          {copy.stack.map(({ label, color, bg, border, dot }) => (
             <motion.div
               key={label}
               whileHover={{ scale: 1.06, y: -2 }}
@@ -571,7 +482,7 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
             textTransform: "uppercase",
           }}
         >
-          keep going
+          {copy.scrollNudge}
         </motion.span>
       </motion.div>
     </section>
@@ -621,19 +532,13 @@ function ProductSection({
   sectionRef: React.RefObject<HTMLElement | null>;
   h2Ref: React.RefObject<HTMLHeadingElement | null>;
 }) {
-  // Feature cards — icon, title, description
-  const features = [
-    { icon: Activity,    title: "Hover-first workflow", desc: "Metis stays lightweight on the page, then opens the deeper workspace in the browser side panel when you want context." },
-    { icon: TrendingDown,title: "Cost and control",     desc: "The product frames waste in plain language: what costs money now, what scales badly later, and what deserves attention first." },
-    { icon: Zap,         title: "Stack-aware signals",  desc: "Frameworks, hosts, AI providers, and third-party scripts are detected so the report feels specific, not generic." },
-    { icon: Shield,      title: "Built for real teams", desc: "The website explains the product cleanly while the extension stays focused on scanning, scoring, and the side-panel workspace." },
-  ];
+  const copy = frontFacingCopy.product;
 
   return (
     <section id="product" ref={sectionRef as React.RefObject<HTMLElement>} style={{ padding: "100px 0" }}>
       <Divider />
       <div style={{ paddingTop: 80 }}>
-        <SectionTag>Product</SectionTag>
+        <SectionTag>{copy.tag}</SectionTag>
 
         {/* h2Ref triggers the sticky sidebar via IntersectionObserver in LandingPage */}
         <motion.h2
@@ -643,20 +548,21 @@ function ProductSection({
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 560 }}
         >
-          The cost layer your frontend never had.
+          {copy.heading}
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.1 }}
           style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.6, margin: 0, marginBottom: 56, maxWidth: 480 }}
         >
-          Metis was designed to feel calm on the page and serious in the report.
-          It catches what a normal profiler rarely explains: what those requests mean for real spend.
+          {copy.body}
         </motion.p>
 
         {/* 2-col grid — stagger animates each card in 80ms apart */}
         <div className="metis-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
-          {features.map(({ icon: Icon, title, desc }, i) => (
+          {copy.features.map(({ icon, title, desc }, i) => {
+            const Icon = FEATURE_ICONS[icon];
+            return (
             <motion.div
               key={title}
               initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
@@ -671,7 +577,8 @@ function ProductSection({
               <h3 style={{ fontFamily: "Inter, sans-serif", fontSize: 15, fontWeight: 700, color: TEXT_W, margin: 0, marginBottom: 8 }}>{title}</h3>
               <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_W_DIM, lineHeight: 1.6, margin: 0 }}>{desc}</p>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -695,6 +602,7 @@ function ProductSection({
  * so auth, guidance, and protected product flows can be added cleanly later.
  */
 function AIGuideSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
+  const copy = frontFacingCopy.guide;
   // Active step index — cycles on a 3 s timer to demo the guide automatically
   const [activeStep, setActiveStep] = useState(0);
 
@@ -702,40 +610,7 @@ function AIGuideSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
   // color  → accent used on the step indicator ring
   // msg    → what the AI assistant says at this phase
   // code   → the code snippet the AI suggests (TypeScript/Python snippet)
-  const steps = [
-    {
-      icon: Activity,
-      label: "1. Scan",
-      detail: "The extension collects a short scan window and turns it into a clean session snapshot.",
-      color: "#f97316",
-      msg: "I've scanned 47 requests. Found 3 critical issues costing ~$26/mo.",
-      code: `// next.config.ts — migrating from CRA to Next.js\nexport default { output: 'standalone' };`,
-    },
-    {
-      icon: Bot,
-      label: "2. Analyse",
-      detail: "A future Python service can read the snapshot and map each issue to a likely root cause.",
-      color: "#8b5cf6",
-      msg: "Root cause: fetchUser() is called in 4 components with no shared cache key.",
-      code: `# FastAPI endpoint — cost snapshot ingestion\n@app.post("/analyse")\nasync def analyse(snapshot: CostSnapshot) -> FixPlan: ...`,
-    },
-    {
-      icon: Code2,
-      label: "3. Guide",
-      detail: "Metis turns the scan into ranked guidance shaped around the stack it detected.",
-      color: "#3b82f6",
-      msg: "Here's the fix for fetchUser — replace with SWR and a shared 'user' key:",
-      code: `// Before (React)\nconst data = await fetchUser(id);\n\n// After (Next.js + SWR)\nconst { data } = useSWR(\`/api/user/\${id}\`, fetcher);`,
-    },
-    {
-      icon: CheckCheck,
-      label: "4. Apply",
-      detail: "After you apply the fix, the next scan shows whether the score and issue list actually improved.",
-      color: "#22c55e",
-      msg: "Fix applied ✓ — request count dropped from 47 → 31. Score improved: 88 → 44.",
-      code: `// TypeScript shared type (extension ↔ Next.js app)\nexport interface CostSnapshot {\n  score: number;\n  issues: Issue[];\n}`,
-    },
-  ];
+  const steps = copy.steps;
 
   // Auto-advance through steps so the section feels alive even without interaction
   useEffect(() => {
@@ -747,7 +622,7 @@ function AIGuideSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
     <section id="guide" ref={sectionRef as React.RefObject<HTMLElement>} style={{ padding: "100px 0" }}>
       <Divider />
       <div style={{ paddingTop: 80 }}>
-        <SectionTag>AI 1-to-1 Guide</SectionTag>
+        <SectionTag>{copy.tag}</SectionTag>
 
         <motion.h2
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
@@ -755,15 +630,14 @@ function AIGuideSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 560 }}
         >
-          A calmer path from issue to fix.
+          {copy.heading}
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.1 }}
           style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 48, maxWidth: 500 }}
         >
-          The website sets the expectation for the deeper product flow: detect the problem, explain why it matters,
-          then hand the team a fix path that feels grounded in their stack.
+          {copy.body}
         </motion.p>
 
         {/* ── Step indicator tabs ── */}
@@ -817,7 +691,7 @@ function AIGuideSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
                 border: `1px solid ${steps[activeStep].color}44`,
                 display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
               }}>
-                {(() => { const Icon = steps[activeStep].icon; return <Icon size={13} style={{ color: steps[activeStep].color }} />; })()}
+                {(() => { const Icon = GUIDE_STEP_ICONS[steps[activeStep].icon]; return <Icon size={13} style={{ color: steps[activeStep].color }} />; })()}
               </div>
               <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 700, color: TEXT_W }}>
                 {steps[activeStep].label}
@@ -860,7 +734,7 @@ function AIGuideSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
               }}>
                 <Terminal size={11} style={{ color: TEXT_W_DIM2 }} />
                 <span style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: TEXT_W_DIM2, letterSpacing: "0.04em" }}>
-                  AI-generated fix · {steps[activeStep].label}
+                  {copy.codeLabelPrefix} {steps[activeStep].label}
                 </span>
               </div>
               <pre style={{
@@ -888,7 +762,7 @@ function AIGuideSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
             />
           ))}
           <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_W_DIM2, marginLeft: 8 }}>
-            Auto-advancing · click to jump
+            {copy.autoAdvanceLabel}
           </span>
         </div>
 
@@ -907,9 +781,8 @@ function AIGuideSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
         >
           <BookOpen size={14} style={{ color: "#a78bfa", flexShrink: 0, marginTop: 1 }} />
           <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_W_DIM, margin: 0, lineHeight: 1.6 }}>
-            <span style={{ color: TEXT_W, fontWeight: 600 }}>Under the hood:</span>{" "}
-            The Python scaffold in this repo is where future auth, protected reports, and guided fix flows will
-            land. Right now the site is honest about the shape of that system without claiming the automation is live.
+            <span style={{ color: TEXT_W, fontWeight: 600 }}>{copy.footerLabel}</span>{" "}
+            {copy.footerNote}
           </p>
         </motion.div>
       </div>
@@ -922,13 +795,7 @@ function AIGuideSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
 // Shows the "before Metis" state: raw stats + a live issues list.
 // ─────────────────────────────────────────────────────────────────────────────
 function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
-  // Stat cards — val + optional unit label + description
-  const stats = [
-    { val: "24",     unit: "avg", label: "API calls per page load" },
-    { val: "3.2",    unit: "MB",  label: "avg payload per session" },
-    { val: "$0.004", unit: "",    label: "avg session cost, unoptimised" },
-    { val: "86%",    unit: "",    label: "of teams don't know their frontend cost" },
-  ];
+  const copy = frontFacingCopy.problem;
 
   return (
     <section id="problem" ref={sectionRef as React.RefObject<HTMLElement>}
@@ -936,27 +803,26 @@ function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
     >
       <Divider />
       <div style={{ paddingTop: 80 }}>
-        <SectionTag>The Problem</SectionTag>
+        <SectionTag>{copy.tag}</SectionTag>
         <motion.h2
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 580 }}
         >
-          Your frontend is bleeding money every session.
+          {copy.heading}
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.1 }}
           style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 56, maxWidth: 520 }}
         >
-          Unoptimised requests, noisy third-party scripts, and AI-heavy interactions compound quietly.
-          Metis exists to make that waste legible before it becomes a postmortem.
+          {copy.body}
         </motion.p>
 
         {/* 2×2 stat grid — scale-in on entry */}
         <div className="metis-grid-2-tight" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12, marginBottom: 48 }}>
-          {stats.map(({ val, unit, label }, i) => (
+          {copy.stats.map(({ value, unit, label }, i) => (
             <motion.div
               key={label}
               initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }}
@@ -964,7 +830,7 @@ function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
               style={{ background: "rgba(0,0,0,0.15)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 14, padding: "20px 22px" }}
             >
               <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 6 }}>
-                <span style={{ fontFamily: "Jua, sans-serif", fontSize: 32, color: TEXT_W, lineHeight: 1 }}>{val}</span>
+                <span style={{ fontFamily: "Jua, sans-serif", fontSize: 32, color: TEXT_W, lineHeight: 1 }}>{value}</span>
                 {unit && <span style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_W_DIM }}>{unit}</span>}
               </div>
               <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_W_DIM2, margin: 0, lineHeight: 1.4 }}>{label}</p>
@@ -982,26 +848,20 @@ function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
           <div style={{ padding: "12px 16px", background: "rgba(239,68,68,0.08)", borderBottom: "1px solid rgba(239,68,68,0.15)", display: "flex", alignItems: "center", gap: 8 }}>
             <AlertCircle size={12} style={{ color: "#ef4444" }} />
             <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 600, color: "#ef4444", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              5 issues detected · High Risk
+              {copy.issueSummaryLabel}
             </span>
           </div>
-          {[
-            { title: "Duplicate API Requests — 8× per load",       sev: "critical", color: "#ef4444" },
-            { title: "Memory leak in 3 components",                 sev: "critical", color: "#ef4444" },
-            { title: "OpenAI called on every keystroke",            sev: "moderate", color: "#f97316" },
-            { title: "3 images over 2MB — no WebP conversion",     sev: "moderate", color: "#f97316" },
-            { title: "Static assets without Cache-Control headers", sev: "low",      color: "#eab308" },
-          ].map((issue, i) => (
+          {copy.issues.map((issue, i) => (
             <motion.div
               key={issue.title}
               initial={{ opacity: 0, x: -8 }} whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-20px" }} transition={{ delay: 0.05 * i, duration: 0.3 }}
-              style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 16px", borderBottom: i < 4 ? "1px solid rgba(255,255,255,0.06)" : "none" }}
+              style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 16px", borderBottom: i < copy.issues.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}
             >
               <div style={{ width: 6, height: 6, borderRadius: "50%", background: issue.color, flexShrink: 0 }} />
               <span style={{ flex: 1, fontFamily: "Inter, sans-serif", fontSize: 13, color: "rgba(255,245,240,0.8)" }}>{issue.title}</span>
               <span style={{ borderRadius: 999, padding: "2px 8px", background: issue.color + "22", color: issue.color, fontFamily: "Inter, sans-serif", fontSize: 9, fontWeight: 600 }}>
-                {issue.sev}
+                {issue.severity}
               </span>
             </motion.div>
           ))}
@@ -1027,34 +887,13 @@ function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
  * contributors here to understand the token system at a glance.
  */
 function DesignSystemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
-  // Colour tokens pulled from the constants at the top of this file
-  const colourTokens = [
-    { name: "--red",       hex: "#dc5e5e", label: "Brand Red",    usage: "CTAs, accents, wordmark" },
-    { name: "--cream",     hex: "#FFF5F0", label: "Cream",        usage: "Hero background, text on red" },
-    { name: "--dark-blue", hex: "#0c1623", label: "Dark Blue",    usage: "Footer background" },
-    { name: "--text-dim",  hex: "rgba(255,245,240,0.65)", label: "Text Dim", usage: "Secondary body copy on red bg" },
-    { name: "--card-bg",   hex: "rgba(0,0,0,0.10)",       label: "Card BG",   usage: "Feature + fix card backgrounds" },
-    { name: "--green",     hex: "#22c55e", label: "Success Green", usage: "Minimal risk score, savings labels" },
-    { name: "--orange",    hex: "#f97316", label: "Warning Orange", usage: "Moderate risk, AI issue severity" },
-    { name: "--red-crit",  hex: "#ef4444", label: "Critical Red",  usage: "Critical severity issues" },
-  ];
-
-  // Type scale entries
-  const typeScale = [
-    { role: "Display",    family: "DM Serif Display", size: "clamp(36–128px)", usage: "h1, h2 headings" },
-    { role: "Numeric",    family: "Jua",               size: "26–48px",         usage: "Scores, stats, large numbers" },
-    { role: "Body",       family: "Inter",             size: "12–17px",         usage: "All prose, labels, UI copy" },
-    { role: "Mono",       family: "JetBrains Mono",    size: "12px",            usage: "Code snippets in AI guide" },
-  ];
-
-  // 4-base spacing scale (px values)
-  const spacingScale = [4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 100];
+  const copy = frontFacingCopy.design;
 
   return (
     <section id="design" ref={sectionRef as React.RefObject<HTMLElement>} style={{ padding: "100px 0" }}>
       <Divider />
       <div style={{ paddingTop: 80 }}>
-        <SectionTag>Design System</SectionTag>
+        <SectionTag>{copy.tag}</SectionTag>
 
         <motion.h2
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
@@ -1062,15 +901,14 @@ function DesignSystemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLE
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 540 }}
         >
-          The Metis design language.
+          {copy.heading}
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.1 }}
           style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 52, maxWidth: 500 }}
         >
-          Consistent tokens, type scale, and spacing so the site feels intentional,
-          even before the full product account system lands.
+          {copy.body}
         </motion.p>
 
         {/* ── Colour tokens ── */}
@@ -1082,11 +920,11 @@ function DesignSystemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLE
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
             <Palette size={14} style={{ color: TEXT_W_DIM }} />
             <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: TEXT_W, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              Colour Tokens
+              {copy.colorTokensHeading}
             </span>
           </div>
           <div className="metis-grid-2-tight" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
-            {colourTokens.map(({ name, hex, label, usage }, i) => (
+            {copy.colorTokens.map(({ name, hex, label, usage }, i) => (
               <motion.div
                 key={name}
                 initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }}
@@ -1123,18 +961,18 @@ function DesignSystemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLE
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
             <Layers size={14} style={{ color: TEXT_W_DIM }} />
             <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: TEXT_W, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              Type Scale
+              {copy.typeScaleHeading}
             </span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 1, borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)" }}>
-            {typeScale.map(({ role, family, size, usage }, i) => (
+            {copy.typeScale.map(({ role, family, size, usage }, i) => (
               <div
                 key={role}
                 style={{
                   display: "flex", alignItems: "center", gap: 12,
                   padding: "11px 14px",
                   background: i % 2 === 0 ? "rgba(0,0,0,0.12)" : "rgba(0,0,0,0.07)",
-                  borderBottom: i < typeScale.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
+                  borderBottom: i < copy.typeScale.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
                 }}
               >
                 {/* Role pill */}
@@ -1164,11 +1002,11 @@ function DesignSystemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLE
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
             <MessageSquare size={14} style={{ color: TEXT_W_DIM }} />
             <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: TEXT_W, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              Spacing Scale (4px base)
+              {copy.spacingScaleHeading}
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "flex-end", gap: 8, flexWrap: "wrap" }}>
-            {spacingScale.map((px) => (
+            {copy.spacingScale.map((px) => (
               <div key={px} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                 {/* Bar height represents the spacing value proportionally (capped) */}
                 <div style={{
@@ -1194,49 +1032,31 @@ function DesignSystemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLE
 // Each card maps severity → accent colour; rank 1 gets a "Fix First" badge.
 // ─────────────────────────────────────────────────────────────────────────────
 function FixesSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
-  // Fix data — rank drives sort order and badge visibility
-  const fixes = [
-    {
-      rank: 1, title: "Duplicate API Requests", color: "#ef4444", saving: 8,
-      rootCause: "Multiple components trigger the same fetch independently on mount with no deduplication.",
-      fix: "Add SWR or React Query with a shared cache key. Concurrent callers share one in-flight request.",
-    },
-    {
-      rank: 2, title: "AI API Call Frequency", color: "#f97316", saving: 11,
-      rootCause: "AI completion handler fires on onChange with no debounce — each keystroke = one API call.",
-      fix: "Debounce by 400ms with useDebouncedCallback. Cache identical prompts with a simple Map for 5 min.",
-    },
-    {
-      rank: 3, title: "Memory Leak Pattern", color: "#ef4444", saving: 5,
-      rootCause: "useEffect hooks add event listeners but return no cleanup function.",
-      fix: "Return cleanup from each useEffect: return () => window.removeEventListener(...). Use AbortController for fetch.",
-    },
-  ];
+  const copy = frontFacingCopy.fixes;
 
   return (
     <section id="fixes" ref={sectionRef as React.RefObject<HTMLElement>} style={{ padding: "100px 0" }}>
       <Divider />
       <div style={{ paddingTop: 80 }}>
-        <SectionTag>How it fixes it</SectionTag>
+        <SectionTag>{copy.tag}</SectionTag>
         <motion.h2
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 540 }}
         >
-          Here&apos;s exactly what to fix.
+          {copy.heading}
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.1 }}
           style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 52, maxWidth: 480 }}
         >
-          Not vague advice. The product direction is clear: ranked fixes, grounded explanations, and a report that
-          respects how engineering teams actually work.
+          {copy.body}
         </motion.p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {fixes.map(({ rank, title, color, saving, rootCause, fix }, i) => (
+          {copy.items.map(({ rank, title, color, saving, rootCause, fix }, i) => (
             <motion.div
               key={title}
               initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
@@ -1254,24 +1074,24 @@ function FixesSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement 
                   <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color: "white" }}>{title}</span>
                   {/* "Fix First" badge only on the top-ranked card */}
                   {rank === 1 && (
-                    <span style={{ borderRadius: 999, padding: "2px 8px", background: "rgba(255,215,0,0.15)", color: "#ffd700", fontFamily: "Inter, sans-serif", fontSize: 9, fontWeight: 700 }}>Fix First</span>
+                    <span style={{ borderRadius: 999, padding: "2px 8px", background: "rgba(255,215,0,0.15)", color: "#ffd700", fontFamily: "Inter, sans-serif", fontSize: 9, fontWeight: 700 }}>{copy.fixFirstLabel}</span>
                   )}
                 </div>
                 {/* Monthly savings estimate */}
                 <span style={{ borderRadius: 999, padding: "4px 10px", background: "rgba(34,197,94,0.15)", color: "#4ade80", fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 700 }}>
-                  Save ~${saving}/mo
+                  {copy.saveLabel(saving)}
                 </span>
               </div>
 
               {/* Card body — root cause + fix */}
               <div style={{ padding: "14px 16px 16px", background: "rgba(0,0,0,0.14)", display: "flex", flexDirection: "column", gap: 10 }}>
                 <div>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "rgba(255,245,240,0.28)", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0, marginBottom: 4 }}>Root Cause</p>
+                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "rgba(255,245,240,0.28)", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0, marginBottom: 4 }}>{copy.rootCauseLabel}</p>
                   <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "rgba(255,245,240,0.55)", lineHeight: 1.55, margin: 0 }}>{rootCause}</p>
                 </div>
                 {/* Left-border accent on fix block matches card's severity colour */}
                 <div style={{ borderRadius: 10, padding: "10px 12px", background: "rgba(255,255,255,0.04)", borderLeft: `3px solid ${color}` }}>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color, textTransform: "uppercase", letterSpacing: "0.07em", margin: 0, marginBottom: 4 }}>Fix</p>
+                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color, textTransform: "uppercase", letterSpacing: "0.07em", margin: 0, marginBottom: 4 }}>{copy.fixLabel}</p>
                   <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "rgba(255,245,240,0.7)", lineHeight: 1.55, margin: 0 }}>{fix}</p>
                 </div>
               </div>
@@ -1288,11 +1108,13 @@ function FixesSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement 
 // The happy-path payoff: checklist → result card → CTA button.
 // ─────────────────────────────────────────────────────────────────────────────
 function SolutionSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
+  const copy = frontFacingCopy.solution;
+
   return (
     <section id="solution" ref={sectionRef as React.RefObject<HTMLElement>} style={{ padding: "100px 0 80px" }}>
       <Divider />
       <div style={{ paddingTop: 80 }}>
-        <SectionTag>The result</SectionTag>
+        <SectionTag>{copy.tag}</SectionTag>
 
         <motion.h2
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
@@ -1300,9 +1122,9 @@ function SolutionSection({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 5vw, 64px)", color: TEXT_W, lineHeight: 1.08, letterSpacing: "-0.03em", margin: 0, marginBottom: 20, maxWidth: 560 }}
         >
-          Start free.
+          {copy.heading[0]}
           <br />
-          Fix in minutes.
+          {copy.heading[1]}
         </motion.h2>
 
         <motion.p
@@ -1310,8 +1132,7 @@ function SolutionSection({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
           viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay: 0.1 }}
           style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 44, maxWidth: 460 }}
         >
-          Install Metis, open a page, and get a clear read on where cost pressure starts. The website handles the
-          story. The extension handles the scan.
+          {copy.body}
         </motion.p>
 
         {/* Checklist — 4 value propositions */}
@@ -1320,12 +1141,7 @@ function SolutionSection({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
           viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay: 0.15 }}
           style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 44 }}
         >
-          {[
-            "Score any running page in under 2 seconds",
-            "See exactly what's costing you, per session",
-            "Get ranked code fixes with savings estimates",
-            "Free to start, with room for Plus-style team workflows later",
-          ].map((item, i) => (
+          {copy.checklist.map((item, i) => (
             <motion.div
               key={item}
               initial={{ opacity: 0, x: -8 }} whileInView={{ opacity: 1, x: 0 }}
@@ -1359,22 +1175,22 @@ function SolutionSection({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
             <circle
               cx={30} cy={30} r={23} fill="none" stroke="#22c55e" strokeWidth={5}
               strokeDasharray={2 * Math.PI * 23}
-              strokeDashoffset={2 * Math.PI * 23 * (1 - 0.24)} // 0.24 = score / 100
+              strokeDashoffset={2 * Math.PI * 23 * (1 - landingAnalysis.resultScore / 100)}
               strokeLinecap="round" transform="rotate(-90 30 30)"
             />
             <text x={30} y={30} textAnchor="middle" dominantBaseline="central"
-              fill="white" fontSize={14} fontFamily="Jua, sans-serif">24</text>
+              fill="white" fontSize={14} fontFamily="Jua, sans-serif">{landingAnalysis.resultScore}</text>
           </svg>
           {/* Labels */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontFamily: "Jua, sans-serif", fontSize: 28, color: TEXT_W, lineHeight: 1 }}>24</span>
+              <span style={{ fontFamily: "Jua, sans-serif", fontSize: 28, color: TEXT_W, lineHeight: 1 }}>{landingAnalysis.resultScore}</span>
               <span style={{ borderRadius: 999, padding: "4px 12px", background: "rgba(34,197,94,0.2)", color: "#22c55e", fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600 }}>
-                Minimal Risk
+                {copy.resultCaption}
               </span>
             </div>
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_W_DIM, margin: 0, lineHeight: 1 }}>
-              After applying 3 fixes — $26/mo saved
+              {landingAnalysis.resultSummary}
             </p>
           </div>
         </motion.div>
@@ -1391,11 +1207,11 @@ function SolutionSection({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
             onClick={() => window.location.assign(CHROME_WAITLIST_URL)}
             style={{ background: TEXT_W, color: RED, border: "none", borderRadius: 999, padding: "16px 32px", fontFamily: "Inter, sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
           >
-            Get early access
+            {copy.primaryCta}
             <ArrowRight size={16} />
           </motion.button>
           <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_W_DIM2 }}>
-            Google auth and email/password will be wired in the next auth pass
+            {copy.secondaryNote}
           </span>
         </motion.div>
       </div>
@@ -1409,6 +1225,7 @@ function SolutionSection({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
 // Email state is local only — wire to a backend endpoint when ready.
 // ─────────────────────────────────────────────────────────────────────────────
 function BigFooter() {
+  const copy = frontFacingCopy.footer;
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -1451,17 +1268,16 @@ function BigFooter() {
             {/* Beta badge */}
             <div style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 999, padding: "4px 12px", background: "rgba(220,94,94,0.15)", border: "1px solid rgba(220,94,94,0.25)", marginBottom: 24 }}>
               <motion.div style={{ width: 5, height: 5, borderRadius: "50%", background: RED }} animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.6, repeat: Infinity }} />
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 600, color: RED, textTransform: "uppercase", letterSpacing: "0.08em" }}>Beta Access</span>
+              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 600, color: RED, textTransform: "uppercase", letterSpacing: "0.08em" }}>{copy.badge}</span>
             </div>
 
             <h2 style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(32px, 4vw, 52px)", color: CREAM, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 14 }}>
-              Get early access.
+              {copy.heading[0]}
               <br />
-              Free, always.
+              {copy.heading[1]}
             </h2>
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: 16, color: "rgba(255,245,240,0.5)", lineHeight: 1.6, margin: 0, marginBottom: 36, maxWidth: 400 }}>
-              Join the list and be first to hear when Metis opens up deeper auth flows, team-ready reports, and
-              polished release builds.
+              {copy.body}
             </p>
 
             <AnimatePresence mode="wait">
@@ -1479,7 +1295,7 @@ function BigFooter() {
                       type="email"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      placeholder="you@company.com"
+                      placeholder={copy.emailPlaceholder}
                       required
                       style={{
                         flex: 1, background: "none", border: "none", outline: "none",
@@ -1499,7 +1315,7 @@ function BigFooter() {
                       cursor: "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 6,
                     }}
                   >
-                    Join beta
+                    {copy.submitLabel}
                     <ArrowRight size={14} />
                   </motion.button>
                 </motion.form>
@@ -1511,7 +1327,7 @@ function BigFooter() {
                 >
                   <CheckCheck size={16} style={{ color: "#4ade80" }} />
                   <span style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: "rgba(255,245,240,0.8)" }}>
-                    You&apos;re on the list. We&apos;ll be in touch.
+                    {copy.successMessage}
                   </span>
                 </motion.div>
               )}
@@ -1530,16 +1346,16 @@ function BigFooter() {
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: RED, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 22, color: "white", lineHeight: 1 }}>M</span>
                 </div>
-                <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 24, color: CREAM, letterSpacing: "-0.02em" }}>Metis</span>
+                <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 24, color: CREAM, letterSpacing: "-0.02em" }}>{frontFacingCopy.brand.name}</span>
               </div>
               <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: "rgba(255,245,240,0.35)", margin: 0, lineHeight: 1.5 }}>
-                Cost intelligence for the modern web.
+                {frontFacingCopy.brand.footerTagline}
                 <br />
-                A browser extension and reporting layer by zward.studio.
+                {frontFacingCopy.brand.footerSubline}
               </p>
               {/* Tech stack micro-badges in footer */}
               <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }}>
-                {["Next.js", "React", "Python", "TypeScript"].map(t => (
+                {copy.stackBadges.map(t => (
                   <span key={t} style={{
                     fontFamily: "Inter, sans-serif", fontSize: 10, fontWeight: 600,
                     color: "rgba(255,245,240,0.35)",
@@ -1552,13 +1368,9 @@ function BigFooter() {
 
             {/* Links */}
             <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-              {[
-                { label: "zward.studio", href: WARD_STUDIO_URL, icon: ExternalLink },
-                { label: "GitHub",       href: REPO_URL, icon: Github },
-                { label: "Get early access", href: CHROME_WAITLIST_URL, icon: ExternalLink },
-                { label: "Privacy",      href: PRIVACY_URL, icon: null },
-                { label: "Terms",        href: TERMS_URL, icon: null },
-              ].map(({ label, href, icon: Icon }) => (
+              {copy.links.map(({ label, href, icon }) => {
+                const Icon = icon ? FOOTER_LINK_ICONS[icon] : null;
+                return (
                 <motion.a
                   key={label}
                   href={href}
@@ -1578,12 +1390,13 @@ function BigFooter() {
                   {Icon && <Icon size={13} />}
                   {label}
                 </motion.a>
-              ))}
+                );
+              })}
             </div>
 
             {/* Copyright */}
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "rgba(255,245,240,0.2)", margin: 0 }}>
-              © 2026 zward.studio · Metis is a live build in progress for the browser product already under active development.
+              {frontFacingCopy.brand.footerCopyright}
             </p>
           </motion.div>
         </div>
@@ -1753,11 +1566,11 @@ export function LandingPage() {
                   animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.8, repeat: Infinity }}
                 />
                 <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_W_DIM2 }}>
-                  Showing{" "}
+                  {frontFacingCopy.solution.resultBadgeLabel}{" "}
                   <span style={{ color: TEXT_W_DIM, fontWeight: 600 }}>
                     {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}
                   </span>{" "}
-                  state · score {currentState.score}/100
+                  state · score {currentState.score}{frontFacingCopy.solution.resultScoreSuffix}
                 </span>
               </motion.div>
             </motion.div>
