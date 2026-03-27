@@ -8,13 +8,11 @@
  * Sections (scroll order):
  *   1. Hero            — full-width, centred; brand wordmark + live score chip
  *   2. Product         — 4-up feature grid; sticky mockup sidebar triggers here
- *   3. AI Guide        — step-by-step AI 1-to-1 migration guide (NEW)
- *   4. Problem         — stats + issues list; shows the pain before the fix
- *   5. Design System   — Metis colour tokens, type scale, spacing refs (NEW)
- *   6. Fixes           — ranked code-level fix cards with root-cause + solution
- *   7. Solution        — result card + CTA
+ *   3. Problem         — stats + issues list; shows the pain before the fix
+ *   4. Fixes           — ranked code-level fix cards with root-cause + solution
+ *   5. Solution        — result card + CTA
  *
- * Layout pattern (sections 2–7):
+ * Layout pattern (sections 2–5):
  *   Left column  → prose + interactive content  (flex: 1)
  *   Right column → sticky ExtensionMockup (≥xl only), fades in at Product h2
  *
@@ -38,14 +36,6 @@ import {
   Github,
   Mail,
   ExternalLink,
-  Bot,           // AI guide icon
-  Palette,       // design system icon
-  Code2,         // code block / migration
-  Layers,        // stack icon
-  MessageSquare, // chat / guide message
-  Sparkles,      // AI sparkle
-  Terminal,      // code terminal
-  BookOpen,      // guide / docs
 } from "lucide-react";
 import { frontFacingCopy, landingAnalysis, mockupStates, siteLinks } from "@/content/frontFacingCopy";
 import { ExtensionMockup, MockupState } from "./ExtensionMockup";
@@ -70,12 +60,6 @@ const FEATURE_ICONS = {
   zap: Zap,
   shield: Shield,
 } as const;
-const GUIDE_STEP_ICONS = {
-  activity: Activity,
-  bot: Bot,
-  code2: Code2,
-  checkCheck: CheckCheck,
-} as const;
 const FOOTER_LINK_ICONS = {
   externalLink: ExternalLink,
   github: Github,
@@ -87,7 +71,7 @@ const CHROME_WAITLIST_URL = siteLinks.waitlistUrl;
 // Union type — every key maps to a mockup state + a nav label.
 // Add new sections here first, then extend SECTION_STATES and NAV_SECTIONS.
 // ─────────────────────────────────────────────────────────────────────────────
-type SectionKey = "hero" | "product" | "guide" | "problem" | "design" | "fixes" | "solution";
+type SectionKey = "hero" | "product" | "problem" | "fixes" | "solution";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MOCKUP STATES
@@ -586,211 +570,6 @@ function ProductSection({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AI GUIDE SECTION  (NEW)
-// ─────────────────────────────────────────────────────────────────────────────
-/**
- * AIGuideSection — "Your AI 1-to-1 migration guide"
- *
- * Visualises the step-by-step AI-driven code migration flow:
- *   Scan → Analyse → Guide → Apply → Verify
- *
- * The mock chat thread shows what Metis's AI assistant actually says at each
- * step so visitors can feel the product without installing it.
- *
- * Tech context: the public site explains the future workflow without pretending
- * it is already live. The Python service scaffold sits beside the Next.js app
- * so auth, guidance, and protected product flows can be added cleanly later.
- */
-function AIGuideSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
-  const copy = frontFacingCopy.guide;
-  // Active step index — cycles on a 3 s timer to demo the guide automatically
-  const [activeStep, setActiveStep] = useState(0);
-
-  // Each step maps to a migration phase.
-  // color  → accent used on the step indicator ring
-  // msg    → what the AI assistant says at this phase
-  // code   → the code snippet the AI suggests (TypeScript/Python snippet)
-  const steps = copy.steps;
-
-  // Auto-advance through steps so the section feels alive even without interaction
-  useEffect(() => {
-    const t = setInterval(() => setActiveStep(s => (s + 1) % steps.length), 3000);
-    return () => clearInterval(t);
-  }, [steps.length]);
-
-  return (
-    <section id="guide" ref={sectionRef as React.RefObject<HTMLElement>} style={{ padding: "100px 0" }}>
-      <Divider />
-      <div style={{ paddingTop: 80 }}>
-        <SectionTag>{copy.tag}</SectionTag>
-
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 560 }}
-        >
-          {copy.heading}
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.1 }}
-          style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 48, maxWidth: 500 }}
-        >
-          {copy.body}
-        </motion.p>
-
-        {/* ── Step indicator tabs ── */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
-          {steps.map(({ label, color }, i) => (
-            <button
-              key={label}
-              onClick={() => setActiveStep(i)}
-              style={{
-                background: activeStep === i ? color + "22" : "rgba(255,255,255,0.06)",
-                border: `1px solid ${activeStep === i ? color + "55" : "rgba(255,255,255,0.1)"}`,
-                borderRadius: 999, padding: "6px 14px",
-                fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: activeStep === i ? 700 : 400,
-                color: activeStep === i ? color : TEXT_W_DIM,
-                cursor: "pointer",
-                transition: "all 0.2s",
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* ── Active step card ── */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeStep}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3 }}
-            style={{
-              borderRadius: 18,
-              overflow: "hidden",
-              border: `1px solid ${steps[activeStep].color}33`,
-              background: "rgba(0,0,0,0.18)",
-              marginBottom: 24,
-            }}
-          >
-            {/* Card header */}
-            <div style={{
-              padding: "12px 16px",
-              background: steps[activeStep].color + "18",
-              borderBottom: `1px solid ${steps[activeStep].color}22`,
-              display: "flex", alignItems: "center", gap: 10,
-            }}>
-              {/* Step icon */}
-              <div style={{
-                width: 28, height: 28, borderRadius: 8,
-                background: steps[activeStep].color + "22",
-                border: `1px solid ${steps[activeStep].color}44`,
-                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-              }}>
-                {(() => { const Icon = GUIDE_STEP_ICONS[steps[activeStep].icon]; return <Icon size={13} style={{ color: steps[activeStep].color }} />; })()}
-              </div>
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 700, color: TEXT_W }}>
-                {steps[activeStep].label}
-              </span>
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_W_DIM, marginLeft: 4 }}>
-                — {steps[activeStep].detail}
-              </span>
-            </div>
-
-            {/* AI chat bubble */}
-            <div style={{ padding: "16px 16px 0" }}>
-              <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-                {/* AI avatar */}
-                <div style={{
-                  width: 28, height: 28, borderRadius: 8, flexShrink: 0,
-                  background: "rgba(139,92,246,0.2)", border: "1px solid rgba(139,92,246,0.3)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <Sparkles size={12} style={{ color: "#a78bfa" }} />
-                </div>
-                <div style={{
-                  flex: 1, borderRadius: "4px 14px 14px 14px",
-                  background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
-                  padding: "10px 14px",
-                }}>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_W, margin: 0, lineHeight: 1.55 }}>
-                    {steps[activeStep].msg}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Code snippet — monospaced, syntax-coloured manually */}
-            <div style={{ margin: "0 16px 16px", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)" }}>
-              <div style={{
-                padding: "8px 12px",
-                background: "rgba(0,0,0,0.3)",
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
-                display: "flex", alignItems: "center", gap: 8,
-              }}>
-                <Terminal size={11} style={{ color: TEXT_W_DIM2 }} />
-                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: TEXT_W_DIM2, letterSpacing: "0.04em" }}>
-                  {copy.codeLabelPrefix} {steps[activeStep].label}
-                </span>
-              </div>
-              <pre style={{
-                margin: 0, padding: "14px 16px",
-                fontFamily: "JetBrains Mono, Fira Code, monospace", fontSize: 12,
-                color: "rgba(255,245,240,0.75)", lineHeight: 1.65,
-                background: "rgba(0,0,0,0.22)",
-                overflowX: "auto", whiteSpace: "pre-wrap", wordBreak: "break-word",
-              }}>
-                {steps[activeStep].code}
-              </pre>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Progress dots below the card */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {steps.map((_, i) => (
-            <motion.div
-              key={i}
-              onClick={() => setActiveStep(i)}
-              animate={{ width: activeStep === i ? 20 : 6, background: activeStep === i ? steps[i].color : "rgba(255,255,255,0.2)" }}
-              transition={{ duration: 0.3 }}
-              style={{ height: 6, borderRadius: 999, cursor: "pointer" }}
-            />
-          ))}
-          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_W_DIM2, marginLeft: 8 }}>
-            {copy.autoAdvanceLabel}
-          </span>
-        </div>
-
-        {/* Tech context note */}
-        <motion.div
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-          viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}
-          style={{
-            marginTop: 32,
-            display: "flex", alignItems: "flex-start", gap: 12,
-            padding: "14px 16px",
-            borderRadius: 12,
-            background: "rgba(139,92,246,0.07)",
-            border: "1px solid rgba(139,92,246,0.18)",
-          }}
-        >
-          <BookOpen size={14} style={{ color: "#a78bfa", flexShrink: 0, marginTop: 1 }} />
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_W_DIM, margin: 0, lineHeight: 1.6 }}>
-            <span style={{ color: TEXT_W, fontWeight: 600 }}>{copy.footerLabel}</span>{" "}
-            {copy.footerNote}
-          </p>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // PROBLEM SECTION
 // Shows the "before Metis" state: raw stats + a live issues list.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -865,161 +644,6 @@ function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
               </span>
             </motion.div>
           ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// DESIGN SYSTEM SECTION  (NEW)
-// ─────────────────────────────────────────────────────────────────────────────
-/**
- * DesignSystemSection — "Current Design System"
- *
- * Shows the Metis design language:
- *   • Colour tokens with hex values
- *   • Type scale (DM Serif Display headings / Inter body / Jua numerics)
- *   • Spacing scale (4-based grid)
- *   • Component examples (SectionTag pill, score ring, issue row)
- *
- * This section serves as living documentation — designers can point new
- * contributors here to understand the token system at a glance.
- */
-function DesignSystemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
-  const copy = frontFacingCopy.design;
-
-  return (
-    <section id="design" ref={sectionRef as React.RefObject<HTMLElement>} style={{ padding: "100px 0" }}>
-      <Divider />
-      <div style={{ paddingTop: 80 }}>
-        <SectionTag>{copy.tag}</SectionTag>
-
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 540 }}
-        >
-          {copy.heading}
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.1 }}
-          style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 52, maxWidth: 500 }}
-        >
-          {copy.body}
-        </motion.p>
-
-        {/* ── Colour tokens ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5 }}
-          style={{ marginBottom: 40 }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Palette size={14} style={{ color: TEXT_W_DIM }} />
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: TEXT_W, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              {copy.colorTokensHeading}
-            </span>
-          </div>
-          <div className="metis-grid-2-tight" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
-            {copy.colorTokens.map(({ name, hex, label, usage }, i) => (
-              <motion.div
-                key={name}
-                initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.04, duration: 0.3 }}
-                style={{
-                  display: "flex", alignItems: "center", gap: 10,
-                  padding: "10px 12px", borderRadius: 10,
-                  background: "rgba(0,0,0,0.15)", border: "1px solid rgba(255,255,255,0.1)",
-                }}
-              >
-                {/* Colour swatch */}
-                <div style={{
-                  width: 28, height: 28, borderRadius: 7, flexShrink: 0,
-                  background: hex,
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
-                }} />
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: RED, marginBottom: 2 }}>{name}</div>
-                  <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, color: TEXT_W, marginBottom: 1 }}>{label}</div>
-                  <div style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: TEXT_W_DIM2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{usage}</div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ── Type scale ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay: 0.1 }}
-          style={{ marginBottom: 40 }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Layers size={14} style={{ color: TEXT_W_DIM }} />
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: TEXT_W, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              {copy.typeScaleHeading}
-            </span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 1, borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)" }}>
-            {copy.typeScale.map(({ role, family, size, usage }, i) => (
-              <div
-                key={role}
-                style={{
-                  display: "flex", alignItems: "center", gap: 12,
-                  padding: "11px 14px",
-                  background: i % 2 === 0 ? "rgba(0,0,0,0.12)" : "rgba(0,0,0,0.07)",
-                  borderBottom: i < copy.typeScale.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
-                }}
-              >
-                {/* Role pill */}
-                <span style={{
-                  flexShrink: 0, minWidth: 64,
-                  fontFamily: "Inter, sans-serif", fontSize: 10, fontWeight: 700,
-                  color: RED, textTransform: "uppercase", letterSpacing: "0.06em",
-                }}>
-                  {role}
-                </span>
-                {/* Family name */}
-                <span style={{ flex: 1, fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_W }}>{family}</span>
-                {/* Size range */}
-                <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: TEXT_W_DIM2 }}>{size}</span>
-                {/* Usage context */}
-                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_W_DIM2, flexShrink: 0 }}>{usage}</span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ── Spacing scale ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay: 0.15 }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <MessageSquare size={14} style={{ color: TEXT_W_DIM }} />
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: TEXT_W, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              {copy.spacingScaleHeading}
-            </span>
-          </div>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 8, flexWrap: "wrap" }}>
-            {copy.spacingScale.map((px) => (
-              <div key={px} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                {/* Bar height represents the spacing value proportionally (capped) */}
-                <div style={{
-                  width: 24,
-                  height: Math.min(px, 60),
-                  borderRadius: 4,
-                  background: `rgba(220,94,94,${0.2 + Math.min(px / 100, 0.7)})`,
-                  border: "1px solid rgba(220,94,94,0.3)",
-                }} />
-                <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 9, color: TEXT_W_DIM2 }}>{px}</span>
-              </div>
-            ))}
-          </div>
         </motion.div>
       </div>
     </section>
@@ -1415,7 +1039,7 @@ function BigFooter() {
  *  1. Maintain `activeSection` via scroll IntersectionObserver → drives nav + mockup state
  *  2. Maintain `mockupVisible` via a separate observer on the Product h2 ref
  *  3. Provide `scrollToSection` to StickyNav
- *  4. Render the full page: Hero (full-width) + two-col layout (sections 2–7) + footer
+ *  4. Render the full page: Hero (full-width) + two-col layout (sections 2–5) + footer
  *
  * Two-col layout:
  *   Left  → prose sections (flex: 1, min-width: 0)
@@ -1431,18 +1055,14 @@ export function LandingPage() {
   // One ref per section — keyed by SectionKey for easy lookup in the scroll handler
   const heroRef = useRef<HTMLElement>(null);
   const productRef = useRef<HTMLElement>(null);
-  const guideRef = useRef<HTMLElement>(null);
   const problemRef = useRef<HTMLElement>(null);
-  const designRef = useRef<HTMLElement>(null);
   const fixesRef = useRef<HTMLElement>(null);
   const solutionRef = useRef<HTMLElement>(null);
   const sectionRefs = useMemo(
     () => ({
       hero: heroRef,
       product: productRef,
-      guide: guideRef,
       problem: problemRef,
-      design: designRef,
       fixes: fixesRef,
       solution: solutionRef,
     }),
@@ -1511,7 +1131,7 @@ export function LandingPage() {
       {/* ── HERO — full-width, outside the two-col layout ── */}
       <HeroSection sectionRef={sectionRefs.hero} />
 
-      {/* ── TWO-COL LAYOUT — sections 2 → 7 ── */}
+      {/* ── TWO-COL LAYOUT — sections 2 → 5 ── */}
       <div
         className="metis-shell"
         style={{
@@ -1523,9 +1143,7 @@ export function LandingPage() {
         {/* Left column — scrollable content */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <ProductSection      sectionRef={sectionRefs.product} h2Ref={productH2Ref} />
-          <AIGuideSection      sectionRef={sectionRefs.guide}   />
           <ProblemSection      sectionRef={sectionRefs.problem} />
-          <DesignSystemSection sectionRef={sectionRefs.design}  />
           <FixesSection        sectionRef={sectionRefs.fixes}   />
           <SolutionSection     sectionRef={sectionRefs.solution} />
         </div>

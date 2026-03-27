@@ -26,9 +26,7 @@ export const frontFacingCopy = {
   nav: {
     sections: [
       { key: "product", label: "Product" },
-      { key: "guide", label: "AI Guide" },
       { key: "problem", label: "Problem" },
-      { key: "design", label: "Design" },
       { key: "fixes", label: "Fixes" },
       { key: "solution", label: "Solution" },
     ],
@@ -108,51 +106,6 @@ export const frontFacingCopy = {
       },
     ],
   },
-  guide: {
-    tag: "AI 1-to-1 Guide",
-    heading: "A calmer path from issue to fix.",
-    body:
-      "The website sets the expectation for the deeper product flow: detect the problem, explain why it matters, then hand the team a fix path that feels grounded in their stack.",
-    footerNote:
-      "The Python scaffold in this repo is where future auth, protected reports, and guided fix flows will land. Right now the site is honest about the shape of that system without claiming the automation is live.",
-    footerLabel: "Under the hood:",
-    autoAdvanceLabel: "Auto-advancing · click to jump",
-    codeLabelPrefix: "AI-generated fix ·",
-    steps: [
-      {
-        icon: "activity",
-        label: "1. Scan",
-        detail: "The extension collects a short scan window and turns it into a clean session snapshot.",
-        color: "#f97316",
-        msg: "I've scanned 47 requests. Found 3 critical issues costing ~$26/mo.",
-        code: `// next.config.ts — migrating from CRA to Next.js\nexport default { output: 'standalone' };`,
-      },
-      {
-        icon: "bot",
-        label: "2. Analyse",
-        detail: "A future Python service can read the snapshot and map each issue to a likely root cause.",
-        color: "#8b5cf6",
-        msg: "Root cause: fetchUser() is called in 4 components with no shared cache key.",
-        code: `# FastAPI endpoint — cost snapshot ingestion\n@app.post("/analyse")\nasync def analyse(snapshot: CostSnapshot) -> FixPlan: ...`,
-      },
-      {
-        icon: "code2",
-        label: "3. Guide",
-        detail: "Metis turns the scan into ranked guidance shaped around the stack it detected.",
-        color: "#3b82f6",
-        msg: "Here's the fix for fetchUser — replace with SWR and a shared 'user' key:",
-        code: `// Before (React)\nconst data = await fetchUser(id);\n\n// After (Next.js + SWR)\nconst { data } = useSWR(\`/api/user/\${id}\`, fetcher);`,
-      },
-      {
-        icon: "checkCheck",
-        label: "4. Apply",
-        detail: "After you apply the fix, the next scan shows whether the score and issue list actually improved.",
-        color: "#22c55e",
-        msg: "Fix applied ✓ — request count dropped from 47 → 31. Score improved: 88 → 44.",
-        code: `// TypeScript shared type (extension ↔ Next.js app)\nexport interface CostSnapshot {\n  score: number;\n  issues: Issue[];\n}`,
-      },
-    ],
-  },
   problem: {
     tag: "The Problem",
     heading: "Your frontend is bleeding money every session.",
@@ -172,32 +125,6 @@ export const frontFacingCopy = {
       { title: "3 images over 2MB — no WebP conversion", severity: "moderate", color: "#f97316" },
       { title: "Static assets without Cache-Control headers", severity: "low", color: "#eab308" },
     ],
-  },
-  design: {
-    tag: "Design System",
-    heading: "The Metis design language.",
-    body:
-      "Consistent tokens, type scale, and spacing so the site feels intentional, even before the full product account system lands.",
-    colorTokensHeading: "Colour Tokens",
-    typeScaleHeading: "Type Scale",
-    spacingScaleHeading: "Spacing Scale (4px base)",
-    colorTokens: [
-      { name: "--red", hex: "#dc5e5e", label: "Brand Red", usage: "CTAs, accents, wordmark" },
-      { name: "--cream", hex: "#FFF5F0", label: "Cream", usage: "Hero background, text on red" },
-      { name: "--dark-blue", hex: "#0c1623", label: "Dark Blue", usage: "Footer background" },
-      { name: "--text-dim", hex: "rgba(255,245,240,0.65)", label: "Text Dim", usage: "Secondary body copy on red bg" },
-      { name: "--card-bg", hex: "rgba(0,0,0,0.10)", label: "Card BG", usage: "Feature + fix card backgrounds" },
-      { name: "--green", hex: "#22c55e", label: "Success Green", usage: "Minimal risk score, savings labels" },
-      { name: "--orange", hex: "#f97316", label: "Warning Orange", usage: "Moderate risk, AI issue severity" },
-      { name: "--red-crit", hex: "#ef4444", label: "Critical Red", usage: "Critical severity issues" },
-    ],
-    typeScale: [
-      { role: "Display", family: "DM Serif Display", size: "clamp(36–128px)", usage: "h1, h2 headings" },
-      { role: "Numeric", family: "Jua", size: "26–48px", usage: "Scores, stats, large numbers" },
-      { role: "Body", family: "Inter", size: "12–17px", usage: "All prose, labels, UI copy" },
-      { role: "Mono", family: "JetBrains Mono", size: "12px", usage: "Code snippets in AI guide" },
-    ],
-    spacingScale: [4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 100],
   },
   fixes: {
     tag: "How it fixes it",
@@ -345,20 +272,6 @@ export const mockupStates = {
       { title: "Unoptimized Images", severity: "moderate", color: "#f97316", saving: 4 },
     ] satisfies MockIssue[],
   },
-  guide: {
-    score: 55,
-    riskLabel: "Moderate Risk",
-    riskColor: "#f97316",
-    riskBg: "rgba(249,115,22,0.2)",
-    quickInsight: "AI guide active — migration in progress",
-    costMin: 14,
-    costMax: 26,
-    sessionCost: "$0.0029",
-    issues: [
-      { title: "AI API Call Frequency", severity: "moderate", color: "#f97316", saving: 11 },
-      { title: "Missing Cache Headers", severity: "low", color: "#eab308", saving: 2 },
-    ] satisfies MockIssue[],
-  },
   problem: {
     score: 88,
     riskLabel: "High Risk",
@@ -375,17 +288,6 @@ export const mockupStates = {
       { title: "Unoptimized Images", severity: "moderate", color: "#f97316", saving: 4 },
       { title: "Missing Cache Headers", severity: "low", color: "#eab308", saving: 2 },
     ] satisfies MockIssue[],
-  },
-  design: {
-    score: 42,
-    riskLabel: "Low Risk",
-    riskColor: "#eab308",
-    riskBg: "rgba(234,179,8,0.2)",
-    quickInsight: "Design system tokens loaded — 1 style issue",
-    costMin: 8,
-    costMax: 15,
-    sessionCost: "$0.0018",
-    issues: [{ title: "Missing Cache Headers", severity: "low", color: "#eab308", saving: 2 }] satisfies MockIssue[],
   },
   fixes: {
     score: 44,
