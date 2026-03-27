@@ -1,0 +1,14 @@
+[project]
+name = "metis-web-api"
+version = "0.1.0"
+description = "FastAPI scaffold for the Metis web product."
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi==0.115.12",
+  "pydantic-settings==2.8.1",
+  "uvicorn==0.34.0"
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
