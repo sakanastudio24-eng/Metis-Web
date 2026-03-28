@@ -1,12 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 
-import Link from "next/link";
-
-import { CheckCircle2, LoaderCircle, LogOut, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, LoaderCircle, LogOut } from "lucide-react";
 
 import { authCopy } from "@/content/authCopy";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -16,11 +15,38 @@ type LoggedInStateProps = {
   email: string | null;
 };
 
+type AnswersState = Record<string, string[]>;
+
 export function LoggedInState({ email }: LoggedInStateProps) {
   const copy = authCopy.loggedIn;
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const [isPending, startTransition] = useTransition();
+  const [isComplete, setIsComplete] = useState(false);
+  const [answers, setAnswers] = useState<AnswersState>(() =>
+    Object.fromEntries(copy.questions.map((question) => [question.id, []])),
+  );
+
+  const answeredCount = useMemo(
+    () => Object.values(answers).filter((entry) => entry.length > 0).length,
+    [answers],
+  );
+
+  function toggleAnswer(questionId: string, option: string) {
+    setAnswers((current) => {
+      const nextValues = current[questionId] ?? [];
+      const hasOption = nextValues.includes(option);
+
+      return {
+        ...current,
+        [questionId]: hasOption ? nextValues.filter((item) => item !== option) : [...nextValues, option],
+      };
+    });
+  }
+
+  function handleComplete() {
+    setIsComplete(true);
+  }
 
   function handleSignOut() {
     startTransition(async () => {
@@ -30,53 +56,108 @@ export function LoggedInState({ email }: LoggedInStateProps) {
   }
 
   return (
-    <main className="auth-shell">
-      <div className={`auth-card ${styles.flowFrame} ${styles.successFrame}`}>
-        <section className={`${styles.flowCard} ${styles.successCard}`}>
-          <div className={styles.successHero}>
-            <div className={styles.successIconShell}>
-              <CheckCircle2 size={48} className={styles.successIcon} />
-            </div>
-            <span className="auth-eyebrow">{copy.eyebrow}</span>
-            <h1>{copy.title}</h1>
-            <p>{email ? copy.readyForEmail(email) : copy.readyForYou}</p>
+    <main className={`auth-shell ${styles.surveyShell}`}>
+      <div className={`auth-card ${styles.surveyBoard}`}>
+        <section className={styles.surveyHero}>
+          <div className={styles.surveyMeta}>
+            <span className={styles.surveyTag}>{copy.eyebrow}</span>
+            <span className={styles.signedInMeta}>{email ? copy.readyForEmail(email) : copy.readyForYou}</span>
           </div>
-
-          <div className={styles.successPanel}>
-            <div>
-              <strong>{copy.panelTitle}</strong>
-              <span>{copy.panelBody}</span>
-            </div>
-            <Sparkles size={18} />
-          </div>
-
-          <div className="auth-actions">
-            <Link href="/">Back to the site</Link>
-            <button type="button" onClick={handleSignOut} className={styles.providerButton} disabled={isPending}>
-              {isPending ? <LoaderCircle size={16} className={styles.spin} /> : <LogOut size={16} />}
-              {copy.signOutLabel}
-            </button>
-          </div>
+          <h1 className={styles.surveyTitle}>{copy.title}</h1>
+          <p className={styles.surveyBody}>{copy.panelBody}</p>
         </section>
 
-        <aside className={styles.contextPanel}>
-          <div className={styles.contextGlow} />
-          <span className={styles.contextLabel}>{copy.summaryTitle}</span>
-          <h2>{copy.panelTitle}</h2>
-          <p>{copy.panelBody}</p>
+        <div className={styles.surveyLayout}>
+          <aside className={styles.surveySidebar}>
+            <div className={styles.surveySidebarCard}>
+              <span className={styles.sidebarLabel}>{copy.summaryTitle}</span>
+              <strong className={styles.sidebarValue}>{answeredCount}/{copy.questions.length}</strong>
+              <p className={styles.sidebarBody}>questions answered so far</p>
+            </div>
 
-          <div className={styles.highlightList}>
-            {copy.summaryItems.map((item) => (
-              <div key={item.title} className={styles.highlightCard}>
-                <span className={styles.highlightDot} />
-                <div className={styles.summaryCopy}>
+            <div className={styles.surveySummaryList}>
+              {copy.summaryItems.map((item) => (
+                <div key={item.title} className={styles.surveySummaryCard}>
                   <strong>{item.title}</strong>
                   <p>{item.body}</p>
                 </div>
+              ))}
+            </div>
+          </aside>
+
+          <section className={styles.surveyContent}>
+            {isComplete ? (
+              <div className={styles.completionCard}>
+                <div className={styles.completionIconShell}>
+                  <CheckCircle2 size={46} className={styles.completionIcon} />
+                </div>
+                <span className={styles.completionEyebrow}>{copy.completionEyebrow}</span>
+                <h2 className={styles.completionTitle}>{copy.completionTitle}</h2>
+                <p className={styles.completionBody}>{copy.completionBody}</p>
+                <div className={styles.completionAnswers}>
+                  {copy.questions.map((question) => (
+                    <div key={question.id} className={styles.completionAnswerRow}>
+                      <strong>{question.title}</strong>
+                      <span>{answers[question.id].length > 0 ? answers[question.id].join(", ") : "Skipped"}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </aside>
+            ) : (
+              <>
+                {copy.questions.map((question) => (
+                  <article key={question.id} className={styles.questionCard}>
+                    <div className={styles.questionHeader}>
+                      <h2>{question.title}</h2>
+                      <p>{question.helper}</p>
+                    </div>
+
+                    <div className={styles.multiAnswerGrid}>
+                      {question.options.map((option) => {
+                        const isActive = answers[question.id].includes(option);
+
+                        return (
+                          <button
+                            key={option}
+                            type="button"
+                            className={`${styles.answerChip} ${isActive ? styles.answerChipActive : ""}`}
+                            onClick={() => toggleAnswer(question.id, option)}
+                          >
+                            {option}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </article>
+                ))}
+              </>
+            )}
+
+            <div className={styles.surveyActions}>
+              {!isComplete ? (
+                <>
+                  <button type="button" className={styles.ghostButton} onClick={() => router.replace("/")}>
+                    {copy.skipLabel}
+                  </button>
+                  <button type="button" className={styles.submitButton} onClick={handleComplete}>
+                    <ArrowRight size={16} />
+                    {copy.finishLabel}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/" className={styles.secondaryLink}>
+                    Back to the site
+                  </Link>
+                  <button type="button" onClick={handleSignOut} className={styles.providerButton} disabled={isPending}>
+                    {isPending ? <LoaderCircle size={16} className={styles.spin} /> : <LogOut size={16} />}
+                    {copy.signOutLabel}
+                  </button>
+                </>
+              )}
+            </div>
+          </section>
+        </div>
       </div>
     </main>
   );

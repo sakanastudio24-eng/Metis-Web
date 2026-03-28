@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { useEffect, useState, useTransition } from "react";
 
-import { Github, LoaderCircle, LogIn, Mail } from "lucide-react";
+import { ArrowRight, Github, KeyRound, LoaderCircle, Mail, Sparkles, WandSparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { authCopy } from "@/content/authCopy";
@@ -55,10 +55,15 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
     };
   }, [router, supabase]);
 
-  function setFriendlyError(error: unknown, fallback: string) {
-    const description = error instanceof Error && error.message ? error.message : fallback;
-    setMessage(description);
-    toast.error(description);
+  function showMessage(nextMessage: string, type: "success" | "error") {
+    setMessage(nextMessage);
+
+    if (type === "success") {
+      toast.success(nextMessage);
+      return;
+    }
+
+    toast.error(nextMessage);
   }
 
   async function handleEmailAuth(event: React.FormEvent<HTMLFormElement>) {
@@ -66,7 +71,7 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
     setMessage(null);
 
     if (!email || !password) {
-      setFriendlyError(new Error(sharedCopy.missingCredentialsMessage), sharedCopy.missingCredentialsMessage);
+      showMessage(sharedCopy.missingCredentialsMessage, "error");
       return;
     }
 
@@ -76,8 +81,7 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
 
         if (error) {
           const errorCode = getSupabaseAuthErrorCode(error);
-          const friendlyMessage = getAuthErrorMessage(errorCode) ?? sharedCopy.signInError;
-          setFriendlyError(new Error(friendlyMessage), friendlyMessage);
+          showMessage(getAuthErrorMessage(errorCode) ?? sharedCopy.signInError, "error");
           return;
         }
 
@@ -94,15 +98,12 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
       });
 
       if (error) {
-        setFriendlyError(error, sharedCopy.createAccountError);
+        showMessage(sharedCopy.createAccountError, "error");
         return;
       }
 
       await supabase.auth.signOut();
-
-      const successMessage = sharedCopy.verificationMessage;
-      setMessage(successMessage);
-      toast.success(successMessage);
+      showMessage(sharedCopy.verificationMessage, "success");
     });
   }
 
@@ -118,29 +119,123 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
       });
 
       if (error) {
-        setFriendlyError(error, sharedCopy.providerLaunchError);
+        showMessage(sharedCopy.providerLaunchError, "error");
       }
     });
   }
 
+  async function handleMagicLink() {
+    setMessage(null);
+
+    if (!email) {
+      showMessage(sharedCopy.missingEmailMessage, "error");
+      return;
+    }
+
+    startTransition(async () => {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: getAuthCallbackUrl(window.location.origin),
+        },
+      });
+
+      if (error) {
+        showMessage(sharedCopy.magicLinkError, "error");
+        return;
+      }
+
+      showMessage(sharedCopy.magicLinkSuccess, "success");
+    });
+  }
+
+  const isSignIn = mode === "sign-in";
+
   return (
-    <main className="auth-shell">
-      <div className={`auth-card ${styles.flowFrame}`}>
-        <section className={`${styles.flowCard} ${styles.primaryPanel}`}>
-          <div className={styles.headerBlock}>
-            <span className="auth-eyebrow">{copy.eyebrow}</span>
-            <h1>{copy.title}</h1>
-            <p>{copy.intro}</p>
+    <main className={`auth-shell ${styles.shell}`}>
+      <div className={`auth-card ${styles.board}`}>
+        <section className={styles.heroPanel}>
+          <span className={styles.heroBadge}>{sharedCopy.brandLabel}</span>
+          <div className={styles.heroCopy}>
+            <span className={styles.heroEyebrow}>{copy.eyebrow}</span>
+            <h1 className={styles.heroTitle}>{copy.title}</h1>
+            <p className={styles.heroBody}>{copy.panelBody}</p>
           </div>
 
-          <div className={styles.providerGrid}>
-            <button type="button" className={styles.providerButton} onClick={() => handleOAuth("google")} disabled={isPending}>
-              <LogIn size={16} />
-              {sharedCopy.googleLabel}
-            </button>
-            <button type="button" className={styles.providerButton} onClick={() => handleOAuth("github")} disabled={isPending}>
-              <Github size={16} />
-              {sharedCopy.githubLabel}
+          <div className={styles.stepRail}>
+            {copy.steps.map((step, index) => (
+              <div key={step} className={styles.stepChip}>
+                <strong>{index + 1}</strong>
+                <span>{step}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.spotlightGrid}>
+            <div className={styles.spotlightCard}>
+              <strong>{sharedCopy.accessCardTitle}</strong>
+              <p>{sharedCopy.accessCardBody}</p>
+            </div>
+            <div className={styles.spotlightCard}>
+              <strong>{sharedCopy.setupCardTitle}</strong>
+              <p>{sharedCopy.setupCardBody}</p>
+            </div>
+            <div className={styles.spotlightCard}>
+              <strong>{sharedCopy.trustCardTitle}</strong>
+              <p>{sharedCopy.trustCardBody}</p>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.authPanel}>
+          <div className={styles.switcher}>
+            <span className={styles.switcherLabel}>{sharedCopy.switcherLabel}</span>
+            <div className={styles.switcherRail}>
+              <Link href="/sign-in" className={`${styles.switcherLink} ${isSignIn ? styles.switcherLinkActive : ""}`}>
+                {sharedCopy.signInTab}
+              </Link>
+              <Link href="/sign-up" className={`${styles.switcherLink} ${!isSignIn ? styles.switcherLinkActive : ""}`}>
+                {sharedCopy.signUpTab}
+              </Link>
+            </div>
+          </div>
+
+          <div className={styles.panelHeader}>
+            <span className="auth-eyebrow">{copy.eyebrow}</span>
+            <h2 className={styles.panelTitle}>{copy.title}</h2>
+            <p className={styles.panelBody}>{copy.intro}</p>
+          </div>
+
+          <div className={styles.emailBlock}>
+            <label className={styles.fieldLabel}>{sharedCopy.emailLabel}</label>
+            <div className={styles.inputShell}>
+              <Mail size={16} />
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder={sharedCopy.emailPlaceholder}
+                autoComplete="email"
+                required
+              />
+            </div>
+          </div>
+
+          <div className={styles.providerSection}>
+            <span className={styles.providerLabel}>{sharedCopy.providerLabel}</span>
+            <div className={styles.providerGrid}>
+              <button type="button" className={styles.providerButton} onClick={() => handleOAuth("google")} disabled={isPending}>
+                <Sparkles size={16} className={styles.providerIcon} />
+                {sharedCopy.googleLabel}
+              </button>
+              <button type="button" className={styles.providerButton} onClick={() => handleOAuth("github")} disabled={isPending}>
+                <Github size={16} className={styles.providerIcon} />
+                {sharedCopy.githubLabel}
+              </button>
+            </div>
+            <button type="button" className={styles.magicButton} onClick={handleMagicLink} disabled={isPending}>
+              {isPending ? <LoaderCircle size={16} className={styles.spin} /> : <WandSparkles size={16} />}
+              {sharedCopy.magicLinkLabel}
             </button>
           </div>
 
@@ -152,30 +247,15 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
 
           <form className={styles.form} onSubmit={handleEmailAuth}>
             <label className={styles.field}>
-              <span>{sharedCopy.emailLabel}</span>
-              <div className={styles.inputShell}>
-                <Mail size={15} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder={sharedCopy.emailPlaceholder}
-                  autoComplete="email"
-                  required
-                />
-              </div>
-            </label>
-
-            <label className={styles.field}>
               <span>{sharedCopy.passwordLabel}</span>
               <div className={styles.inputShell}>
-                <LogIn size={15} />
+                <KeyRound size={16} />
                 <input
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder={sharedCopy.passwordPlaceholder}
-                  autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
+                  autoComplete={isSignIn ? "current-password" : "new-password"}
                   minLength={8}
                   required
                 />
@@ -183,43 +263,22 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
             </label>
 
             <button type="submit" className={styles.submitButton} disabled={isPending}>
-              {isPending ? <LoaderCircle size={16} className={styles.spin} /> : null}
+              {isPending ? <LoaderCircle size={16} className={styles.spin} /> : <ArrowRight size={16} />}
               {copy.submitLabel}
             </button>
           </form>
 
           {message ? <p className={styles.feedback}>{message}</p> : null}
 
-          <div className="auth-actions">
-            <Link href="/">{sharedCopy.backToSite}</Link>
-            <Link href={copy.alternateHref}>{copy.alternateLabel}</Link>
+          <div className={styles.footerActions}>
+            <Link href="/" className={styles.secondaryLink}>
+              {sharedCopy.backToSite}
+            </Link>
+            <Link href={copy.alternateHref} className={styles.secondaryLink}>
+              {copy.alternateLabel}
+            </Link>
           </div>
         </section>
-
-        <aside className={styles.contextPanel}>
-          <div className={styles.contextGlow} />
-          <span className={styles.contextLabel}>{sharedCopy.stageLabel}</span>
-          <h2>{copy.panelTitle}</h2>
-          <p>{copy.panelBody}</p>
-
-          <div className={styles.stepRail}>
-            {copy.steps.map((step, index) => (
-              <div key={step} className={styles.stepChip}>
-                <strong>{index + 1}</strong>
-                <span>{step}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className={styles.highlightList}>
-            {copy.highlights.map((item) => (
-              <div key={item} className={styles.highlightCard}>
-                <span className={styles.highlightDot} />
-                <p>{item}</p>
-              </div>
-            ))}
-          </div>
-        </aside>
       </div>
     </main>
   );
