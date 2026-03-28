@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isSafeAuthNextPath } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
@@ -8,6 +9,12 @@ export async function GET(request: NextRequest) {
   const error = requestUrl.searchParams.get("error");
   const errorDescription = requestUrl.searchParams.get("error_description");
   const redirectBase = requestUrl.origin;
+  const nextPath = requestUrl.searchParams.get("next");
+  const redirectPath = isSafeAuthNextPath(nextPath)
+    ? nextPath
+    : requestUrl.searchParams.get("type") === "recovery"
+      ? "/reset-password"
+      : "/logged-in";
 
   if (error) {
     const failureUrl = new URL("/sign-in", redirectBase);
@@ -31,9 +38,9 @@ export async function GET(request: NextRequest) {
 
   if (exchangeError) {
     const failureUrl = new URL("/sign-in", redirectBase);
-    failureUrl.searchParams.set("error", "callback_failed");
+    failureUrl.searchParams.set("error", redirectPath === "/reset-password" ? "reset_failed" : "callback_failed");
     return NextResponse.redirect(failureUrl);
   }
 
-  return NextResponse.redirect(new URL("/logged-in", redirectBase));
+  return NextResponse.redirect(new URL(redirectPath, redirectBase));
 }

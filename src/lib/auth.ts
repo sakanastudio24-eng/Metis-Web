@@ -1,13 +1,27 @@
-export function getAuthCallbackUrl(origin?: string): string {
+function getAuthOrigin(origin?: string): string {
   if (origin) {
-    return `${origin}/auth/callback`;
+    return origin;
   }
 
   if (typeof window !== "undefined") {
-    return `${window.location.origin}/auth/callback`;
+    return window.location.origin;
   }
 
-  return "http://localhost:3000/auth/callback";
+  return "http://localhost:3000";
+}
+
+export function getAuthCallbackUrl(origin?: string, nextPath?: string): string {
+  const url = new URL("/auth/callback", getAuthOrigin(origin));
+
+  if (nextPath && isSafeAuthNextPath(nextPath)) {
+    url.searchParams.set("next", nextPath);
+  }
+
+  return url.toString();
+}
+
+export function isSafeAuthNextPath(nextPath: string | null | undefined): nextPath is string {
+  return Boolean(nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//"));
 }
 
 export function getAuthErrorMessage(code: string | null): string | null {
@@ -20,6 +34,8 @@ export function getAuthErrorMessage(code: string | null): string | null {
       return "That email and password combination did not work.";
     case "verification_required":
       return "Check your inbox and confirm your email before signing in.";
+    case "reset_failed":
+      return "That recovery link is not usable anymore. Request a new one.";
     default:
       return null;
   }
