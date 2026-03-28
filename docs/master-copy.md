@@ -137,69 +137,87 @@ Footer stack badges:
 
 ### Sign In
 
-- Eyebrow: `Welcome back`
+- Eyebrow: `Access`
 - Title: `Sign in to Metis`
-- Intro: `Use email and password or continue with Google or GitHub`
+- Intro body: `Choose a provider, use a magic link, or sign in with email and password`
 - Submit label: `Sign in`
-- Alternate label: `Need an account?`
-- Context panel title: `Back into the scan flow`
-- Context panel body: `Move straight into the protected side of Metis without losing the calm lightweight feel of the public site`
+- Alternate CTA: `Create an account`
+- Side panel header: `Get back into the product`
+- Side panel body: `Use the fastest path into Metis and move straight from access into setup`
 
 Steps:
 
-- Step label: `Access`
-- Step label: `Confirm`
-- Step label: `Enter`
+- Step label: `Choose`
+- Step label: `Verify`
+- Step label: `Start`
 
 Highlights:
 
-- Highlight body: `Return with email or a provider you already trust`
-- Highlight body: `Keep the entry flow short and readable`
-- Highlight body: `Be ready for protected reports and saved product states next`
+- Highlight body: `Use Google or GitHub if you want the quickest path`
+- Highlight body: `Use a magic link if you do not want to enter a password`
+- Highlight body: `Land inside the guided onboarding flow as soon as access is valid`
 
 ### Sign Up
 
-- Eyebrow: `Create your account`
-- Title: `Start using Metis`
-- Intro: `Create an account with email and password or continue with Google or GitHub`
+- Eyebrow: `Start`
+- Title: `Create your Metis access`
+- Intro body: `Start with Google, GitHub, magic link, or create access with email and password`
 - Submit label: `Create account`
-- Alternate label: `Already have an account?`
-- Context panel title: `Set up your first Metis pass`
-- Context panel body: `Create access now, confirm your inbox once, and be ready when deeper product features move behind the authenticated layer`
+- Alternate CTA: `Already have access`
+- Side panel header: `Move from sign up into setup`
+- Side panel body: `Create access now and continue directly into the onboarding questions that shape the next product pass`
 
 Steps:
 
 - Step label: `Create`
-- Step label: `Verify`
-- Step label: `Enter`
+- Step label: `Confirm`
+- Step label: `Answer`
 
 Highlights:
 
-- Highlight body: `Start with email, Google, or GitHub`
-- Highlight body: `Keep verification explicit instead of hidden`
-- Highlight body: `Land in a clean protected state once access is ready`
+- Highlight body: `Choose the provider flow that feels easiest`
+- Highlight body: `Use magic link when you want less friction`
+- Highlight body: `Keep the first protected experience short and useful`
 
 ### Shared Auth Labels
 
-- Stage label: `Onboarding`
+- Brand label: `Metis Web`
+- Stage label: `Access flow`
+- Switcher label: `Mode`
+- Tab label: `Sign in`
+- Tab label: `Sign up`
+- Section label: `Continue with a provider`
 - Provider button: `Continue with Google`
 - Provider button: `Continue with GitHub`
-- Divider label: `or use email`
+- Provider button: `Email me a magic link`
+- Magic link success: `Magic link sent. Check your inbox and continue from the email`
+- Divider label: `or use email and password`
 - Field label: `Email`
 - Email placeholder: `you@company.com`
 - Field label: `Password`
 - Password placeholder: `Enter a strong password`
+- Support card header: `Access first`
+- Support card body: `Choose the path that gets you into Metis with the least friction`
+- Support card header: `Setup next`
+- Support card body: `Answer a few questions so the first protected experience feels shaped around your needs`
+- Support card header: `Keep it clear`
+- Support card body: `No hidden provider jumps, no confusing detours, and no fake completion state before onboarding starts`
 - Back link: `Back to the site`
 
 ### Logged In
 
-- Eyebrow: `Signed in`
-- Title: `You're logged in`
-- Ready message: `Metis is ready for you`
-- Dynamic ready message: ``Metis is ready for ${email}``
-- Panel title: `More features are coming soon`
-- Panel body: `This is the first authenticated checkpoint before reports and protected product flows land`
+- Eyebrow: `Onboarding`
+- Header: `Tell Metis what matters first`
+- Support body: `Answer a few quick questions and shape the first protected experience`
+- Signed-in support line: ``Signed in as ${email}``
+- Panel header: `White multi answer panel`
+- Panel body: `Choose more than one answer when it helps. This step is here to guide the next product pass, not slow you down`
 - Sign out label: `Sign out`
+- Finish CTA: `Finish setup`
+- Skip CTA: `Skip for now`
+- Completion eyebrow: `Saved`
+- Completion header: `Your setup is captured`
+- Completion body: `You can move on now and come back later when deeper onboarding persistence is wired`
 - Summary title: `Protected access is working`
 
 Summary items:
@@ -210,6 +228,18 @@ Summary items:
   Summary body: `FastAPI is prepared to validate authenticated access for the next product routes`
 - Summary header: `Next surface`
   Summary body: `Saved scans, richer reports, and team facing flows can now layer on top`
+
+Onboarding questions:
+
+- Question header: `Who are you setting Metis up for`
+  Question helper: `Choose every role that fits`
+  Answer options: `Founder`, `Engineer`, `Product`, `Design`, `Growth`, `Ops`
+- Question header: `What should Metis help with first`
+  Question helper: `Choose more than one if needed`
+  Answer options: `Cost visibility`, `AI spend`, `Fix priority`, `Team reporting`, `Site audits`, `Release checks`
+- Question header: `What shows up most in your stack`
+  Question helper: `Pick the tools or surfaces you expect Metis to touch first`
+  Answer options: `Next.js`, `React`, `Vercel`, `OpenAI`, `Cloudflare`, `Third party scripts`
 
 ## Legal Pages
 
@@ -281,7 +311,9 @@ Shared legal link:
 ### Auth UI fallbacks
 
 - Missing credentials: `Email and password are both required`
+- Missing email for magic link: `Enter your email first so we know where to send the magic link`
 - Provider launch error: `The provider login could not start`
+- Magic link error: `The magic link could not be sent`
 - Create account error: `We could not create that account`
 - Sign in error: `That email and password combination did not work`
 - Verification confirmation: `Check your inbox and confirm your email before signing in`
