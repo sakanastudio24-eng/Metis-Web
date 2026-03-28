@@ -202,20 +202,20 @@ export const frontFacingCopy = {
   legal: {
     privacy: {
       eyebrow: "Privacy",
-      title: "Metis privacy notes",
+      title: "Privacy policy",
       paragraphs: [
-        "Metis is being built to help teams understand frontend cost signals without turning the product into a data vacuum. The current website does not collect scan telemetry. The future extension and product flows will be documented in plain language before they are enabled.",
-        "During this phase, any local examples or auth placeholders are there to explain the intended shape of the product. They are not wired to a live data pipeline yet.",
-        "When the runtime products go live, this page should be updated to cover scan collection, storage windows, team access, and data deletion policy in detail.",
+        "Metis respects the difference between explaining a product and quietly collecting data. This website does not ask visitors for account details unless they choose to use the sign in or sign up flow, and it does not present itself as a live analytics dashboard.",
+        "If you contact Metis, join a waitlist, or create access through the auth flow, the information you provide may be used to respond to you, manage access, and improve the service. Metis is not intended to sell personal information or use hidden tracking as a product strategy.",
+        "As the authenticated product expands, this policy should be updated to describe what product data is stored, how long it is retained, who can access it, and how deletion requests are handled.",
       ],
     },
     terms: {
       eyebrow: "Terms",
-      title: "Metis terms preview",
+      title: "Terms of use",
       paragraphs: [
-        "This project is in an implementation phase. The site is here to explain the product clearly, not to suggest that every promised workflow is already shipping. Anything marked as beta, planned, or placeholder should be read literally.",
-        "Once live auth, reports, and billing exist, this page should be expanded with subscription terms, acceptable use boundaries, and customer support expectations.",
-        "The source code for this repository is released under the MIT license included at the repo root.",
+        "Metis is provided as a developing product and website. The material on this site is intended to explain the service clearly, but access, features, and availability may change as the product evolves.",
+        "You agree not to misuse the site, interfere with access, attempt to bypass security controls, or use the service in a way that harms the product, its operators, or other users. If authenticated features are enabled, account access remains your responsibility.",
+        "Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability. The source code in this repository is available under the MIT license included at the repo root.",
       ],
     },
     backLink: "Back to Metis",
