@@ -137,97 +137,80 @@ Footer stack badges:
 
 ### Sign In
 
-- Eyebrow: `Access`
-- Title: `Sign in to Metis`
-- Intro body: `Choose a provider, use a magic link, or sign in with email and password`
-- Submit label: `Sign in`
-- Alternate CTA: `Create an account`
-- Side panel header: `Get back into the product`
-- Side panel body: `Use the fastest path into Metis and move straight from access into setup`
-
-Steps:
-
-- Step label: `Choose`
-- Step label: `Verify`
-- Step label: `Start`
-
-Highlights:
-
-- Highlight body: `Use Google or GitHub if you want the quickest path`
-- Highlight body: `Use a magic link if you do not want to enter a password`
-- Highlight body: `Land inside the guided onboarding flow as soon as access is valid`
+- Eyebrow: `Sign in`
+- Header: `Access Metis`
+- Body: `Use Google, GitHub, a magic link, or your email and password`
+- Submit CTA: `Continue`
+- Footer prompt: `Need an account?`
+- Footer link: `Create account`
 
 ### Sign Up
 
-- Eyebrow: `Start`
-- Title: `Create your Metis access`
-- Intro body: `Start with Google, GitHub, magic link, or create access with email and password`
-- Submit label: `Create account`
-- Alternate CTA: `Already have access`
-- Side panel header: `Move from sign up into setup`
-- Side panel body: `Create access now and continue directly into the onboarding questions that shape the next product pass`
-
-Steps:
-
-- Step label: `Create`
-- Step label: `Confirm`
-- Step label: `Answer`
-
-Highlights:
-
-- Highlight body: `Choose the provider flow that feels easiest`
-- Highlight body: `Use magic link when you want less friction`
-- Highlight body: `Keep the first protected experience short and useful`
+- Eyebrow: `Create account`
+- Header: `Start with Metis`
+- Body: `Create access with Google, GitHub, a magic link, or email and password`
+- Submit CTA: `Create account`
+- Footer prompt: `Already have access?`
+- Footer link: `Sign in`
 
 ### Shared Auth Labels
 
 - Brand label: `Metis Web`
-- Stage label: `Access flow`
-- Switcher label: `Mode`
 - Tab label: `Sign in`
 - Tab label: `Sign up`
-- Section label: `Continue with a provider`
-- Provider button: `Continue with Google`
-- Provider button: `Continue with GitHub`
-- Provider button: `Email me a magic link`
-- Magic link success: `Magic link sent. Check your inbox and continue from the email`
-- Divider label: `or use email and password`
-- Field label: `Email`
+- Section label: `Continue with`
+- Provider button: `Google`
+- Provider button: `GitHub`
+- Provider button: `Send magic link`
+- Magic link success: `Magic link sent. Check your inbox and continue from the email.`
+- Divider label: `or use email`
+- Field label: `Work email`
 - Email placeholder: `you@company.com`
 - Field label: `Password`
-- Password placeholder: `Enter a strong password`
-- Support card header: `Access first`
-- Support card body: `Choose the path that gets you into Metis with the least friction`
-- Support card header: `Setup next`
-- Support card body: `Answer a few questions so the first protected experience feels shaped around your needs`
-- Support card header: `Keep it clear`
-- Support card body: `No hidden provider jumps, no confusing detours, and no fake completion state before onboarding starts`
+- Password placeholder: `Enter your password`
+- Create-password placeholder: `Create a password`
+- Forgot password link: `Forgot password?`
 - Back link: `Back to the site`
+
+### Verification
+
+- Eyebrow: `Verify email`
+- Header: `Check your inbox`
+- Intro body: `Open the email from Metis and use the secure link to finish access.`
+- Support body: `Once verification is complete you can return to sign in and move into onboarding.`
+- Dynamic line: ``Verification sent to ${email}``
+- Primary CTA: `Back to sign in`
+- Secondary CTA: `Create another account`
+
+### Password Recovery
+
+- Request eyebrow: `Recovery`
+- Request header: `Reset your password`
+- Request body: `Enter your email and we will send a recovery link.`
+- Request CTA: `Send recovery email`
+- Request success header: `Check your inbox`
+- Request success body: ``We sent a recovery link to ${email}. Open it on this device to choose a new password.``
+- Reset eyebrow: `New password`
+- Reset header: `Choose a new password`
+- Reset body: `Enter your new password to finish recovery.`
+- Reset CTA: `Update password`
+- Reset invalid header: `Recovery link needed`
+- Reset invalid body: `Use a fresh recovery email so Metis can confirm it is really you.`
+- Reset success header: `Password updated`
+- Reset success body: `You can sign in now and move straight back into Metis.`
 
 ### Logged In
 
-- Eyebrow: `Onboarding`
-- Header: `Tell Metis what matters first`
-- Support body: `Answer a few quick questions and shape the first protected experience`
+- Eyebrow: `Setup`
+- Header: `What should Metis focus on first`
+- Support body: `This first pass stays short. It helps shape what Metis should prioritize next for you.`
 - Signed-in support line: ``Signed in as ${email}``
-- Panel header: `White multi answer panel`
-- Panel body: `Choose more than one answer when it helps. This step is here to guide the next product pass, not slow you down`
 - Sign out label: `Sign out`
 - Finish CTA: `Finish setup`
 - Skip CTA: `Skip for now`
 - Completion eyebrow: `Saved`
 - Completion header: `Your setup is captured`
-- Completion body: `You can move on now and come back later when deeper onboarding persistence is wired`
-- Summary title: `Protected access is working`
-
-Summary items:
-
-- Summary header: `Session active`
-  Summary body: `Supabase has completed the auth handoff and the protected page is reachable`
-- Summary header: `Backend ready`
-  Summary body: `FastAPI is prepared to validate authenticated access for the next product routes`
-- Summary header: `Next surface`
-  Summary body: `Saved scans, richer reports, and team facing flows can now layer on top`
+- Completion body: `You are in. More features are coming soon, and this first setup pass is now recorded.`
 
 Onboarding questions:
 

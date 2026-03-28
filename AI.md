@@ -10,15 +10,16 @@ Current surface split:
 
 - public website: product story, problem framing, fixes, solution, legal pages
 - auth routes: email sign up, email sign in, Google OAuth, GitHub OAuth
+- recovery routes: forgot password, reset password, and verification guidance
 - callback route: shared auth completion at `/auth/callback`
-- logged-in route: first protected success state before deeper product features land
+- logged-in route: short onboarding questionnaire on a red background with a white multi-answer panel
 - API: FastAPI proof layer for health, readiness, and authenticated backend expansion
 
 ## Live runtime model
 
 - the public site explains the product and routes people into auth
 - Supabase owns identity, provider login, sessions, and callback exchange
-- the website completes auth at `/auth/callback` and redirects into `/logged-in`
+- the website completes auth at `/auth/callback` and redirects into `/logged-in` or `/reset-password`
 - FastAPI does not issue its own passwords or sessions
 - FastAPI validates authenticated access against Supabase and stays narrow for now
 
@@ -54,10 +55,14 @@ Important implementation boundaries:
 - `src/app/sign-in/page.tsx`
 - `src/app/sign-up/page.tsx`
 - `src/app/auth/callback/route.ts`
+- `src/app/forgot-password/page.tsx`
+- `src/app/reset-password/page.tsx`
+- `src/app/verify/page.tsx`
 - `src/app/logged-in/page.tsx`
 - `src/components/auth/AuthScreen.tsx`
+- `src/components/auth/ForgotPasswordScreen.tsx`
+- `src/components/auth/ResetPasswordScreen.tsx`
 - `src/components/auth/LoggedInState.tsx`
-- `src/components/auth/AuthFlow.module.css`
 - `src/content/authCopy.ts`
 - `src/lib/supabase/browser.ts`
 - `src/lib/supabase/server.ts`
