@@ -1,4 +1,4 @@
-# Master Copy
+# Metis Web Master Copy
 
 This document is the readable source of truth for the current user-facing copy in Metis Web.
 
