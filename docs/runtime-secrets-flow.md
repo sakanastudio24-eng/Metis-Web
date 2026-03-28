@@ -16,22 +16,32 @@ This repo avoids that by locking down the names first and delaying the real inje
 
 The current implementation expects these names to exist once runtime injection is turned on:
 
-- `NEXT_PUBLIC_SITE_URL`
-- `NEXT_PUBLIC_WARD_STUDIO_URL`
-- `NEXT_PUBLIC_METIS_API_BASE_URL`
-- `AUTH_SECRET`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_API_BASE_URL`
+- `DATABASE_URL`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `RESEND_API_KEY`
+- `FRONTEND_URL`
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
-- `EMAIL_AUTH_FROM`
-- `EMAIL_AUTH_SERVER`
-- `API_PORT`
-- `API_ALLOWED_ORIGINS`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
 
 ## What happens today
 
 - `.env.example` documents the contract
-- the Next.js app validates the public and server-facing values
-- the FastAPI scaffold validates the same contract from Python
+- the Next.js app validates the public auth values it needs
+- the FastAPI backend validates the API contract from Python
+- the auth callback path is fixed at `/auth/callback`
+
+## Callback URLs
+
+The current auth flow expects these callback URLs to be allowed in Supabase and the provider dashboards:
+
+- `http://localhost:3000/auth/callback`
+- `https://yourdomain.com/auth/callback`
 
 ## What happens in the joint 1Password step
 

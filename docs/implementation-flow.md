@@ -10,9 +10,9 @@ The first job is visual honesty. The Figma export gives the tone, rhythm, sectio
 
 Once the visuals are stable, the copy gets pulled closer to the extension repo. That means the site talks about the hover, the side panel workspace, the scan pipeline, and the score language the way the real product does.
 
-## 3. Prepare the next layer without faking it
+## 3. Add the product gate
 
-The repo includes auth placeholder pages and a FastAPI scaffold on purpose. They mark where protected product flows will land next, but they do not pretend those systems already exist.
+The repo now includes a real auth foundation. Supabase handles identity, the website handles sign in and callback flow, and FastAPI exposes the protected backend shape the product will grow into.
 
 ## 4. Keep the docs readable
 
