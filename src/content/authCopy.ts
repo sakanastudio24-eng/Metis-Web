@@ -6,6 +6,14 @@ export const authCopy = {
     submitLabel: "Sign in",
     alternateLabel: "Need an account?",
     alternateHref: "/sign-up",
+    panelTitle: "Back into the scan flow",
+    panelBody: "Move straight into the protected side of Metis without losing the calm, lightweight feel of the public site.",
+    steps: ["Access", "Confirm", "Enter"],
+    highlights: [
+      "Return with email or a provider you already trust.",
+      "Keep the entry flow short and readable.",
+      "Be ready for protected reports and saved product states next.",
+    ],
   },
   signUp: {
     eyebrow: "Create your account",
@@ -14,8 +22,17 @@ export const authCopy = {
     submitLabel: "Create account",
     alternateLabel: "Already have an account?",
     alternateHref: "/sign-in",
+    panelTitle: "Set up your first Metis pass",
+    panelBody: "Create access now, confirm your inbox once, and be ready when deeper product features move behind the authenticated layer.",
+    steps: ["Create", "Verify", "Enter"],
+    highlights: [
+      "Start with email, Google, or GitHub.",
+      "Keep verification explicit instead of hidden.",
+      "Land in a clean protected state once access is ready.",
+    ],
   },
   shared: {
+    stageLabel: "Onboarding",
     googleLabel: "Continue with Google",
     githubLabel: "Continue with GitHub",
     emailDividerLabel: "or use email",
@@ -38,5 +55,11 @@ export const authCopy = {
     panelTitle: "More features are coming soon.",
     panelBody: "This is the first authenticated checkpoint before reports and protected product flows land.",
     signOutLabel: "Sign out",
+    summaryTitle: "Protected access is working",
+    summaryItems: [
+      { title: "Session active", body: "Supabase has completed the auth handoff and the protected page is reachable." },
+      { title: "Backend ready", body: "FastAPI is prepared to validate authenticated access for the next product routes." },
+      { title: "Next surface", body: "Saved scans, richer reports, and team-facing flows can now layer on top." },
+    ],
   },
 } as const;

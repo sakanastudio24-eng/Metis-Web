@@ -1,6 +1,139 @@
+.flowFrame {
+  display: grid;
+  gap: 24px;
+  overflow: hidden;
+}
+
 .flowCard {
   display: grid;
   gap: 20px;
+}
+
+.primaryPanel {
+  position: relative;
+  z-index: 1;
+}
+
+.headerBlock {
+  display: grid;
+  gap: 10px;
+}
+
+.contextPanel {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(220, 94, 94, 0.26), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.contextPanel h2 {
+  margin: 0;
+  font-family: "DM Serif Display", serif;
+  font-size: clamp(28px, 4vw, 38px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.contextPanel > p {
+  margin: 0;
+  color: rgba(255, 245, 240, 0.72);
+  line-height: 1.7;
+}
+
+.contextGlow {
+  position: absolute;
+  inset: auto -40px -80px auto;
+  width: 180px;
+  height: 180px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(220, 94, 94, 0.3), transparent 72%);
+  pointer-events: none;
+}
+
+.contextLabel {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 245, 240, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 245, 240, 0.85);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stepRail {
+  display: grid;
+  gap: 10px;
+}
+
+.stepChip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(9, 17, 27, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.stepChip strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(220, 94, 94, 0.18);
+  color: #fff5f0;
+  font-size: 12px;
+}
+
+.stepChip span {
+  color: rgba(255, 245, 240, 0.86);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.highlightList {
+  display: grid;
+  gap: 12px;
+}
+
+.highlightCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 15px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.highlightCard p {
+  margin: 0;
+  color: rgba(255, 245, 240, 0.76);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.highlightDot {
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #dc5e5e, #ffb088);
+  box-shadow: 0 0 0 4px rgba(220, 94, 94, 0.12);
+  flex-shrink: 0;
 }
 
 .providerGrid {
@@ -21,6 +154,18 @@
   background: rgba(255, 255, 255, 0.05);
   color: var(--text);
   cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.providerButton:hover,
+.submitButton:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
 }
 
 .providerButton:disabled,
@@ -30,7 +175,7 @@
 }
 
 .submitButton {
-  background: var(--brand);
+  background: linear-gradient(135deg, #dc5e5e, #f18073);
   border-color: rgba(220, 94, 94, 0.36);
   color: white;
   font-weight: 700;
@@ -105,9 +250,32 @@
   color: rgba(255, 245, 240, 0.88);
 }
 
+.successFrame {
+  align-items: stretch;
+}
+
 .successCard {
-  place-items: center;
+  align-content: start;
+}
+
+.successHero {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
   text-align: center;
+}
+
+.successIconShell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(74, 222, 128, 0.2), transparent 60%),
+    rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .successIcon {
@@ -142,6 +310,20 @@
   line-height: 1.6;
 }
 
+.summaryCopy {
+  display: grid;
+  gap: 6px;
+}
+
+.summaryCopy strong {
+  color: #fff5f0;
+  font-size: 14px;
+}
+
+.summaryCopy p {
+  margin: 0;
+}
+
 .spin {
   animation: auth-flow-spin 1s linear infinite;
 }
@@ -157,8 +339,23 @@
 }
 
 @media (max-width: 720px) {
+  .flowFrame {
+    gap: 18px;
+  }
+
+  .contextPanel {
+    padding: 20px;
+  }
+
   .successPanel {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (min-width: 980px) {
+  .flowFrame {
+    grid-template-columns: minmax(0, 1.12fr) minmax(280px, 0.88fr);
+    gap: 28px;
   }
 }

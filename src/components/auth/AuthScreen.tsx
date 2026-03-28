@@ -125,72 +125,101 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
 
   return (
     <main className="auth-shell">
-      <div className={`auth-card ${styles.flowCard}`}>
-        <span className="auth-eyebrow">{copy.eyebrow}</span>
-        <h1>{copy.title}</h1>
-        <p>{copy.intro}</p>
+      <div className={`auth-card ${styles.flowFrame}`}>
+        <section className={`${styles.flowCard} ${styles.primaryPanel}`}>
+          <div className={styles.headerBlock}>
+            <span className="auth-eyebrow">{copy.eyebrow}</span>
+            <h1>{copy.title}</h1>
+            <p>{copy.intro}</p>
+          </div>
 
-        <div className={styles.providerGrid}>
-          <button type="button" className={styles.providerButton} onClick={() => handleOAuth("google")} disabled={isPending}>
-            <LogIn size={16} />
-            {sharedCopy.googleLabel}
-          </button>
-          <button type="button" className={styles.providerButton} onClick={() => handleOAuth("github")} disabled={isPending}>
-            <Github size={16} />
-            {sharedCopy.githubLabel}
-          </button>
-        </div>
+          <div className={styles.providerGrid}>
+            <button type="button" className={styles.providerButton} onClick={() => handleOAuth("google")} disabled={isPending}>
+              <LogIn size={16} />
+              {sharedCopy.googleLabel}
+            </button>
+            <button type="button" className={styles.providerButton} onClick={() => handleOAuth("github")} disabled={isPending}>
+              <Github size={16} />
+              {sharedCopy.githubLabel}
+            </button>
+          </div>
 
-        <div className={styles.divider}>
-          <span />
-          <strong>{sharedCopy.emailDividerLabel}</strong>
-          <span />
-        </div>
+          <div className={styles.divider}>
+            <span />
+            <strong>{sharedCopy.emailDividerLabel}</strong>
+            <span />
+          </div>
 
-        <form className={styles.form} onSubmit={handleEmailAuth}>
-          <label className={styles.field}>
-            <span>{sharedCopy.emailLabel}</span>
-            <div className={styles.inputShell}>
-              <Mail size={15} />
-              <input
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder={sharedCopy.emailPlaceholder}
-                autoComplete="email"
-                required
-              />
-            </div>
-          </label>
+          <form className={styles.form} onSubmit={handleEmailAuth}>
+            <label className={styles.field}>
+              <span>{sharedCopy.emailLabel}</span>
+              <div className={styles.inputShell}>
+                <Mail size={15} />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder={sharedCopy.emailPlaceholder}
+                  autoComplete="email"
+                  required
+                />
+              </div>
+            </label>
 
-          <label className={styles.field}>
-            <span>{sharedCopy.passwordLabel}</span>
-            <div className={styles.inputShell}>
-              <LogIn size={15} />
-              <input
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder={sharedCopy.passwordPlaceholder}
-                autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
-                minLength={8}
-                required
-              />
-            </div>
-          </label>
+            <label className={styles.field}>
+              <span>{sharedCopy.passwordLabel}</span>
+              <div className={styles.inputShell}>
+                <LogIn size={15} />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder={sharedCopy.passwordPlaceholder}
+                  autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
+                  minLength={8}
+                  required
+                />
+              </div>
+            </label>
 
-          <button type="submit" className={styles.submitButton} disabled={isPending}>
-            {isPending ? <LoaderCircle size={16} className={styles.spin} /> : null}
-            {copy.submitLabel}
-          </button>
-        </form>
+            <button type="submit" className={styles.submitButton} disabled={isPending}>
+              {isPending ? <LoaderCircle size={16} className={styles.spin} /> : null}
+              {copy.submitLabel}
+            </button>
+          </form>
 
-        {message ? <p className={styles.feedback}>{message}</p> : null}
+          {message ? <p className={styles.feedback}>{message}</p> : null}
 
-        <div className="auth-actions">
-          <Link href="/">{sharedCopy.backToSite}</Link>
-          <Link href={copy.alternateHref}>{copy.alternateLabel}</Link>
-        </div>
+          <div className="auth-actions">
+            <Link href="/">{sharedCopy.backToSite}</Link>
+            <Link href={copy.alternateHref}>{copy.alternateLabel}</Link>
+          </div>
+        </section>
+
+        <aside className={styles.contextPanel}>
+          <div className={styles.contextGlow} />
+          <span className={styles.contextLabel}>{sharedCopy.stageLabel}</span>
+          <h2>{copy.panelTitle}</h2>
+          <p>{copy.panelBody}</p>
+
+          <div className={styles.stepRail}>
+            {copy.steps.map((step, index) => (
+              <div key={step} className={styles.stepChip}>
+                <strong>{index + 1}</strong>
+                <span>{step}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.highlightList}>
+            {copy.highlights.map((item) => (
+              <div key={item} className={styles.highlightCard}>
+                <span className={styles.highlightDot} />
+                <p>{item}</p>
+              </div>
+            ))}
+          </div>
+        </aside>
       </div>
     </main>
   );
