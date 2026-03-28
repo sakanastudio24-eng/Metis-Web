@@ -20,8 +20,7 @@ export const frontFacingCopy = {
     name: "Metis",
     footerTagline: "Cost intelligence for the modern web.",
     footerSubline: "A browser extension and reporting layer by zward.studio.",
-    footerCopyright:
-      "© 2026 zward.studio · Metis is a live build in progress for the browser product already under active development.",
+    footerCopyright: "© 2026 zward.studio",
   },
   nav: {
     sections: [
@@ -50,37 +49,21 @@ export const frontFacingCopy = {
     monthlyProjectionValue: (min: number) => `~$${(min * 10).toLocaleString()}/month`,
   },
   hero: {
-    badge: "Now in beta — shaped around the extension that already exists",
     quote: ["Every session has a price.", "Most teams never see the bill."],
     ctas: {
       primary: "Start for free",
       secondary: "Watch a scan",
-    },
-    liveChip: {
-      prefix: "This page's current Metis score:",
-      score: "42",
-      risk: "Minimal Risk",
-      sample: "Live page sample",
     },
     stats: [
       { value: "< 2s", label: "time to first signal" },
       { value: "5+", label: "pages sampled in a live run" },
       { value: "$0", label: "to understand the first report" },
     ],
-    stackLabel: "Product stack",
-    stack: [
-      { label: "Next.js", color: "#000000", bg: "rgba(0,0,0,0.08)", border: "rgba(0,0,0,0.15)", dot: "#000" },
-      { label: "React", color: "#61dafb", bg: "rgba(97,218,251,0.08)", border: "rgba(97,218,251,0.25)", dot: "#61dafb" },
-      { label: "Python", color: "#3b82f6", bg: "rgba(59,130,246,0.08)", border: "rgba(59,130,246,0.25)", dot: "#3b82f6" },
-      { label: "TypeScript", color: "#2563eb", bg: "rgba(37,99,235,0.08)", border: "rgba(37,99,235,0.25)", dot: "#2563eb" },
-      { label: "FastAPI", color: "#10b981", bg: "rgba(16,185,129,0.08)", border: "rgba(16,185,129,0.25)", dot: "#10b981" },
-      { label: "Tailwind", color: "#38bdf8", bg: "rgba(56,189,248,0.08)", border: "rgba(56,189,248,0.25)", dot: "#38bdf8" },
-    ],
     scrollNudge: "keep going",
   },
   product: {
     tag: "Product",
-    heading: "The cost layer your frontend never had.",
+    heading: "The cost layer your frontend never had",
     body:
       "Metis was designed to feel calm on the page and serious in the report. It catches what a normal profiler rarely explains: what those requests mean for real spend.",
     features: [
@@ -108,7 +91,7 @@ export const frontFacingCopy = {
   },
   problem: {
     tag: "The Problem",
-    heading: "Your frontend is bleeding money every session.",
+    heading: "Your frontend is bleeding money every session",
     body:
       "Unoptimised requests, noisy third-party scripts, and AI-heavy interactions compound quietly. Metis exists to make that waste legible before it becomes a postmortem.",
     stats: [
@@ -128,7 +111,7 @@ export const frontFacingCopy = {
   },
   fixes: {
     tag: "How it fixes it",
-    heading: "Here's exactly what to fix.",
+    heading: "Here's exactly what to fix",
     body:
       "Not vague advice. The product direction is clear: ranked fixes, grounded explanations, and a report that respects how engineering teams actually work.",
     rootCauseLabel: "Root Cause",
@@ -164,7 +147,7 @@ export const frontFacingCopy = {
   },
   solution: {
     tag: "The result",
-    heading: ["Start free.", "Fix in minutes."],
+    heading: ["Start free", "Fix in minutes"],
     body:
       "Install Metis, open a page, and get a clear read on where cost pressure starts. The website handles the story. The extension handles the scan.",
     checklist: [
@@ -174,10 +157,8 @@ export const frontFacingCopy = {
       "Free to start, with room for Plus-style team workflows later",
     ],
     resultCaption: "Minimal Risk",
-    resultBadgeLabel: "Showing",
-    resultScoreSuffix: "/100",
     primaryCta: "Get early access",
-    secondaryNote: "Google auth and email/password will be wired in the next auth pass",
+    secondaryNote: "",
   },
   footer: {
     badge: "Beta Access",

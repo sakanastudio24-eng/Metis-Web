@@ -32,7 +32,6 @@ import {
   AlertCircle,
   CheckCheck,
   ChevronRight,
-  Crown,
   Github,
   Mail,
   ExternalLink,
@@ -123,6 +122,7 @@ function StickyNav({
 
   return (
     <motion.nav
+      className="metis-nav-shell"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, delay: 1.6, ease: [0.16, 1, 0.3, 1] }}
@@ -136,6 +136,7 @@ function StickyNav({
       }}
     >
       <div
+        className="metis-nav-pill"
         style={{
           pointerEvents: "auto",
           display: "flex",
@@ -160,6 +161,7 @@ function StickyNav({
       >
         {/* ── Logo — clicking scrolls back to hero ── */}
         <button
+          className="metis-nav-brand"
           onClick={() => onNav("hero")}
           style={{
             background: "none", border: "none", cursor: "pointer",
@@ -183,11 +185,13 @@ function StickyNav({
         </button>
 
         {/* Thin vertical divider between logo and nav links */}
-        <div style={{ width: 1, height: 14, background: isHero ? "rgba(220,94,94,0.2)" : "rgba(255,255,255,0.14)", margin: "0 6px" }} />
+        <div className="metis-nav-divider" style={{ width: 1, height: 14, background: isHero ? "rgba(220,94,94,0.2)" : "rgba(255,255,255,0.14)", margin: "0 6px" }} />
 
         {/* ── Section links — spring pill highlights active item ── */}
+        <div className="metis-nav-links" style={{ display: "flex", alignItems: "center", gap: 2 }}>
         {NAV_SECTIONS.map(({ key, label }) => (
           <button
+            className="metis-nav-link"
             key={key}
             onClick={() => onNav(key)}
             style={{
@@ -217,12 +221,14 @@ function StickyNav({
             {label}
           </button>
         ))}
+        </div>
 
         {/* Thin vertical divider before CTA */}
-        <div style={{ width: 1, height: 14, background: isHero ? "rgba(220,94,94,0.2)" : "rgba(255,255,255,0.14)", margin: "0 6px" }} />
+        <div className="metis-nav-divider" style={{ width: 1, height: 14, background: isHero ? "rgba(220,94,94,0.2)" : "rgba(255,255,255,0.14)", margin: "0 6px" }} />
 
         {/* ── CTA — always brand-red ── */}
         <motion.button
+          className="metis-nav-cta"
           whileHover={{ scale: 1.05, boxShadow: "0 4px 18px rgba(220,94,94,0.4)" }}
           whileTap={{ scale: 0.97 }}
           onClick={() => window.location.assign(CHROME_WAITLIST_URL)}
@@ -247,8 +253,7 @@ function StickyNav({
 // ─────────────────────────────────────────────────────────────────────────────
 // HERO SECTION
 // Full-width, centred. Sits outside the two-col layout.
-// Contains: badge → wordmark → quote → CTAs → live score chip →
-//           stats → tech stack strip → scroll nudge
+// Contains: wordmark → quote → CTAs → stats → scroll nudge
 // ─────────────────────────────────────────────────────────────────────────────
 function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
   const copy = frontFacingCopy.hero;
@@ -267,28 +272,6 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
         padding: "80px 24px",
       }}
     >
-      {/* Beta badge — animates in after Metis wordmark */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.55, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        style={{ marginBottom: 36 }}
-      >
-        <div
-          style={{
-            display: "inline-flex", alignItems: "center", gap: 6,
-            borderRadius: 999, padding: "5px 14px",
-            background: "rgba(220,94,94,0.1)",
-            border: "1px solid rgba(220,94,94,0.22)",
-          }}
-        >
-          <Crown size={11} style={{ color: RED }} />
-          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, color: RED }}>
-            {copy.badge}
-          </span>
-        </div>
-      </motion.div>
-
       {/* Wordmark — first element to appear (delay 0) */}
       <motion.h1
         initial={{ opacity: 0, y: 36 }}
@@ -366,38 +349,11 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
         </motion.button>
       </motion.div>
 
-      {/* Live score chip — pulsing green dot + example score */}
-      <motion.div
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.05, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        style={{
-          display: "inline-flex", alignItems: "center", gap: 12,
-          borderRadius: 12, padding: "10px 16px",
-          background: "rgba(220,94,94,0.07)",
-          border: "1px solid rgba(220,94,94,0.18)",
-        }}
-      >
-        {/* Breathing animation on the live indicator dot */}
-        <motion.div
-          style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }}
-          animate={{ opacity: [1, 0.4, 1], scale: [1, 1.3, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
-        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_R_DIM }}>
-          {copy.liveChip.prefix}&nbsp;
-          <span style={{ fontFamily: "Jua, sans-serif", fontSize: 14, color: RED }}>{copy.liveChip.score}</span>
-          <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 600, color: "#22c55e" }}>{copy.liveChip.risk}</span>
-        </span>
-        <div style={{ width: 1, height: 18, background: "rgba(220,94,94,0.18)" }} />
-        <span style={{ fontSize: 11, color: TEXT_R_DIM }}>{copy.liveChip.sample}</span>
-      </motion.div>
-
       {/* Stats row */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ delay: 1.05, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         style={{ display: "flex", alignItems: "center", gap: 40, marginTop: 52, flexWrap: "wrap", justifyContent: "center" }}
       >
         {copy.stats.map(({ value, label }) => (
@@ -408,52 +364,12 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
         ))}
       </motion.div>
 
-      {/* ── Tech Stack Strip ──
-          Shows the migration target stack: Next.js / React / Python / TypeScript.
-          Uses pill badges with per-technology brand colour accents.
-          TECH_STACK array at the top of this file controls what appears here. */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.65, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        style={{ marginTop: 48, display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}
-      >
-        <span style={{
-          fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 600,
-          color: TEXT_R_DIM, textTransform: "uppercase", letterSpacing: "0.1em",
-        }}>
-          {copy.stackLabel}
-        </span>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-          {copy.stack.map(({ label, color, bg, border, dot }) => (
-            <motion.div
-              key={label}
-              whileHover={{ scale: 1.06, y: -2 }}
-              transition={{ duration: 0.15 }}
-              style={{
-                display: "flex", alignItems: "center", gap: 7,
-                borderRadius: 999, padding: "6px 14px",
-                background: bg,
-                border: `1px solid ${border}`,
-                cursor: "default",
-              }}
-            >
-              {/* Colour dot replaces logo — keeps it lightweight */}
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: dot, flexShrink: 0 }} />
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color }}>
-                {label}
-              </span>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
       {/* Scroll nudge — breathing opacity loop */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.9, duration: 0.5 }}
-        style={{ marginTop: 56, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}
+        transition={{ delay: 1.35, duration: 0.5 }}
+        style={{ marginTop: 48, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}
       >
         <motion.span
           animate={{ opacity: [0.35, 0.9, 0.35] }}
@@ -624,10 +540,15 @@ function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
           style={{ background: "rgba(0,0,0,0.18)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 16, overflow: "hidden" }}
         >
           {/* Header bar */}
-          <div style={{ padding: "12px 16px", background: "rgba(239,68,68,0.08)", borderBottom: "1px solid rgba(239,68,68,0.15)", display: "flex", alignItems: "center", gap: 8 }}>
-            <AlertCircle size={12} style={{ color: "#ef4444" }} />
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 600, color: "#ef4444", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              {copy.issueSummaryLabel}
+          <div style={{ padding: "12px 16px", background: "rgba(239,68,68,0.16)", borderBottom: "1px solid rgba(239,68,68,0.24)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <AlertCircle size={13} style={{ color: "#fff5f0", flexShrink: 0 }} />
+              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: "#fff5f0", letterSpacing: "0.01em" }}>
+                5 issues detected
+              </span>
+            </div>
+            <span style={{ borderRadius: 999, padding: "4px 10px", background: "rgba(255,245,240,0.12)", border: "1px solid rgba(255,245,240,0.16)", color: "#fff5f0", fontFamily: "Inter, sans-serif", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              High Risk
             </span>
           </div>
           {copy.issues.map((issue, i) => (
@@ -834,9 +755,11 @@ function SolutionSection({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
             {copy.primaryCta}
             <ArrowRight size={16} />
           </motion.button>
-          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_W_DIM2 }}>
-            {copy.secondaryNote}
-          </span>
+          {copy.secondaryNote ? (
+            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_W_DIM2 }}>
+              {copy.secondaryNote}
+            </span>
+          ) : null}
         </motion.div>
       </div>
     </section>
@@ -1117,6 +1040,7 @@ export function LandingPage() {
 
   return (
     <div
+      className="metis-page"
       style={{
         // Background transitions between cream (hero) and brand-red (all other sections)
         background: isHero ? CREAM : RED,
@@ -1171,26 +1095,6 @@ export function LandingPage() {
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
               <ExtensionMockup state={currentState} />
-              {/* Section label below mockup */}
-              <motion.div
-                key={`lbl-${activeSection}`}
-                initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 8, paddingLeft: 4 }}
-              >
-                {/* Breathing colour dot matches current section's risk colour */}
-                <motion.div
-                  style={{ width: 6, height: 6, borderRadius: "50%", background: currentState.riskColor }}
-                  animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.8, repeat: Infinity }}
-                />
-                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_W_DIM2 }}>
-                  {frontFacingCopy.solution.resultBadgeLabel}{" "}
-                  <span style={{ color: TEXT_W_DIM, fontWeight: 600 }}>
-                    {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}
-                  </span>{" "}
-                  state · score {currentState.score}{frontFacingCopy.solution.resultScoreSuffix}
-                </span>
-              </motion.div>
             </motion.div>
           </AnimatePresence>
         </div>
