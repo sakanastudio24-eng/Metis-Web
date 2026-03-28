@@ -23,14 +23,14 @@ It captures website copy, auth copy, legal copy, mockup labels, success messages
 
 ### Hero
 
-- `Every session has a price.`
-- `Most teams never see the bill.`
+- Header line 1: `Every session has a price.`
+- Header line 2: `Most teams never see the bill.`
 - Primary CTA: `Start for free`
 - Secondary CTA: `Watch a scan`
 - Stat label: `time to first signal`
 - Stat label: `pages sampled in a live run`
 - Stat label: `to understand the first report`
-- Scroll nudge: `keep going`
+- Support copy: `keep going`
 
 ### Product
 
@@ -40,14 +40,14 @@ It captures website copy, auth copy, legal copy, mockup labels, success messages
 
 Feature cards:
 
-- `Hover-first workflow`
-  `Metis stays lightweight on the page, then opens the deeper workspace in the browser side panel when you want context.`
-- `Cost and control`
-  `The product frames waste in plain language: what costs money now, what scales badly later, and what deserves attention first.`
-- `Stack-aware signals`
-  `Frameworks, hosts, AI providers, and third-party scripts are detected so the report feels specific, not generic.`
-- `Built for real teams`
-  `The website explains the product cleanly while the extension stays focused on scanning, scoring, and the side-panel workspace.`
+- Card header: `Hover-first workflow`
+  Card body: `Metis stays lightweight on the page, then opens the deeper workspace in the browser side panel when you want context.`
+- Card header: `Cost and control`
+  Card body: `The product frames waste in plain language: what costs money now, what scales badly later, and what deserves attention first.`
+- Card header: `Stack-aware signals`
+  Card body: `Frameworks, hosts, AI providers, and third-party scripts are detected so the report feels specific, not generic.`
+- Card header: `Built for real teams`
+  Card body: `The website explains the product cleanly while the extension stays focused on scanning, scoring, and the side-panel workspace.`
 
 ### Problem
 
@@ -57,18 +57,18 @@ Feature cards:
 
 Stats:
 
-- `24 avg API calls per page load`
-- `3.2 MB avg payload per session`
-- `$0.004 avg session cost, unoptimised`
-- `86% of teams don't know their frontend cost`
+- Stat value and label: `24 avg API calls per page load`
+- Stat value and label: `3.2 MB avg payload per session`
+- Stat value and label: `$0.004 avg session cost, unoptimised`
+- Stat value and label: `86% of teams don't know their frontend cost`
 
 Problem issues:
 
-- `Duplicate API Requests — 8× per load`
-- `Memory leak in 3 components`
-- `OpenAI called on every keystroke`
-- `3 images over 2MB — no WebP conversion`
-- `Static assets without Cache-Control headers`
+- Issue label: `Duplicate API Requests — 8× per load`
+- Issue label: `Memory leak in 3 components`
+- Issue label: `OpenAI called on every keystroke`
+- Issue label: `3 images over 2MB — no WebP conversion`
+- Issue label: `Static assets without Cache-Control headers`
 
 ### Fixes
 
@@ -82,15 +82,15 @@ Problem issues:
 
 Fix cards:
 
-- `Duplicate API Requests`
-  Root cause: `Multiple components trigger the same fetch independently on mount with no deduplication.`
-  Fix: `Add SWR or React Query with a shared cache key. Concurrent callers share one in-flight request.`
-- `AI API Call Frequency`
-  Root cause: `AI completion handler fires on onChange with no debounce — each keystroke = one API call.`
-  Fix: `Debounce by 400ms with useDebouncedCallback. Cache identical prompts with a simple Map for 5 min.`
-- `Memory Leak Pattern`
-  Root cause: `useEffect hooks add event listeners but return no cleanup function.`
-  Fix: `Return cleanup from each useEffect: return () => window.removeEventListener(...). Use AbortController for fetch.`
+- Card header: `Duplicate API Requests`
+  Root cause body: `Multiple components trigger the same fetch independently on mount with no deduplication.`
+  Fix body: `Add SWR or React Query with a shared cache key. Concurrent callers share one in-flight request.`
+- Card header: `AI API Call Frequency`
+  Root cause body: `AI completion handler fires on onChange with no debounce — each keystroke = one API call.`
+  Fix body: `Debounce by 400ms with useDebouncedCallback. Cache identical prompts with a simple Map for 5 min.`
+- Card header: `Memory Leak Pattern`
+  Root cause body: `useEffect hooks add event listeners but return no cleanup function.`
+  Fix body: `Return cleanup from each useEffect: return () => window.removeEventListener(...). Use AbortController for fetch.`
 
 ### Solution
 
@@ -103,10 +103,10 @@ Fix cards:
 
 Checklist:
 
-- `Score any running page in under 2 seconds`
-- `See exactly what's costing you, per session`
-- `Get ranked code fixes with savings estimates`
-- `Free to start, with room for Plus-style team workflows later`
+- Checklist item: `Score any running page in under 2 seconds`
+- Checklist item: `See exactly what's costing you, per session`
+- Checklist item: `Get ranked code fixes with savings estimates`
+- Checklist item: `Free to start, with room for Plus-style team workflows later`
 
 ### Footer
 
@@ -120,18 +120,18 @@ Checklist:
 
 Footer links:
 
-- `zward.studio`
-- `GitHub`
-- `Get early access`
-- `Privacy`
-- `Terms`
+- Link label: `zward.studio`
+- Link label: `GitHub`
+- Link label: `Get early access`
+- Link label: `Privacy`
+- Link label: `Terms`
 
 Footer stack badges:
 
-- `Next.js`
-- `React`
-- `Python`
-- `TypeScript`
+- Badge label: `Next.js`
+- Badge label: `React`
+- Badge label: `Python`
+- Badge label: `TypeScript`
 
 ## Auth Flow
 
@@ -147,15 +147,15 @@ Footer stack badges:
 
 Steps:
 
-- `Access`
-- `Confirm`
-- `Enter`
+- Step label: `Access`
+- Step label: `Confirm`
+- Step label: `Enter`
 
 Highlights:
 
-- `Return with email or a provider you already trust`
-- `Keep the entry flow short and readable`
-- `Be ready for protected reports and saved product states next`
+- Highlight body: `Return with email or a provider you already trust`
+- Highlight body: `Keep the entry flow short and readable`
+- Highlight body: `Be ready for protected reports and saved product states next`
 
 ### Sign Up
 
@@ -169,15 +169,15 @@ Highlights:
 
 Steps:
 
-- `Create`
-- `Verify`
-- `Enter`
+- Step label: `Create`
+- Step label: `Verify`
+- Step label: `Enter`
 
 Highlights:
 
-- `Start with email, Google, or GitHub`
-- `Keep verification explicit instead of hidden`
-- `Land in a clean protected state once access is ready`
+- Highlight body: `Start with email, Google, or GitHub`
+- Highlight body: `Keep verification explicit instead of hidden`
+- Highlight body: `Land in a clean protected state once access is ready`
 
 ### Shared Auth Labels
 
@@ -204,12 +204,12 @@ Highlights:
 
 Summary items:
 
-- `Session active`
-  `Supabase has completed the auth handoff and the protected page is reachable`
-- `Backend ready`
-  `FastAPI is prepared to validate authenticated access for the next product routes`
-- `Next surface`
-  `Saved scans, richer reports, and team facing flows can now layer on top`
+- Summary header: `Session active`
+  Summary body: `Supabase has completed the auth handoff and the protected page is reachable`
+- Summary header: `Backend ready`
+  Summary body: `FastAPI is prepared to validate authenticated access for the next product routes`
+- Summary header: `Next surface`
+  Summary body: `Saved scans, richer reports, and team facing flows can now layer on top`
 
 ## Legal Pages
 
@@ -220,9 +220,9 @@ Summary items:
 
 Paragraphs:
 
-- `Metis respects the difference between explaining a product and quietly collecting data. This website does not ask visitors for account details unless they choose to use the sign in or sign up flow, and it does not present itself as a live analytics dashboard.`
-- `If you contact Metis, join a waitlist, or create access through the auth flow, the information you provide may be used to respond to you, manage access, and improve the service. Metis is not intended to sell personal information or use hidden tracking as a product strategy.`
-- `As the authenticated product expands, this policy should be updated to describe what product data is stored, how long it is retained, who can access it, and how deletion requests are handled.`
+- Body paragraph 1: `Metis respects the difference between explaining a product and quietly collecting data. This website does not ask visitors for account details unless they choose to use the sign in or sign up flow, and it does not present itself as a live analytics dashboard.`
+- Body paragraph 2: `If you contact Metis, join a waitlist, or create access through the auth flow, the information you provide may be used to respond to you, manage access, and improve the service. Metis is not intended to sell personal information or use hidden tracking as a product strategy.`
+- Body paragraph 3: `As the authenticated product expands, this policy should be updated to describe what product data is stored, how long it is retained, who can access it, and how deletion requests are handled.`
 
 ### Terms
 
@@ -231,24 +231,24 @@ Paragraphs:
 
 Paragraphs:
 
-- `Metis is provided as a developing product and website. The material on this site is intended to explain the service clearly, but access, features, and availability may change as the product evolves.`
-- `You agree not to misuse the site, interfere with access, attempt to bypass security controls, or use the service in a way that harms the product, its operators, or other users. If authenticated features are enabled, account access remains your responsibility.`
-- `Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability. The source code in this repository is available under the MIT license included at the repo root.`
+- Body paragraph 1: `Metis is provided as a developing product and website. The material on this site is intended to explain the service clearly, but access, features, and availability may change as the product evolves.`
+- Body paragraph 2: `You agree not to misuse the site, interfere with access, attempt to bypass security controls, or use the service in a way that harms the product, its operators, or other users. If authenticated features are enabled, account access remains your responsibility.`
+- Body paragraph 3: `Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability. The source code in this repository is available under the MIT license included at the repo root.`
 
 Shared legal link:
 
-- `Back to Metis`
+- Link label: `Back to Metis`
 
 ## Example Mockup Copy
 
 ### Header and score labels
 
-- `Metis Scan`
-- `metis.zward.studio · just now`
-- `Cost Risk Score`
-- `Session cost`
-- `Live · 3 pages sampled · metis.zward.studio`
-- `At 10k users →`
+- Header: `Metis Scan`
+- Subheader: `metis.zward.studio · just now`
+- Label: `Cost Risk Score`
+- Label: `Session cost`
+- Support label: `Live · 3 pages sampled · metis.zward.studio`
+- Support label: `At 10k users →`
 - Prefix: `~`
 - Suffix: `/month est. waste`
 - Dynamic monthly waste label: ``~$${min}–$${max}/month est. waste``
@@ -262,19 +262,19 @@ Shared legal link:
 
 ### Example state insights
 
-- `High request count and AI usage detected`
-- `Moderate cost inefficiencies across 5 issues`
-- `Severe API overuse and memory pressure detected`
-- `2 minor issues remain — fixes applied to critical items`
-- `Site is well-optimized — low cost risk detected`
+- Insight body: `High request count and AI usage detected`
+- Insight body: `Moderate cost inefficiencies across 5 issues`
+- Insight body: `Severe API overuse and memory pressure detected`
+- Insight body: `2 minor issues remain — fixes applied to critical items`
+- Insight body: `Site is well-optimized — low cost risk detected`
 
 ### Example issue labels
 
-- `Duplicate API Requests`
-- `Memory Leak Pattern`
-- `AI API Call Frequency`
-- `Unoptimized Images`
-- `Missing Cache Headers`
+- Issue label: `Duplicate API Requests`
+- Issue label: `Memory Leak Pattern`
+- Issue label: `AI API Call Frequency`
+- Issue label: `Unoptimized Images`
+- Issue label: `Missing Cache Headers`
 
 ## Errors And Catchall Responses
 
