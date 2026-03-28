@@ -1,58 +1,34 @@
-# Metis Web
+# Metis
 
-Metis Web is the public-facing website for Metis, the browser product that helps teams understand where frontend cost risk starts and why it grows.
+Metis is a browser product for teams that want to understand what their frontend is costing them.
 
-The Chrome extension does the scanning. This website does the explaining.
+It looks for the things that quietly make pages expensive to run: repeated requests, heavy assets, noisy third party scripts, and AI usage that starts small and turns into real spend. The goal is simple. Show where cost pressure starts, explain why it matters, and point to the fixes worth doing first.
 
-It is here to:
+## What Metis does
 
-- introduce the Metis product in a way that feels concrete, not hand-wavy
-- show how the hover, side panel, score, issue list, and fix flow fit together
-- give the product a clean home at `metis.zward.studio`
-- prepare the repo for the next layer: auth, protected reports, and 1Password-managed runtime secrets
+Metis helps teams spot frontend waste before it becomes a billing problem or a performance problem.
 
-## What the extension is for
+It is built to answer questions like:
 
-Metis sits lightly on top of a site and surfaces cost pressure that usually stays invisible until a bill or outage forces the conversation.
+- What is making this page more expensive than it should be?
+- Which requests or scripts keep firing when they do not need to?
+- Where is AI usage adding real cost?
+- Which fix is likely to save the most money first?
 
-The extension is designed to help teams answer questions like:
+## Why use it
 
-- Which requests are repeating when they should not?
-- Which assets or scripts are quietly making every session heavier?
-- Where is AI usage starting to turn into real spend?
-- Which fix should we do first if we want the fastest cost win?
+Most teams can tell when a page feels slow. Far fewer can tell what that page costs to run.
 
-The current sibling repo at [`../Metis`](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis/README.md) contains the product logic and extension runtime context this website is written around.
+Metis closes that gap. It gives engineers, founders, and product teams a clearer read on frontend cost risk so they can fix the right thing earlier.
 
-## Repo shape
+## Who made it
 
-- `src/app`: Next.js App Router routes for the website, auth placeholders, and legal pages
-- `src/components/landing`: the Figma-driven marketing shell, adapted into a production Next.js client component
-- `src/lib`: config and env validation helpers
-- `api/`: minimal FastAPI scaffold for health checks and future protected product flows
-- `docs/`: human-readable notes about implementation flow, git segmentation, and runtime secret setup
+Metis is made by [zward.studio](https://zward.studio).
 
-## Local setup
+This repository is the public website for the product. The extension and product runtime live alongside it in the broader Metis workspace.
 
-1. Copy `.env.example` to `.env.local` and fill in safe local values.
-2. Install the web dependencies with `pnpm install`.
-3. Start the site with `pnpm dev`.
-4. Start the API scaffold with `pnpm api:dev`.
+## Where to find it
 
-## Guardrails
-
-- Env values are treated seriously. If required config is missing, the app should fail loudly instead of limping forward.
-- Auth is scaffolded, not faked. The `/sign-in` and `/sign-up` routes show the intended shape of the flow without pretending the provider work is already done.
-- The site copy is intentionally human. It should sound like a product a team could trust, not a placeholder deck.
-
-## Git segmentation
-
-This repo is meant to be developed in clean segments instead of one giant dump commit.
-
-The working rule for this implementation is:
-
-- repo and tooling setup in one segment
-- product UI and route work in another
-- docs and runtime flow notes in another
-
-That keeps the history readable and makes review easier when the auth and secrets work starts.
+- Website: [metis.zward.studio](https://metis.zward.studio)
+- Studio: [zward.studio](https://zward.studio)
+- Repository: [sakanastudio24-eng/Metis-Web](https://github.com/sakanastudio24-eng/Metis-Web)

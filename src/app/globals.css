@@ -1,128 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&family=Jua&display=swap");
 
-:root {
-  color-scheme: dark;
-  --bg: #09111b;
-  --text: #fff5f0;
-  --muted: rgba(255, 245, 240, 0.66);
-  --card: rgba(255, 255, 255, 0.06);
-  --card-border: rgba(255, 255, 255, 0.12);
-  --brand: #dc5e5e;
+@import "tw-animate-css";
+
+@import "shadcn/tailwind.css";
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: 0 0% 100%;
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --radius: 0.625rem;
+    --metis-red: 0 64% 62%;
+    --metis-cream: 23 100% 97%;
+    --metis-ink: 213 39% 7%;
+    --metis-panel: 213 31% 11%;
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    @apply font-sans;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+  .theme {
+    --font-heading: var(--font-sans);
+    --font-sans: var(--font-sans);
+  }
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+  }
 }
 
-* {
-  box-sizing: border-box;
+@layer components {
+  .auth-shell {
+    @apply min-h-screen bg-metis-auth px-4 py-8 sm:px-6 lg:px-8;
+  }
+
+  .legal-shell {
+    @apply min-h-screen bg-metis-auth px-4 py-8 sm:px-6 lg:px-8;
+  }
+
+  .auth-eyebrow,
+  .legal-eyebrow {
+    @apply inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-metis-cream/80;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: "Inter", sans-serif;
-}
-
-a {
-  color: inherit;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-.hidden {
-  display: none;
-}
-
-.auth-shell,
-.legal-shell {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 32px;
-  background:
-    radial-gradient(circle at top left, rgba(220, 94, 94, 0.18), transparent 40%),
-    linear-gradient(180deg, #101923 0%, #0a1018 100%);
-}
-
-.auth-card,
-.legal-card {
-  width: min(720px, 100%);
-  border-radius: 28px;
-  background: rgba(12, 22, 35, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.35);
-  padding: 32px;
-}
-
-.auth-eyebrow,
-.legal-eyebrow {
-  display: inline-flex;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(220, 94, 94, 0.12);
-  border: 1px solid rgba(220, 94, 94, 0.28);
-  color: var(--brand);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.auth-card h1,
-.legal-card h1 {
-  margin: 18px 0 12px;
-  font-family: "DM Serif Display", serif;
-  font-size: clamp(36px, 5vw, 54px);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-}
-
-.auth-card p,
-.legal-card p {
-  margin: 0 0 14px;
+.auth-success-panel span {
   color: var(--muted);
-  font-size: 15px;
-  line-height: 1.7;
-}
-
-.auth-stack {
-  display: grid;
-  gap: 14px;
-  margin: 24px 0 28px;
-}
-
-.auth-stack div {
-  display: grid;
-  gap: 4px;
-  padding: 16px 18px;
-  border-radius: 18px;
-  background: var(--card);
-  border: 1px solid var(--card-border);
-}
-
-.auth-stack strong {
-  font-size: 13px;
-}
-
-.auth-stack span {
   font-size: 14px;
-  color: var(--muted);
+  line-height: 1.6;
 }
 
-.auth-actions {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
+.auth-spin {
+  animation: auth-spin 1s linear infinite;
 }
 
 .auth-actions a,
+.auth-actions button,
 .legal-card a {
   display: inline-flex;
   align-items: center;
@@ -139,6 +163,16 @@ select {
   margin-top: 10px;
 }
 
+@keyframes auth-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (min-width: 1280px) {
   .xl\:block {
     display: block;
@@ -153,6 +187,46 @@ select {
 }
 
 @media (max-width: 959px) {
+  .metis-page {
+    padding-bottom: 92px;
+  }
+
+  .metis-nav-shell {
+    top: auto !important;
+    bottom: 12px;
+    left: 12px !important;
+    right: 12px !important;
+    justify-content: stretch !important;
+  }
+
+  .metis-nav-pill {
+    width: 100%;
+    justify-content: center;
+    padding: 8px !important;
+    gap: 0 !important;
+    border-radius: 20px !important;
+  }
+
+  .metis-nav-brand,
+  .metis-nav-divider,
+  .metis-nav-cta {
+    display: none !important;
+  }
+
+  .metis-nav-links {
+    width: 100%;
+    justify-content: space-between;
+    gap: 4px !important;
+  }
+
+  .metis-nav-link {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 10px 8px !important;
+    font-size: 12px !important;
+    text-align: center;
+  }
+
   .metis-grid-2,
   .metis-grid-2-tight,
   .metis-footer-grid {
@@ -165,5 +239,10 @@ select {
   .legal-card {
     padding: 24px;
     border-radius: 22px;
+  }
+
+  .auth-success-panel {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
