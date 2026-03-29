@@ -5,8 +5,10 @@ import { useMemo, useState } from "react";
 
 import {
   ArrowRight,
+  Check,
   CheckCircle2,
   ChevronRight,
+  Copy,
   KeyRound,
   Lock,
   ShieldCheck,
@@ -42,6 +44,25 @@ const PREVIEW_STEP_CONTENT = [
   },
 ] as const;
 
+const MOCK_SECRET = "JBSW Y3DP EHPK 3PXP";
+const BACKUP_CODES = ["7F2A-K9PL", "3BXQ-N8RT", "MK4J-2WDE", "PQ7C-H5SA", "9NVR-L1TF", "XB2G-Y6MK", "T5ZD-3WCE", "6HQP-A8NJ"] as const;
+
+function PreviewProgress({ current, total }: { current: number; total: number }) {
+  return (
+    <div className="flex items-center gap-2">
+      {Array.from({ length: total }).map((_, index) => (
+        <div
+          key={index}
+          className={`h-1.5 rounded-full transition-all ${index === current ? "w-6 bg-[#dc5e5e]" : index < current ? "w-3 bg-emerald-400" : "w-3 bg-white/15"}`}
+        />
+      ))}
+      <span className="ml-1 text-[11px] font-medium uppercase tracking-[0.14em] text-white/35">
+        {current + 1} / {total}
+      </span>
+    </div>
+  );
+}
+
 function getProviderLabel(provider: string) {
   switch (provider) {
     case "google":
@@ -60,6 +81,7 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
   const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
+  const [secretCopied, setSecretCopied] = useState(false);
 
   const step = useMemo(() => PREVIEW_STEP_CONTENT[stepIndex], [stepIndex]);
 
@@ -198,19 +220,50 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
                 ))}
               </div>
 
+              <div className="mt-5">
+                <PreviewProgress current={stepIndex} total={copy.previewSteps.length} />
+              </div>
+
               <div className="mt-6 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
                 <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
-                  <div className="flex h-44 items-center justify-center rounded-[20px] border border-dashed border-white/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))]">
-                    <div className="grid grid-cols-6 gap-1">
+                  <div className="flex h-52 items-center justify-center rounded-[20px] border border-dashed border-white/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))]">
+                    <div className="grid grid-cols-6 gap-1.5">
                       {Array.from({ length: 36 }).map((_, index) => (
                         <div
                           key={index}
-                          className={`h-4 w-4 rounded-[4px] ${index % 3 === 0 ? "bg-white" : "bg-white/10"}`}
+                          className={`h-5 w-5 rounded-[5px] ${index % 3 === 0 ? "bg-white" : "bg-white/10"}`}
                         />
                       ))}
                     </div>
                   </div>
-                  <p className="mt-3 text-xs uppercase tracking-[0.18em] text-white/35">Preview only</p>
+                  {stepIndex === 0 ? (
+                    <div className="mt-4 rounded-[18px] border border-white/10 bg-white/5 p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Manual key</p>
+                          <p className="mt-1 text-sm font-medium tracking-[0.18em] text-white">{MOCK_SECRET}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(MOCK_SECRET).catch(() => {});
+                            setSecretCopied(true);
+                            setTimeout(() => setSecretCopied(false), 1800);
+                          }}
+                          className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold transition ${
+                            secretCopied
+                              ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200"
+                              : "border-white/12 bg-white/5 text-white/75 hover:border-white/20 hover:bg-white/8 hover:text-white"
+                          }`}
+                        >
+                          {secretCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                          {secretCopied ? "Copied" : "Copy"}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="mt-3 text-xs uppercase tracking-[0.18em] text-white/35">Preview only</p>
+                  )}
                 </div>
 
                 <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
@@ -224,40 +277,55 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
                     {stepIndex === 0 ? (
                       <>
                         <div className="rounded-2xl border border-white/10 bg-white/4 px-4 py-3 text-sm text-white/82">
-                          Authenticator app
+                          Google Authenticator, Authy, or 1Password
                         </div>
                         <div className="rounded-2xl border border-white/10 bg-white/4 px-4 py-3 text-sm text-white/82">
-                          Secret key preview
+                          Use the manual key if you cannot scan the code
                         </div>
                       </>
                     ) : null}
                     {stepIndex === 1 ? (
-                      <div className="flex gap-2">
-                        {Array.from({ length: 6 }).map((_, index) => (
-                          <div
-                            key={index}
-                            className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/12 bg-white/4 text-lg font-semibold text-white"
-                          >
-                            {index < 3 ? index + 2 : ""}
-                          </div>
-                        ))}
+                      <div className="space-y-3">
+                        <div className="flex gap-2">
+                          {Array.from({ length: 6 }).map((_, index) => (
+                            <div
+                              key={index}
+                              className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/12 bg-white/4 text-lg font-semibold text-white"
+                            >
+                              {index < 3 ? index + 2 : ""}
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs uppercase tracking-[0.18em] text-white/35">
+                          Enter the six-digit code from your authenticator app
+                        </p>
                       </div>
                     ) : null}
                     {stepIndex === 2 ? (
-                      <div className="grid grid-cols-2 gap-2">
-                        {["7F2A-K9PL", "3BXQ-N8RT", "MK4J-2WDE", "PQ7C-H5SA"].map((code) => (
-                          <div
-                            key={code}
-                            className="rounded-2xl border border-white/10 bg-white/4 px-4 py-3 text-sm font-medium text-white/82"
-                          >
-                            {code}
-                          </div>
-                        ))}
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-2">
+                          {BACKUP_CODES.map((code) => (
+                            <div
+                              key={code}
+                              className="rounded-2xl border border-white/10 bg-white/4 px-4 py-3 text-sm font-medium text-white/82"
+                            >
+                              {code}
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs uppercase tracking-[0.18em] text-white/35">
+                          Save these offline so recovery still works if a device is lost
+                        </p>
                       </div>
                     ) : null}
                     {stepIndex === 3 ? (
-                      <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
-                        This confirmation state will go live after backend activation.
+                      <div className="space-y-3">
+                        <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
+                          This confirmation state will go live after backend activation.
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-white/4 px-4 py-3 text-sm text-white/72">
+                          The V4 flow ends with a final protected-state review before closing the modal.
+                        </div>
                       </div>
                     ) : null}
                   </div>
