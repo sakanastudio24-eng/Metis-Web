@@ -154,7 +154,7 @@ export const frontFacingCopy = {
       "Score any running page in under 2 seconds",
       "See exactly what's costing you, per session",
       "Get ranked code fixes with savings estimates",
-      "Free to start, with room for Plus-style team workflows later",
+      "Free to start, with room for Plus Beta access later",
     ],
     resultCaption: "Minimal Risk",
     primaryCta: "Get early access",
@@ -164,7 +164,7 @@ export const frontFacingCopy = {
     badge: "Beta Access",
     heading: ["Get early access.", "Free, always."],
     body:
-      "Join the list and be first to hear when Metis opens up deeper auth flows, team-ready reports, and polished release builds.",
+      "Join the list and be first to hear when Metis opens up deeper auth flows, Plus Beta access, and polished release builds.",
     emailPlaceholder: "you@company.com",
     submitLabel: "Join beta",
     successMessage: "You're on the list. We'll be in touch.",

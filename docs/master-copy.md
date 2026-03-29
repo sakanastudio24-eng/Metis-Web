@@ -106,14 +106,14 @@ Checklist:
 - Checklist item: `Score any running page in under 2 seconds`
 - Checklist item: `See exactly what's costing you, per session`
 - Checklist item: `Get ranked code fixes with savings estimates`
-- Checklist item: `Free to start, with room for Plus-style team workflows later`
+- Checklist item: `Free to start, with room for Plus Beta access later`
 
 ### Footer
 
 - Badge: `Beta Access`
 - Heading line 1: `Get early access.`
 - Heading line 2: `Free, always.`
-- Body: `Join the list and be first to hear when Metis opens up deeper auth flows, team-ready reports, and polished release builds.`
+- Body: `Join the list and be first to hear when Metis opens up deeper auth flows, Plus Beta access, and polished release builds.`
 - Email placeholder: `you@company.com`
 - Submit label: `Join beta`
 - Success message: `You're on the list. We'll be in touch.`
@@ -235,26 +235,59 @@ Onboarding questions:
 
 ### Account
 
-- Eyebrow: `Account`
-- Header: `Manage your Metis account`
-- Body: `Profile, access method, plan status, and secure entry points live here.`
+- Eyebrow: `Metis Dash`
+- Header: `Account`
+- Body: `Identity, verification, and connected access`
 - Verification label: `Verified`
 - Verification label: `Verification pending`
 - Temporary label: `Temporary local account`
 - Temporary body: `This session exists only for local auth review and does not grant backend API access.`
-- Section label: `Account`
-- Section body: `Identity basics, verification state, and a quick snapshot of what is ready.`
-- Section label: `Security`
-- Section body: `Review your secure access settings and future two-factor options.`
-- Section CTA: `Open security settings`
+- Sidebar section label: `Account`
+- Sidebar section label: `API Beta`
+- Sidebar section label: `Security`
+- Sidebar section label: `Plan & Pricing`
+- Sidebar section label: `Settings`
+- Dashboard badge: `Plus Beta`
+- Section header: `Account overview`
+- Section body: `Keep identity basics, verification status, and connected access in one place.`
+- Profile status label: `Account status`
+- Plan label: `Free plan`
+- Plan label: `Plus Beta`
+- Connected access label: `Connected access`
+- Usage header: `Scan usage`
+- Usage summary: `139 of 50 scans`
+- Usage detail: `Current account activity over the last 7 days`
+- Usage delta: `+18% vs last week`
+- Section header: `API Beta`
+- Section body: `Preview the staged API surface for CI checks, deploy hooks, and automated scans without overstating what is live.`
+- Status header: `Beta access status`
+- Status label: `Pending unlock`
+- Status label: `Enabled for Plus Beta`
+- Beta key header: `Beta key preview`
+- Beta key body: `Keys stay masked until API Beta is enabled for this account.`
+- API CTA: `Join Plus Beta`
+- API secondary CTA: `Docs coming soon`
+- Security note: `Never paste beta keys into client-side code. Keep all tokens server-side.`
+- Section header: `Security posture`
+- Section body: `Keep the current sign-in method visible, preview two-factor, and stage deeper controls honestly.`
+- Sign-in method label: `Sign-in method`
+- Two-factor label: `Two-factor authentication`
+- Two-factor status: `Preview available`
+- Two-factor CTA: `Open security preview`
+- Placeholder label: `Active sessions`
+- Placeholder label: `Audit log`
+- Placeholder state: `Coming soon`
 - Section label: `Plan & Pricing`
-- Plan value: `Metis Free`
-- Plan body: `Start free and keep pricing visible as Metis expands into deeper reports and team workflows.`
-- Section label: `Metis settings`
-- Section body: `The browser extension remains the place for lightweight controls and in-product settings.`
+- Plan body: `Start free, then enroll into Plus Beta when you need deeper dashboard and API access.`
+- Plan label: `Free`
+- Plan label: `Plus Beta`
+- Plan CTA: `Current plan`
+- Plan CTA: `Enroll in Plus Beta`
+- Section label: `Settings`
+- Section body: `Keep extension settings as the single settings entry point for now.`
 - Link-style row label: `App settings`
-- Link-style row body: `Extension settings will connect here once the browser entry point is wired.`
-- Link-state note: `Inactive for now`
+- Link-style row body: `This opens the extension settings entry point once the browser hook is wired.`
+- Link-state note: `Extension route only`
 - Dashboard sign out label: `Sign out`
 
 ### Security

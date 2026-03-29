@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 
 import { siteConfig } from "@/lib/site";
 
-const DEFAULT_TITLE = "Metis | Cost intelligence for the modern web";
+const DEFAULT_TITLE = "Metis | Frontend cost intelligence for the modern web";
 const DEFAULT_DESCRIPTION =
-  "Metis helps teams see where frontend waste comes from, understand the real cost of each session, and move from guesswork to ranked fixes.";
+  "Metis helps teams surface frontend cost risk, understand real session spend, and move from guesswork to ranked fixes.";
 
 type PublicMetadataOptions = {
   title: string;

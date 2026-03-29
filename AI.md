@@ -13,6 +13,7 @@ Current surface split:
 - recovery routes: verify email, forgot password, and reset password
 - callback route: shared auth completion at `/auth/callback`
 - signed-in routes: onboarding, account, and security surfaces
+- Metis Dash: account overview, API Beta, security, plan and pricing, and settings inside one dashboard shell
 - API: FastAPI proof layer for health, readiness, and authenticated backend expansion
 
 ## Live runtime model
@@ -73,6 +74,7 @@ Important implementation boundaries:
 - `src/components/auth/AccountPageClient.tsx`
 - `src/components/auth/SecurityPageClient.tsx`
 - `src/content/authCopy.ts`
+- `src/content/frontFacingCopy.ts`
 - `src/lib/seo.ts`
 - `src/lib/auth-server.ts`
 - `src/lib/temp-auth.ts`
@@ -100,6 +102,7 @@ Important implementation boundaries:
 - create a stable checkpoint commit for each finished section so rewrites can target only that section later
 - when a section needs to be reworked, reset or rewrite from the nearest section checkpoint instead of rolling back farther than necessary
 - section checkpoints matter most for auth entry, onboarding, dashboard sections, pricing/plan work, settings work, copy, and docs
+- keep Metis Dash sections isolated when committing: account, API Beta, security, pricing, and settings should not be batched together unless the user explicitly asks for a larger checkpoint
 - keep dependency or version bumps isolated when possible
 - frontend changes should stay humanized, intentional, and readable, not generic scaffold output
 - keep auth work separate from unrelated landing-page or mobile-layout changes
@@ -127,6 +130,7 @@ Important implementation boundaries:
 - keep provider callback URLs explicit and documented
 - prefer narrow backend responsibility over convenience-heavy hidden behavior
 - keep auth, account, and security routes out of public indexing
+- keep dashboard-facing beta language honest: API Beta and other staged controls should look intentional without pretending backend entitlement already exists
 - never let the temporary local test session cross the backend auth boundary
 
 ## Env contract in use
