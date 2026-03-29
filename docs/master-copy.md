@@ -143,6 +143,7 @@ Footer stack badges:
 - Submit CTA: `Continue`
 - Footer prompt: `Need an account?`
 - Footer link: `Create account`
+- Overlay behavior: `Centered auth overlay above the homepage`
 
 ### Sign Up
 
@@ -152,6 +153,7 @@ Footer stack badges:
 - Submit CTA: `Create account`
 - Footer prompt: `Already have access?`
 - Footer link: `Sign in`
+- Overlay behavior: `Centered auth overlay above the homepage`
 
 ### Shared Auth Labels
 
@@ -174,6 +176,9 @@ Footer stack badges:
 - Forgot password link: `Forgot password?`
 - Security label: `Protected access for metis.zward.studio`
 - Back link: `Back to the site`
+- Local testing label: `Local testing only`
+- Local testing body: `Google is temporarily bypassed in local development so onboarding and account flows can be reviewed quickly.`
+- Local testing CTA: `Use temporary Google test account`
 
 ### Verification
 
@@ -214,6 +219,8 @@ Footer stack badges:
 - Completion eyebrow: `Saved`
 - Completion header: `Your setup is captured`
 - Completion body: `You are in. Your first setup answers are recorded and more account features are coming next.`
+- Temporary account label: `Temporary test account`
+- Temporary account body: `This local-only session is for reviewing onboarding and account flows. Remove it before shipping.`
 
 Onboarding questions:
 
@@ -234,6 +241,8 @@ Onboarding questions:
 - Body: `Profile, access method, plan status, and secure entry points live here.`
 - Verification label: `Verified`
 - Verification label: `Verification pending`
+- Temporary label: `Temporary local account`
+- Temporary body: `This session exists only for local auth review and does not grant backend API access.`
 - Section label: `Sign-in method`
 - Section label: `Current plan`
 - Plan value: `Metis Free`
@@ -258,6 +267,8 @@ Onboarding questions:
 - Preview body: `The V3 design includes a four-step 2FA flow. This preview is intentionally staged until secrets and server support are ready.`
 - Preview CTA: `Preview 2FA flow`
 - Preview badge: `Requires backend activation`
+- Temporary label: `Temporary security preview`
+- Temporary body: `This local-only account can review the security UI, but it does not represent a real provider-backed session.`
 - Provider section header: `Current sign-in method`
 - Provider section body: `Your current provider determines whether password changes happen here or with the provider you used to sign in.`
 - Support body: `Protected routes stay private and are excluded from public indexing.`

@@ -9,7 +9,7 @@ Metis Web is the website and auth shell for the Metis product.
 Current surface split:
 
 - public website: product story, problem framing, fixes, solution, legal pages
-- auth routes: V3 sign up, sign in, Google OAuth, GitHub OAuth, magic link
+- auth routes: V3 sign up and sign in as centered overlays over the homepage, plus Google OAuth, GitHub OAuth, and magic link
 - recovery routes: verify email, forgot password, and reset password
 - callback route: shared auth completion at `/auth/callback`
 - signed-in routes: onboarding, account, and security surfaces
@@ -18,10 +18,12 @@ Current surface split:
 ## Live runtime model
 
 - the public site explains the product and routes people into auth
+- `/sign-in` and `/sign-up` render the landing page with a centered overlay instead of a separate auth page
 - Supabase owns identity, provider login, sessions, and callback exchange
 - the website completes auth at `/auth/callback` and redirects into `/logged-in` or `/reset-password`
 - FastAPI does not issue its own passwords or sessions
 - FastAPI validates authenticated access against Supabase and stays narrow for now
+- local development includes a temporary Google test bypass for onboarding and account UI review only
 
 ## Core pipeline
 
@@ -48,6 +50,7 @@ Important implementation boundaries:
 - email sign up should require verification before the user is treated as fully signed in
 - callback handling should stay centralized at `/auth/callback`
 - auth copy should stay separate from landing-page marketing copy
+- the temporary Google test account is local-only and should be removed after review
 
 ## Key files
 
@@ -62,6 +65,8 @@ Important implementation boundaries:
 - `src/app/account/page.tsx`
 - `src/app/account/security/page.tsx`
 - `src/components/auth/AuthScreen.tsx`
+- `src/components/auth/AuthOverlay.tsx`
+- `src/components/auth/HomeWithAuthOverlay.tsx`
 - `src/components/auth/ForgotPasswordScreen.tsx`
 - `src/components/auth/ResetPasswordScreen.tsx`
 - `src/components/auth/LoggedInState.tsx`
@@ -70,6 +75,8 @@ Important implementation boundaries:
 - `src/content/authCopy.ts`
 - `src/lib/seo.ts`
 - `src/lib/auth-server.ts`
+- `src/lib/temp-auth.ts`
+- `src/lib/temp-auth-client.ts`
 - `src/lib/supabase/browser.ts`
 - `src/lib/supabase/server.ts`
 - `src/lib/auth.ts`
@@ -110,6 +117,7 @@ Important implementation boundaries:
 - keep provider callback URLs explicit and documented
 - prefer narrow backend responsibility over convenience-heavy hidden behavior
 - keep auth, account, and security routes out of public indexing
+- never let the temporary local test session cross the backend auth boundary
 
 ## Env contract in use
 
@@ -136,4 +144,4 @@ OAuth archive:
 
 ## Main risk before shipping
 
-The biggest review-sensitive area is still auth configuration drift between Supabase, provider dashboards, local env shape, deployed callback URLs, and staged security surfaces that look real before backend activation is ready.
+The biggest review-sensitive areas are auth configuration drift between Supabase, provider dashboards, and deployed callback URLs, plus the temporary local test-account path that must stay fenced to development and be removed later.
