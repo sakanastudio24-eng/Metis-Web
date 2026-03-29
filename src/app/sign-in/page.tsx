@@ -20,7 +20,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
 
   return (
     <HomeWithAuthOverlay
-      initialView="login"
+      initialView="auth"
       initialError={params?.error ?? null}
       initialMessage={params?.message ?? null}
     />
