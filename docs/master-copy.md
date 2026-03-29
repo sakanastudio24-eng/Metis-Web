@@ -1,420 +1,569 @@
 # Metis Web Master Copy
 
-This document is the readable source of truth for the current user-facing copy in Metis Web.
+This is the readable copy reference for the current website, auth flow, onboarding, dashboard, and security surfaces. The source of truth in code still lives in `src/content`, but this file should match what people actually see.
 
-It captures website copy, auth copy, legal copy, mockup labels, success messages, and mapped error responses. The implementation source of truth still lives in the content and helper files, but this document is the editorial handoff version.
+## Brand
 
-## Landing Page
+Name: `Metis`
 
-### Brand
+Footer tagline: `Cost intelligence for the modern web.`
 
-- Name: `Metis`
-- Footer tagline: `Cost intelligence for the modern web.`
-- Footer subline: `A browser extension and reporting layer by zward.studio.`
-- Footer copyright: `© 2026 zward.studio`
+Footer subline: `A browser extension and reporting layer by zward.studio.`
 
-### Navigation
+Footer copyright: `© 2026 zward.studio`
 
-- Product
-- Problem
-- Fixes
-- Solution
-- Primary CTA: `Try free`
+## Navigation
+
+Section label: `Product`
+
+Section label: `Problem`
+
+Section label: `Fixes`
+
+Section label: `Solution`
+
+Primary CTA: `Try free`
+
+## Landing page
 
 ### Hero
 
-- Header line 1: `Every session has a price.`
-- Header line 2: `Most teams never see the bill.`
-- Primary CTA: `Start for free`
-- Secondary CTA: `Watch a scan`
-- Stat label: `time to first signal`
-- Stat label: `pages sampled in a live run`
-- Stat label: `to understand the first report`
-- Support copy: `keep going`
+Header line 1: `Every session has a price.`
+
+Header line 2: `Most teams never see the bill.`
+
+Primary CTA: `Start for free`
+
+Secondary CTA: `Watch a scan`
+
+Stat label: `time to first signal`
+
+Stat label: `pages sampled in a live run`
+
+Stat label: `to understand the first report`
+
+Support copy: `keep going`
 
 ### Product
 
-- Tag: `Product`
-- Heading: `The cost layer your frontend never had`
-- Body: `Metis was designed to feel calm on the page and serious in the report. It catches what a normal profiler rarely explains: what those requests mean for real spend.`
+Tag: `Product`
 
-Feature cards:
+Header: `The cost layer your frontend never had`
 
-- Card header: `Hover-first workflow`
-  Card body: `Metis stays lightweight on the page, then opens the deeper workspace in the browser side panel when you want context.`
-- Card header: `Cost and control`
-  Card body: `The product frames waste in plain language: what costs money now, what scales badly later, and what deserves attention first.`
-- Card header: `Stack-aware signals`
-  Card body: `Frameworks, hosts, AI providers, and third-party scripts are detected so the report feels specific, not generic.`
-- Card header: `Built for real teams`
-  Card body: `The website explains the product cleanly while the extension stays focused on scanning, scoring, and the side-panel workspace.`
+Body: `Metis was designed to feel calm on the page and serious in the report. It catches what a normal profiler rarely explains: what those requests mean for real spend.`
+
+Feature title: `Hover-first workflow`
+
+Feature body: `Metis stays lightweight on the page, then opens the deeper workspace in the browser side panel when you want context.`
+
+Feature title: `Cost and control`
+
+Feature body: `The product frames waste in plain language: what costs money now, what scales badly later, and what deserves attention first.`
+
+Feature title: `Stack-aware signals`
+
+Feature body: `Frameworks, hosts, AI providers, and third-party scripts are detected so the report feels specific, not generic.`
+
+Feature title: `Built for real teams`
+
+Feature body: `The website explains the product cleanly while the extension stays focused on scanning, scoring, and the side-panel workspace.`
 
 ### Problem
 
-- Tag: `The Problem`
-- Heading: `Your frontend is bleeding money every session`
-- Body: `Unoptimised requests, noisy third-party scripts, and AI-heavy interactions compound quietly. Metis exists to make that waste legible before it becomes a postmortem.`
+Tag: `The Problem`
 
-Stats:
+Header: `Your frontend is bleeding money every session`
 
-- Stat value and label: `24 avg API calls per page load`
-- Stat value and label: `3.2 MB avg payload per session`
-- Stat value and label: `$0.004 avg session cost, unoptimised`
-- Stat value and label: `86% of teams don't know their frontend cost`
+Body: `Unoptimised requests, noisy third-party scripts, and AI-heavy interactions compound quietly. Metis exists to make that waste legible before it becomes a postmortem.`
 
-Problem issues:
+Issue summary: `5 issues detected · High Risk`
 
-- Issue label: `Duplicate API Requests — 8× per load`
-- Issue label: `Memory leak in 3 components`
-- Issue label: `OpenAI called on every keystroke`
-- Issue label: `3 images over 2MB — no WebP conversion`
-- Issue label: `Static assets without Cache-Control headers`
+Issue label: `Duplicate API Requests, 8× per load`
+
+Issue label: `Memory leak in 3 components`
+
+Issue label: `OpenAI called on every keystroke`
+
+Issue label: `3 images over 2MB with no WebP conversion`
+
+Issue label: `Static assets without Cache-Control headers`
 
 ### Fixes
 
-- Tag: `How it fixes it`
-- Heading: `Here's exactly what to fix`
-- Body: `Not vague advice. The product direction is clear: ranked fixes, grounded explanations, and a report that respects how engineering teams actually work.`
-- Label: `Root Cause`
-- Label: `Fix`
-- Label: `Fix First`
-- Dynamic save label: ``Save ~$${saving}/mo``
+Tag: `How it fixes it`
 
-Fix cards:
+Header: `Here's exactly what to fix`
 
-- Card header: `Duplicate API Requests`
-  Root cause body: `Multiple components trigger the same fetch independently on mount with no deduplication.`
-  Fix body: `Add SWR or React Query with a shared cache key. Concurrent callers share one in-flight request.`
-- Card header: `AI API Call Frequency`
-  Root cause body: `AI completion handler fires on onChange with no debounce — each keystroke = one API call.`
-  Fix body: `Debounce by 400ms with useDebouncedCallback. Cache identical prompts with a simple Map for 5 min.`
-- Card header: `Memory Leak Pattern`
-  Root cause body: `useEffect hooks add event listeners but return no cleanup function.`
-  Fix body: `Return cleanup from each useEffect: return () => window.removeEventListener(...). Use AbortController for fetch.`
+Body: `Not vague advice. The product direction is clear: ranked fixes, grounded explanations, and a report that respects how engineering teams actually work.`
+
+Label: `Root Cause`
+
+Label: `Fix`
+
+Label: `Fix First`
+
+Dynamic label: ``Save ~$${saving}/mo``
+
+Fix title: `Duplicate API Requests`
+
+Root cause body: `Multiple components trigger the same fetch independently on mount with no deduplication.`
+
+Fix body: `Add SWR or React Query with a shared cache key. Concurrent callers share one in-flight request.`
+
+Fix title: `AI API Call Frequency`
+
+Root cause body: `AI completion handler fires on onChange with no debounce. Each keystroke triggers one API call.`
+
+Fix body: `Debounce by 400ms with useDebouncedCallback. Cache identical prompts with a simple Map for 5 min.`
+
+Fix title: `Memory Leak Pattern`
+
+Root cause body: `useEffect hooks add event listeners but return no cleanup function.`
+
+Fix body: `Return cleanup from each useEffect: return () => window.removeEventListener(...). Use AbortController for fetch.`
 
 ### Solution
 
-- Tag: `The result`
-- Heading line 1: `Start free`
-- Heading line 2: `Fix in minutes`
-- Body: `Install Metis, open a page, and get a clear read on where cost pressure starts. The website handles the story. The extension handles the scan.`
-- Result caption: `Minimal Risk`
-- Primary CTA: `Get early access`
+Tag: `The result`
 
-Checklist:
+Header line 1: `Start free`
 
-- Checklist item: `Score any running page in under 2 seconds`
-- Checklist item: `See exactly what's costing you, per session`
-- Checklist item: `Get ranked code fixes with savings estimates`
-- Checklist item: `Free to start, with room for Plus Beta access later`
+Header line 2: `Fix in minutes`
+
+Body: `Create access on the website, manage your account there, then use the extension for the actual scan and report workflow.`
+
+Checklist item: `Score any running page in under 2 seconds`
+
+Checklist item: `See exactly what's costing you, per session`
+
+Checklist item: `Get ranked code fixes with savings estimates`
+
+Checklist item: `Keep account settings on the website and extension settings in the extension`
+
+Result caption: `Minimal Risk`
+
+Primary CTA: `Get early access`
 
 ### Footer
 
-- Badge: `Beta Access`
-- Heading line 1: `Get early access.`
-- Heading line 2: `Free, always.`
-- Body: `Join the list and be first to hear when Metis opens up deeper auth flows, Plus Beta access, and polished release builds.`
-- Email placeholder: `you@company.com`
-- Submit label: `Join beta`
-- Success message: `You're on the list. We'll be in touch.`
+Badge: `Beta Access`
 
-Footer links:
+Header line 1: `Get early access.`
 
-- Link label: `zward.studio`
-- Link label: `GitHub`
-- Link label: `Get early access`
-- Link label: `Privacy`
-- Link label: `Terms`
+Header line 2: `Free, always.`
 
-Footer stack badges:
+Body: `Create a free account on the website, complete setup there, and manage Plus Beta access from your account when beta enrollment opens.`
 
-- Badge label: `Next.js`
-- Badge label: `React`
-- Badge label: `Python`
-- Badge label: `TypeScript`
+Email placeholder: `you@company.com`
 
-## Auth Flow
+CTA: `Join beta`
 
-### Sign In
+Success message: `You're on the list. We'll be in touch.`
 
-- Eyebrow: `Sign in`
-- Header: `Welcome back`
-- Body: `Choose Google, GitHub, a magic link, or email and password to get back into Metis.`
-- Submit CTA: `Continue`
-- Footer prompt: `Need an account?`
-- Footer link: `Create account`
-- Overlay behavior: `Centered auth overlay above the homepage`
+Footer link: `zward.studio`
 
-### Sign Up
+Footer link: `GitHub`
 
-- Eyebrow: `Create account`
-- Header: `Start with Metis`
-- Body: `Create your free account and move straight into your first guided setup.`
-- Submit CTA: `Create account`
-- Footer prompt: `Already have access?`
-- Footer link: `Sign in`
-- Overlay behavior: `Centered auth overlay above the homepage`
+Footer link: `Get early access`
 
-### Shared Auth Labels
+Footer link: `Privacy`
 
-- Brand label: `Metis Web`
-- Stage header: `A quiet layer for frontend cost risk`
-- Stage body: `Metis keeps the auth surface compact, secure, and focused so the product can move you quickly from access into signal.`
-- Tab label: `Sign in`
-- Tab label: `Sign up`
-- Section label: `Continue with`
-- Provider button: `Google`
-- Provider button: `GitHub`
-- Provider button: `Send magic link`
-- Magic link success: `Magic link sent. Check your inbox and continue from the email.`
-- Divider label: `or use email`
-- Field label: `Work email`
-- Email placeholder: `you@company.com`
-- Field label: `Password`
-- Password placeholder: `Enter your password`
-- Create-password placeholder: `Create a password`
-- Forgot password link: `Forgot password?`
-- Security label: `Protected access for metis.zward.studio`
-- Back link: `Back to the site`
-- Local testing label: `Local testing only`
-- Local testing body: `Google is temporarily bypassed in local development so onboarding and account flows can be reviewed quickly.`
-- Local testing CTA: `Use temporary Google test account`
+Footer link: `Terms`
 
-### Verification
+## Auth overlay
 
-- Eyebrow: `Verify email`
-- Header: `Check your inbox`
-- Intro body: `Open the email from Metis and use the secure link to finish access.`
-- Support body: `Once verification is complete you can return to sign in and move into onboarding without extra setup.`
-- Dynamic line: ``Verification sent to ${email}``
-- Primary CTA: `Back to sign in`
-- Secondary CTA: `Create another account`
+### Shared labels
 
-### Password Recovery
+Brand label: `Metis Web`
 
-- Request eyebrow: `Recovery`
-- Request header: `Reset your password`
-- Request body: `Enter your email and we will send a recovery link.`
-- Request CTA: `Send recovery email`
-- Request success header: `Check your inbox`
-- Request success body: ``We sent a recovery link to ${email}. Open it on this device to choose a new password.``
-- Reset eyebrow: `New password`
-- Reset header: `Choose a new password`
-- Reset body: `Enter your new password to finish recovery.`
-- Reset CTA: `Update password`
-- Reset invalid header: `Recovery link needed`
-- Reset invalid body: `Use a fresh recovery email so Metis can confirm it is really you.`
-- Reset success header: `Password updated`
-- Reset success body: `You can sign in now and move straight back into Metis.`
+Stage header: `A quiet layer for frontend cost risk`
 
-### Logged In
+Stage body: `Metis keeps website auth focused on access, account settings, and beta controls so the extension can stay focused on signal.`
 
-- Eyebrow: `Setup`
-- Header: `Tell Metis what matters first`
-- Support body: `This stays short and points your first dashboard toward the signals you care about most.`
-- Signed-in support line: ``Signed in as ${email}``
-- Finish CTA: `Finish setup`
-- Skip CTA: `Skip for now`
-- Completion eyebrow: `Saved`
-- Completion header: `You're all set.`
-- Completion body: `Welcome to Metis via ${provider}. Here's what's ready for you.`
-- Temporary account label: `Temporary test account`
-- Temporary account body: `This local-only session is for reviewing onboarding and account flows. Remove it before shipping.`
+Tab label: `Sign in`
 
-Onboarding questions:
+Tab label: `Sign up`
 
-- Question header: `What are you building?`
-  Question helper: `We'll personalise your first scan for your project type.`
-  Answer options: `SaaS app`, `E-commerce`, `Internal tool`, `Something else`
-- Question header: `How big is your team?`
-  Question helper: `Helps us tune how we present team-level insights.`
-  Answer options: `Just me`, `2 – 5`, `6 – 20`, `20+`
-- Question header: `What worries you most?`
-  Question helper: `We'll surface those insights first on your dashboard.`
-  Answer options: `API costs`, `Performance`, `AI spend`, `All of it`
+Provider label: `Continue with`
 
-### Account
+Provider button: `Google`
 
-- Eyebrow: `Metis Dash`
-- Header: `Account`
-- Body: `Identity, verification, and connected access`
-- Verification label: `Verified`
-- Verification label: `Verification pending`
-- Temporary label: `Temporary local account`
-- Temporary body: `This session exists only for local auth review and does not grant backend API access.`
-- Sidebar section label: `Account`
-- Sidebar section label: `API Beta`
-- Sidebar section label: `Security`
-- Sidebar section label: `Plan & Pricing`
-- Sidebar section label: `Settings`
-- Dashboard badge: `Plus Beta`
-- Section header: `Account overview`
-- Section body: `Keep identity basics, verification status, and connected access in one place.`
-- Profile status label: `Account status`
-- Plan label: `Free plan`
-- Plan label: `Plus Beta`
-- Connected access label: `Connected access`
-- Usage header: `Scan usage`
-- Usage summary: `139 of 50 scans`
-- Usage detail: `Current account activity over the last 7 days`
-- Usage delta: `+18% vs last week`
-- Section header: `API Beta`
-- Section body: `Preview the staged API surface for CI checks, deploy hooks, and automated scans without overstating what is live.`
-- Status header: `Beta access status`
-- Status label: `Pending unlock`
-- Status label: `Enabled for Plus Beta`
-- Beta key header: `Beta key preview`
-- Beta key body: `Keys stay masked until API Beta is enabled for this account.`
-- API CTA: `Join Plus Beta`
-- API secondary CTA: `Docs coming soon`
-- Security note: `Never paste beta keys into client-side code. Keep all tokens server-side.`
-- Section header: `Security posture`
-- Section body: `Keep the current sign-in method visible, preview two-factor, and stage deeper controls honestly.`
-- Sign-in method label: `Sign-in method`
-- Two-factor label: `Two-factor authentication`
-- Two-factor status: `Preview available`
-- Two-factor CTA: `Open security preview`
-- Placeholder label: `Active sessions`
-- Placeholder label: `Audit log`
-- Placeholder state: `Coming soon`
-- Section label: `Plan & Pricing`
-- Plan body: `Start free, then enroll into Plus Beta when you need deeper dashboard and API access.`
-- Plan label: `Free`
-- Plan label: `Plus Beta`
-- Plan CTA: `Current plan`
-- Plan CTA: `Enroll in Plus Beta`
-- Section label: `Settings`
-- Section body: `Keep extension settings as the single settings entry point for now.`
-- Link-style row label: `App settings`
-- Link-style row body: `This opens the extension settings entry point once the browser hook is wired.`
-- Link-state note: `Extension route only`
-- Dashboard sign out label: `Sign out`
+Provider button: `GitHub`
 
-### Security
+Provider button: `Send magic link`
 
-- Eyebrow: `Security`
-- Header: `Protect your Metis access`
-- Body: `See what is active today and what will unlock once the deeper security backend is switched on.`
-- Section header: `Available now`
-- Section body: `These protections are active now and cover the current access flow.`
-- Section header: `Coming next`
-- Section body: `These surfaces are designed now, but they still require backend activation before they become live controls.`
-- Preview header: `Two-factor authentication preview`
-- Preview body: `The V4 design keeps two-factor as a four-step flow: intro, verify, backup, then confirmation. This preview stays staged until secrets and server support are ready.`
-- Preview CTA: `Preview 2FA flow`
-- Preview badge: `Requires backend activation`
-- Temporary label: `Temporary security preview`
-- Temporary body: `This local-only account can review the security UI, but it does not represent a real provider-backed session.`
-- Provider section header: `Current sign-in method`
-- Provider section body: `Your current provider determines whether password changes happen here or with the provider you used to sign in.`
-- Support body: `Protected routes stay private and are excluded from public indexing.`
-- Back CTA: `Back to account`
+Magic link success: `Magic link sent. Check your inbox and continue from the email.`
 
-## Legal Pages
+Divider label: `or use email`
 
-### Privacy
+Email label: `Work email`
 
-- Eyebrow: `Privacy`
-- Title: `Privacy policy`
+Password label: `Password`
 
-Paragraphs:
+Security support line: `Protected access for metis.zward.studio`
 
-- Body paragraph 1: `Metis respects the difference between explaining a product and quietly collecting data. This website does not ask visitors for account details unless they choose to use the sign in or sign up flow, and it does not present itself as a live analytics dashboard.`
-- Body paragraph 2: `If you contact Metis, join a waitlist, or create access through the auth flow, the information you provide may be used to respond to you, manage access, and improve the service. Metis is not intended to sell personal information or use hidden tracking as a product strategy.`
-- Body paragraph 3: `As the authenticated product expands, this policy should be updated to describe what product data is stored, how long it is retained, who can access it, and how deletion requests are handled.`
+Back label: `Back to the site`
 
-### Terms
+Temporary review label: `Local testing only`
 
-- Eyebrow: `Terms`
-- Title: `Terms of use`
+Temporary review body: `Google is temporarily bypassed in local development so onboarding and account flows can be reviewed quickly.`
 
-Paragraphs:
+Temporary review CTA: `Use temporary Google test account`
 
-- Body paragraph 1: `Metis is provided as a developing product and website. The material on this site is intended to explain the service clearly, but access, features, and availability may change as the product evolves.`
-- Body paragraph 2: `You agree not to misuse the site, interfere with access, attempt to bypass security controls, or use the service in a way that harms the product, its operators, or other users. If authenticated features are enabled, account access remains your responsibility.`
-- Body paragraph 3: `Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability. The source code in this repository is available under the MIT license included at the repo root.`
+### Sign in
 
-Shared legal link:
+Eyebrow: `Sign in`
 
-- Link label: `Back to Metis`
+Header: `Welcome back`
 
-## Example Mockup Copy
+Body: `Sign in on the website to manage your account, security posture, and beta access before heading back to the extension.`
 
-### Header and score labels
+Submit CTA: `Continue`
 
-- Header: `Metis Scan`
-- Subheader: `metis.zward.studio · just now`
-- Label: `Cost Risk Score`
-- Label: `Session cost`
-- Support label: `Live · 3 pages sampled · metis.zward.studio`
-- Support label: `At 10k users →`
-- Prefix: `~`
-- Suffix: `/month est. waste`
-- Dynamic monthly waste label: ``~$${min}–$${max}/month est. waste``
-- Dynamic projection label: ``~$${(min * 10).toLocaleString()}/month``
+Footer prompt: `Need an account?`
 
-### States and empty responses
+Footer link: `Create account`
 
-- Empty insight: `All issues resolved`
-- Empty issues label: `No Issues Detected`
-- Dynamic issues label: ``${count} Issues · By Severity``
+### Sign up
 
-### Example state insights
+Eyebrow: `Create account`
 
-- Insight body: `High request count and AI usage detected`
-- Insight body: `Moderate cost inefficiencies across 5 issues`
-- Insight body: `Severe API overuse and memory pressure detected`
-- Insight body: `2 minor issues remain — fixes applied to critical items`
-- Insight body: `Site is well-optimized — low cost risk detected`
+Header: `Start with Metis`
 
-### Example issue labels
+Body: `Create your free account on the website, accept the legal terms here, and move straight into your first guided setup.`
 
-- Issue label: `Duplicate API Requests`
-- Issue label: `Memory Leak Pattern`
-- Issue label: `AI API Call Frequency`
-- Issue label: `Unoptimized Images`
-- Issue label: `Missing Cache Headers`
+Submit CTA: `Create account`
 
-## Errors And Catchall Responses
+Footer prompt: `Already have access?`
 
-### Auth UI fallbacks
+Footer link: `Sign in`
 
-- Missing credentials: `Email and password are both required`
-- Missing email for magic link: `Enter your email first so we know where to send the message.`
-- Provider launch error: `The provider login could not start`
-- Magic link error: `The magic link could not be sent`
-- Create account error: `We could not create that account`
-- Sign in error: `That email and password combination did not work`
-- Verification confirmation: `Check your inbox and confirm your email before signing in`
-- Reset request error: `We could not send a recovery email right now.`
-- Reset request success: `Recovery email sent. Check your inbox for the reset link.`
-- Reset password error: `We could not update your password right now.`
-- Reset password success: `Password updated. You can sign in now.`
-- Reset password expired: `That reset link is expired or incomplete.`
+Legal acceptance label: `I agree to the`
 
-### Auth callback and mapped helper responses
+Legal link: `Terms of Use`
 
-- `callback_failed`
-  `That sign-in link is not usable anymore. Try again.`
-- `oauth_cancelled`
-  `The provider sign-in was cancelled before it finished.`
-- `invalid_credentials`
-  `That email and password combination did not work.`
-- `verification_required`
-  `Check your inbox and confirm your email before signing in.`
+Legal link: `Privacy Policy`
 
-### Generic no-copy fallback behavior
+Legal error: `You need to accept the Terms of Use and Privacy Policy before creating an account.`
 
-- Unmapped auth error code returns `null` from the helper and falls back to the direct UI error string instead of a generic unknown error banner
+## Verification and recovery
 
-## Dynamic Templates
+Verification eyebrow: `Verify email`
 
-These are the variable-style strings that should stay explicit in copy review:
+Verification header: `Check your inbox`
 
-- ``Save ~$${saving}/mo``
-- ``~$${min}–$${max}/month est. waste``
-- ``~$${(min * 10).toLocaleString()}/month``
-- ``${count} Issues · By Severity``
-- ``Metis is ready for ${email}``
-- `waitlist success`
-  `You're on the list. We'll be in touch.`
+Verification body: `Open the email from Metis and use the secure link to finish access.`
+
+Verification support body: `Once verification is complete you can return to sign in and move into onboarding without extra setup.`
+
+Verification dynamic line: ``Verification sent to ${email}``
+
+Recovery eyebrow: `Recovery`
+
+Recovery header: `Reset your password`
+
+Recovery body: `Enter your email and we will send a recovery link.`
+
+Recovery CTA: `Send recovery email`
+
+Recovery success header: `Check your inbox`
+
+Recovery success body: ``We sent a recovery link to ${email}. Open it on this device to choose a new password.``
+
+Reset eyebrow: `New password`
+
+Reset header: `Choose a new password`
+
+Reset body: `Enter your new password to finish recovery.`
+
+Reset CTA: `Update password`
+
+Reset error header: `Recovery link needed`
+
+Reset error body: `Use a fresh recovery email so Metis can confirm it is really you.`
+
+Reset success header: `Password updated`
+
+Reset success body: `You can sign in now and move straight back into Metis.`
+
+## Onboarding
+
+Eyebrow: `Setup`
+
+Header: `Tell Metis what matters first`
+
+Body: `This stays short and points your first dashboard toward the signals you care about most.`
+
+Signed in line: ``Signed in as ${email}``
+
+Next destination line: `Your account settings and beta access live on the website account pages after setup.`
+
+Finish CTA: `Finish setup`
+
+Skip CTA: `Skip for now`
+
+Completion eyebrow: `Saved`
+
+Completion header: `You are all set`
+
+Completion body: `Welcome to Metis. Your first setup answers are saved and your account areas are ready to review next.`
+
+Temporary account label: `Temporary test account`
+
+Temporary account body: `This local-only session is for reviewing onboarding and account flows. Remove it before shipping.`
+
+Question: `What are you building?`
+
+Question helper: `We'll personalise your first scan for your project type.`
+
+Options: `SaaS app`, `E-commerce`, `Internal tool`, `Something else`
+
+Question: `How big is your team?`
+
+Question helper: `Helps us tune how we present team-level insights.`
+
+Options: `Just me`, `2 – 5`, `6 – 20`, `20+`
+
+Question: `What worries you most?`
+
+Question helper: `We'll surface those insights first on your dashboard.`
+
+Options: `API costs`, `Performance`, `AI spend`, `All of it`
+
+## Metis Dash
+
+Brand label: `Metis Dash`
+
+Badge: `Plus Beta`
+
+Section label: `Account`
+
+Section label: `API Beta`
+
+Section label: `Security`
+
+Section label: `Plan & Pricing`
+
+Section label: `Settings`
+
+Section support label: `More sections coming soon`
+
+### Account section
+
+Header: `Account overview`
+
+Body: `Keep identity basics, verification status, and connected access in one place.`
+
+Label: `Account status`
+
+Label: `Free plan`
+
+Label: `Plus Beta`
+
+Label: `Connected access`
+
+Label: `Scan usage`
+
+### API Beta section
+
+Header: `API Beta`
+
+Body: `Preview the staged API surface for CI checks, deploy hooks, and automated scans without overstating what is live.`
+
+Label: `Beta access status`
+
+Status: `Pending unlock`
+
+Status: `Enabled for Plus Beta`
+
+Body: `API Beta is staged while endpoints, rate limits, and docs are hardened for launch.`
+
+Label: `Beta key preview`
+
+Body: `Keys stay masked until API Beta is enabled for this account.`
+
+CTA: `Join Plus Beta`
+
+CTA: `Docs coming soon`
+
+Security note: `Never paste beta keys into client-side code. Keep all tokens server-side.`
+
+### Security section
+
+Header: `Security posture`
+
+Body: `Keep the current sign-in method visible, preview two-factor, and stage deeper controls honestly.`
+
+Label: `Good security posture`
+
+Body: `Email verification, provider auth, and recovery flows are active. Two-factor is next.`
+
+Label: `Sign-in method`
+
+Label: `Two-factor authentication`
+
+Status: `Preview available`
+
+Label: `Active sessions`
+
+Label: `Audit log`
+
+Status: `Coming soon`
+
+Body: `These controls stay visible so the dashboard is honest about what is next without pretending the backend is already live.`
+
+### Plan and pricing section
+
+Header: `Plan & Pricing`
+
+Body: `Start free, then enroll into Plus Beta when you need deeper dashboard and API access.`
+
+Plan: `Free`
+
+Plan: `Plus Beta`
+
+CTA: `Current plan`
+
+CTA: `Enroll in Plus Beta`
+
+FAQ: `Can I switch plans later?`
+
+Answer: `Yes. Free remains available, and Plus Beta can be enabled or removed during the staged rollout.`
+
+FAQ: `What does Plus Beta unlock?`
+
+Answer: `It stages deeper dashboard access, API Beta, and premium rollout features as they harden.`
+
+FAQ: `Is there a Team plan?`
+
+Answer: `Not in this phase. The dashboard is focused on Free and Plus Beta only.`
+
+### Settings section
+
+Header: `Settings`
+
+Body: `Keep account settings on the website and extension behavior settings inside the extension.`
+
+Label: `App settings`
+
+Body: `The extension remains the single place for scan controls, refresh preferences, and saved-history actions.`
+
+State label: `Managed in extension`
+
+## Security page
+
+Eyebrow: `Security`
+
+Header: `Protect your Metis access`
+
+Body: `Set up two-factor authentication, review your current sign-in method, and keep the account boundary explicit.`
+
+Section label: `Available now`
+
+Item: `Supabase session handling`
+
+Item: `Email verification checks`
+
+Item: `Provider-based sign-in with Google and GitHub`
+
+Item: `Password recovery with callback validation`
+
+Section label: `Coming next`
+
+Item: `Recovery codes`
+
+Item: `Trusted device review`
+
+Item: `Session management for teams`
+
+Two-factor preview header: `Two-factor authentication`
+
+Preview body: `Temporary accounts can still review the 2FA layout here, but real accounts now use the live authenticator-app flow below.`
+
+Preview badge: `Preview only`
+
+Live setup badge: `Start setup`
+
+Enabled badge: `Enabled`
+
+Start header: `Authenticator app`
+
+Start body: `Begin setup to generate a QR code and secret for your authenticator app. Once verified, the current session is promoted to aal2.`
+
+Start CTA: `Start 2FA setup`
+
+Manual key label: `Manual key`
+
+Copy label: `Copy`
+
+Copied label: `Copied`
+
+Verify header: `Verify your code`
+
+Verify body: `Scan the QR code or enter the manual key in your authenticator app, then enter the current six-digit code to finish setup.`
+
+Verify CTA: `Verify and enable`
+
+Restart CTA: `Restart setup`
+
+Enabled header: `Authenticator active`
+
+Enabled summary: `Authenticator-based sign-in is live for this account. Keep your app and secret safe.`
+
+Disable CTA: `Disable 2FA`
+
+Assurance header: `Authenticator assurance`
+
+Assurance body: `AAL shows how strongly the current session is verified. aal2 means the session has passed both the first factor and a verified MFA factor.`
+
+Provider section header: `Current sign-in method`
+
+Provider section body: `Your current provider determines whether password changes happen here or with the provider you used to sign in.`
+
+Session note: `Protected routes stay private and are excluded from public indexing.`
+
+Back label: `Back to account`
+
+Temporary security label: `Temporary security preview`
+
+Temporary security body: `This local-only account can review the security UI, but it does not represent a real provider-backed session.`
+
+## Errors and helper responses
+
+Callback error: `That sign-in link is not usable anymore. Try again.`
+
+Provider cancel error: `The provider sign-in was cancelled before it finished.`
+
+Credential error: `That email and password combination did not work.`
+
+Verification required error: `Check your inbox and confirm your email before signing in.`
+
+Recovery link error: `That recovery link is not usable anymore. Request a new one.`
+
+Provider launch error: `The provider sign-in could not start.`
+
+Magic link error: `The magic link could not be sent.`
+
+Create account error: `We could not create that account.`
+
+Recovery request error: `We could not send a recovery email right now.`
+
+Reset password error: `We could not update your password right now.`
+
+Reset password success: `Password updated. You can sign in now.`
+
+Temporary access error: `The temporary test account could not be started.`
+
+Security load error: `We could not load your current two-factor state right now.`
+
+Security enroll error: `We could not start two-factor setup right now.`
+
+Security enroll success: `Authenticator setup started. Scan the QR code and verify the first code.`
+
+Security verify error: `That verification code did not work. Try the latest code from your authenticator app.`
+
+Security verify success: `Two-factor authentication is now enabled for this account.`
+
+Security disable error: `We could not disable two-factor authentication right now.`
+
+Security disable success: `Two-factor authentication has been removed from this account.`
