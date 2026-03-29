@@ -92,8 +92,13 @@ Important implementation boundaries:
 
 ## Working rules
 
-- prefer focused commits by surface area
+- prefer focused commits by section, not just by broad surface area
 - every implemented feature or meaningful change should call out git segmentation clearly
+- if one request changes multiple sections, each section should get its own commit
+- do not batch unrelated section edits into one “UI” or “auth” commit just because they share a folder
+- create a stable checkpoint commit for each finished section so rewrites can target only that section later
+- when a section needs to be reworked, reset or rewrite from the nearest section checkpoint instead of rolling back farther than necessary
+- section checkpoints matter most for auth entry, onboarding, dashboard sections, pricing/plan work, settings work, copy, and docs
 - keep dependency or version bumps isolated when possible
 - frontend changes should stay humanized, intentional, and readable, not generic scaffold output
 - keep auth work separate from unrelated landing-page or mobile-layout changes
@@ -108,6 +113,8 @@ Important implementation boundaries:
 - never inspect `.env` files directly
 - if environment shape matters, ask the user or update `.env.example`
 - when reporting work back, include the git segmentation for the feature that was added or changed
+- when reporting work back, explain the section-level commit breakdown, not just the total number of commits
+- if a prior commit was too broad, re-segment it immediately instead of stacking more work on top
 
 ## Security rules
 
