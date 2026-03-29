@@ -9,10 +9,10 @@ Metis Web is the website and auth shell for the Metis product.
 Current surface split:
 
 - public website: product story, problem framing, fixes, solution, legal pages
-- auth routes: email sign up, email sign in, Google OAuth, GitHub OAuth
-- recovery routes: forgot password, reset password, and verification guidance
+- auth routes: V3 sign up, sign in, Google OAuth, GitHub OAuth, magic link
+- recovery routes: verify email, forgot password, and reset password
 - callback route: shared auth completion at `/auth/callback`
-- logged-in route: short onboarding questionnaire on a red background with a white multi-answer panel
+- signed-in routes: onboarding, account, and security surfaces
 - API: FastAPI proof layer for health, readiness, and authenticated backend expansion
 
 ## Live runtime model
@@ -59,11 +59,17 @@ Important implementation boundaries:
 - `src/app/reset-password/page.tsx`
 - `src/app/verify/page.tsx`
 - `src/app/logged-in/page.tsx`
+- `src/app/account/page.tsx`
+- `src/app/account/security/page.tsx`
 - `src/components/auth/AuthScreen.tsx`
 - `src/components/auth/ForgotPasswordScreen.tsx`
 - `src/components/auth/ResetPasswordScreen.tsx`
 - `src/components/auth/LoggedInState.tsx`
+- `src/components/auth/AccountPageClient.tsx`
+- `src/components/auth/SecurityPageClient.tsx`
 - `src/content/authCopy.ts`
+- `src/lib/seo.ts`
+- `src/lib/auth-server.ts`
 - `src/lib/supabase/browser.ts`
 - `src/lib/supabase/server.ts`
 - `src/lib/auth.ts`
@@ -103,6 +109,7 @@ Important implementation boundaries:
 - do not hardcode secrets into code, docs, or examples
 - keep provider callback URLs explicit and documented
 - prefer narrow backend responsibility over convenience-heavy hidden behavior
+- keep auth, account, and security routes out of public indexing
 
 ## Env contract in use
 
@@ -129,4 +136,4 @@ OAuth archive:
 
 ## Main risk before shipping
 
-The biggest review-sensitive area is still auth configuration drift between Supabase, provider dashboards, local env shape, and deployed callback URLs.
+The biggest review-sensitive area is still auth configuration drift between Supabase, provider dashboards, local env shape, deployed callback URLs, and staged security surfaces that look real before backend activation is ready.

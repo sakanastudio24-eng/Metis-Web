@@ -41,7 +41,7 @@ The current implementation expects these names to exist once runtime injection i
 The current auth flow expects these callback URLs to be allowed in Supabase and the provider dashboards:
 
 - `http://localhost:3000/auth/callback`
-- `https://yourdomain.com/auth/callback`
+- `https://metis.zward.studio/auth/callback`
 
 ## What happens in the joint 1Password step
 

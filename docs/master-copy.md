@@ -138,8 +138,8 @@ Footer stack badges:
 ### Sign In
 
 - Eyebrow: `Sign in`
-- Header: `Access Metis`
-- Body: `Use Google, GitHub, a magic link, or your email and password`
+- Header: `Welcome back`
+- Body: `Choose Google, GitHub, a magic link, or email and password to get back into Metis.`
 - Submit CTA: `Continue`
 - Footer prompt: `Need an account?`
 - Footer link: `Create account`
@@ -148,7 +148,7 @@ Footer stack badges:
 
 - Eyebrow: `Create account`
 - Header: `Start with Metis`
-- Body: `Create access with Google, GitHub, a magic link, or email and password`
+- Body: `Create your free account and move straight into your first guided setup.`
 - Submit CTA: `Create account`
 - Footer prompt: `Already have access?`
 - Footer link: `Sign in`
@@ -156,6 +156,8 @@ Footer stack badges:
 ### Shared Auth Labels
 
 - Brand label: `Metis Web`
+- Stage header: `A quiet layer for frontend cost risk`
+- Stage body: `Metis keeps the auth surface compact, secure, and focused so the product can move you quickly from access into signal.`
 - Tab label: `Sign in`
 - Tab label: `Sign up`
 - Section label: `Continue with`
@@ -170,6 +172,7 @@ Footer stack badges:
 - Password placeholder: `Enter your password`
 - Create-password placeholder: `Create a password`
 - Forgot password link: `Forgot password?`
+- Security label: `Protected access for metis.zward.studio`
 - Back link: `Back to the site`
 
 ### Verification
@@ -177,7 +180,7 @@ Footer stack badges:
 - Eyebrow: `Verify email`
 - Header: `Check your inbox`
 - Intro body: `Open the email from Metis and use the secure link to finish access.`
-- Support body: `Once verification is complete you can return to sign in and move into onboarding.`
+- Support body: `Once verification is complete you can return to sign in and move into onboarding without extra setup.`
 - Dynamic line: ``Verification sent to ${email}``
 - Primary CTA: `Back to sign in`
 - Secondary CTA: `Create another account`
@@ -202,15 +205,15 @@ Footer stack badges:
 ### Logged In
 
 - Eyebrow: `Setup`
-- Header: `What should Metis focus on first`
-- Support body: `This first pass stays short. It helps shape what Metis should prioritize next for you.`
+- Header: `Tell Metis what matters first`
+- Support body: `This first pass stays short and helps Metis prioritize what you want to see first.`
 - Signed-in support line: ``Signed in as ${email}``
 - Sign out label: `Sign out`
 - Finish CTA: `Finish setup`
 - Skip CTA: `Skip for now`
 - Completion eyebrow: `Saved`
 - Completion header: `Your setup is captured`
-- Completion body: `You are in. More features are coming soon, and this first setup pass is now recorded.`
+- Completion body: `You are in. Your first setup answers are recorded and more account features are coming next.`
 
 Onboarding questions:
 
@@ -223,6 +226,42 @@ Onboarding questions:
 - Question header: `What shows up most in your stack`
   Question helper: `Pick the tools or surfaces you expect Metis to touch first`
   Answer options: `Next.js`, `React`, `Vercel`, `OpenAI`, `Cloudflare`, `Third party scripts`
+
+### Account
+
+- Eyebrow: `Account`
+- Header: `Manage your Metis account`
+- Body: `Profile, access method, plan status, and secure entry points live here.`
+- Verification label: `Verified`
+- Verification label: `Verification pending`
+- Section label: `Sign-in method`
+- Section label: `Current plan`
+- Plan value: `Metis Free`
+- Plan body: `Start free and upgrade later when deeper reports and team workflows open up.`
+- Section label: `Security`
+- Security body: `Review your secure access settings and future two-factor options.`
+- Security CTA: `Open security settings`
+- Section label: `Extension access`
+- Extension body: `The account layer stays lightweight while the browser product handles scans and reports.`
+- Extension CTA: `Back to the website`
+
+### Security
+
+- Eyebrow: `Security`
+- Header: `Protect your Metis access`
+- Body: `See what is active today and what will unlock once the deeper security backend is switched on.`
+- Section header: `Available now`
+- Section body: `These protections are active now and cover the current access flow.`
+- Section header: `Coming next`
+- Section body: `These surfaces are designed now, but they still require backend activation before they become live controls.`
+- Preview header: `Two-factor authentication preview`
+- Preview body: `The V3 design includes a four-step 2FA flow. This preview is intentionally staged until secrets and server support are ready.`
+- Preview CTA: `Preview 2FA flow`
+- Preview badge: `Requires backend activation`
+- Provider section header: `Current sign-in method`
+- Provider section body: `Your current provider determines whether password changes happen here or with the provider you used to sign in.`
+- Support body: `Protected routes stay private and are excluded from public indexing.`
+- Back CTA: `Back to account`
 
 ## Legal Pages
 
@@ -294,12 +333,17 @@ Shared legal link:
 ### Auth UI fallbacks
 
 - Missing credentials: `Email and password are both required`
-- Missing email for magic link: `Enter your email first so we know where to send the magic link`
+- Missing email for magic link: `Enter your email first so we know where to send the message.`
 - Provider launch error: `The provider login could not start`
 - Magic link error: `The magic link could not be sent`
 - Create account error: `We could not create that account`
 - Sign in error: `That email and password combination did not work`
 - Verification confirmation: `Check your inbox and confirm your email before signing in`
+- Reset request error: `We could not send a recovery email right now.`
+- Reset request success: `Recovery email sent. Check your inbox for the reset link.`
+- Reset password error: `We could not update your password right now.`
+- Reset password success: `Password updated. You can sign in now.`
+- Reset password expired: `That reset link is expired or incomplete.`
 
 ### Auth callback and mapped helper responses
 
