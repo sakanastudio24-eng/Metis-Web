@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -28,6 +28,7 @@ import {
   Lock,
   LogOut,
   Mail,
+  Menu,
   Rocket,
   Settings2,
   Shield,
@@ -36,6 +37,7 @@ import {
   Sparkles,
   TrendingUp,
   UserRound,
+  X,
 } from "lucide-react";
 
 import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
@@ -92,6 +94,18 @@ const NAV_ACTIVE: Array<DashboardSection & { icon: React.ElementType }> = dashbo
   ...section,
   icon: SECTION_ICONS[section.id],
 }));
+
+const NAV_VISIBLE = NAV_ACTIVE.map((section) =>
+  section.id === "api"
+    ? {
+        ...section,
+        soon: true,
+      }
+    : {
+        ...section,
+        soon: false,
+      },
+);
 
 const NAV_SOON = [
   { icon: Sparkles, label: "AI insights" },
@@ -345,7 +359,7 @@ function AccountPanel({
   return (
     <PanelFrame title={copy.title} body={copy.body}>
       <Card>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 18 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 18, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <Avatar user={user} size={66} fontSize={22} />
             <div>
@@ -388,7 +402,7 @@ function AccountPanel({
         </div>
       </Card>
 
-      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)" }}>
+      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
         <Card>
           <SectionLabel>{copy.connectedAccountsTitle}</SectionLabel>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -473,7 +487,7 @@ function ApiBetaPanel({ user }: { user: DashboardUser }) {
 
   return (
     <PanelFrame title={copy.title} body={copy.body}>
-      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "minmax(0,1.05fr) minmax(0,0.95fr)" }}>
+      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
         <Card style={{ background: `linear-gradient(135deg, ${BG_CARD} 0%, ${ACCENT_GLOW} 100%)`, border: `1px solid ${ACCENT_BD}` }}>
           <SectionLabel>{copy.accessTitle}</SectionLabel>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
@@ -608,7 +622,7 @@ function SecurityPanel({ provider, onOpenDetails }: { provider: string; onOpenDe
         </div>
       </Card>
 
-      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
+      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
         <Card>
           <SectionLabel>{copy.providerTitle}</SectionLabel>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderRadius: 12, border: `1px solid ${BD_SOFT}`, background: BG_CARD_2, padding: "12px 14px" }}>
@@ -653,7 +667,7 @@ function SecurityPanel({ provider, onOpenDetails }: { provider: string; onOpenDe
         </Card>
       </div>
 
-      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
+      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
         {[copy.activeSessionsTitle, copy.auditLogTitle].map((title) => (
           <Card key={title}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
@@ -699,7 +713,7 @@ function PricingPanel({ user }: { user: DashboardUser }) {
         {annual ? <Badge>{copy.annualSavingsLabel}</Badge> : null}
       </div>
 
-      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
+      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
         {plans.map((plan) => (
           <motion.div
             key={plan.id}
@@ -776,7 +790,7 @@ function PricingPanel({ user }: { user: DashboardUser }) {
       </div>
 
       <Card>
-        <div style={{ display: "grid", gap: 18, gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}>
+        <div style={{ display: "grid", gap: 18, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           {copy.faq.map((item) => (
             <div key={item.q}>
               <p style={{ margin: 0, marginBottom: 6, fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color: TXT }}>{item.q}</p>
@@ -836,6 +850,8 @@ export function AccountPageClient({
   const supabase = createSupabaseBrowserClient();
   const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
   const [active, setActive] = useState<NavId>("account");
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const user = useMemo<DashboardUser>(() => {
@@ -848,6 +864,33 @@ export function AccountPageClient({
       provider,
     };
   }, [email, isTemporary, provider]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 980px)");
+
+    function updateViewport() {
+      setIsMobileViewport(media.matches);
+      if (!media.matches) {
+        setIsMobileNavOpen(false);
+      }
+    }
+
+    updateViewport();
+    media.addEventListener("change", updateViewport);
+
+    return () => {
+      media.removeEventListener("change", updateViewport);
+    };
+  }, []);
+
+  function handleSelectSection(id: NavId) {
+    if (id === "api") {
+      return;
+    }
+
+    setActive(id);
+    setIsMobileNavOpen(false);
+  }
 
   function handleSignOut() {
     startTransition(async () => {
@@ -864,7 +907,83 @@ export function AccountPageClient({
     return null;
   }
 
-  const activeSection = NAV_ACTIVE.find((section) => section.id === active) ?? NAV_ACTIVE[0];
+  const activeSection = NAV_ACTIVE.find((section) => section.id === active && section.id !== "api") ?? NAV_ACTIVE[0];
+
+  const navigationContent = (
+    <>
+      <div style={{ padding: "20px 6px 16px", marginBottom: 12, borderBottom: `1px solid ${BD_SOFT}` }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+          <div style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 14px 30px rgba(220,94,94,0.28)" }}>
+            <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 16, color: "white", lineHeight: 1 }}>M</span>
+          </div>
+          <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 17, letterSpacing: "-0.02em", color: TXT }}>{dashboardCopy.brandLabel}</span>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 10, borderRadius: 12, border: `1px solid ${BD}`, background: BG_CARD_2, padding: "10px 12px" }}>
+          <Avatar user={user} size={30} fontSize={12} />
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, color: TXT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</p>
+            <p style={{ margin: "2px 0 0", fontFamily: "Inter, sans-serif", fontSize: 10, color: TXT_FAINT }}>
+              {user.plan === "plus_beta" ? dashboardCopy.betaBadge : dashboardCopy.account.freePlanLabel}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {NAV_VISIBLE.map((section) => (
+          <NavLink
+            key={section.id}
+            icon={section.icon}
+            label={section.label}
+            active={active === section.id && !section.soon}
+            soon={section.soon}
+            onClick={section.soon ? undefined : () => handleSelectSection(section.id)}
+          />
+        ))}
+      </div>
+
+      <div style={{ margin: "12px 0 8px", padding: "0 13px" }}>
+        <div style={{ height: 1, background: BD_SOFT, marginBottom: 12 }} />
+        <p style={{ margin: 0, marginBottom: 8, fontFamily: "Inter, sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: TXT_FAINT }}>
+          {dashboardCopy.moreSectionsLabel}
+        </p>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {NAV_SOON.map((item) => (
+          <NavLink key={item.label} icon={item.icon} label={item.label} soon />
+        ))}
+      </div>
+
+      <div style={{ flex: 1 }} />
+
+      <div style={{ borderTop: `1px solid ${BD_SOFT}`, paddingTop: 10, marginTop: 12 }}>
+        <button
+          type="button"
+          onClick={() => {
+            setIsMobileNavOpen(false);
+            router.push("/");
+          }}
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            padding: "10px 13px",
+            borderRadius: 10,
+            border: "none",
+            background: "transparent",
+            color: TXT_DIM,
+            cursor: "pointer",
+          }}
+        >
+          <ArrowLeft size={14} />
+          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13 }}>Back to site</span>
+        </button>
+      </div>
+    </>
+  );
 
   return (
     <motion.div
@@ -879,79 +998,89 @@ export function AccountPageClient({
         overflow: "hidden",
       }}
     >
-      <aside
-        style={{
-          width: 232,
-          flexShrink: 0,
-          borderRight: `1px solid ${BD}`,
-          background: BG_CARD,
-          padding: "0 12px 16px",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div style={{ padding: "20px 6px 16px", marginBottom: 12, borderBottom: `1px solid ${BD_SOFT}` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-            <div style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 14px 30px rgba(220,94,94,0.28)" }}>
-              <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 16, color: "white", lineHeight: 1 }}>M</span>
-            </div>
-            <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 17, letterSpacing: "-0.02em", color: TXT }}>{dashboardCopy.brandLabel}</span>
-          </div>
+      {!isMobileViewport ? (
+        <aside
+          style={{
+            width: 232,
+            flexShrink: 0,
+            borderRight: `1px solid ${BD}`,
+            background: BG_CARD,
+            padding: "0 12px 16px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {navigationContent}
+        </aside>
+      ) : null}
 
-          <div style={{ display: "flex", alignItems: "center", gap: 10, borderRadius: 12, border: `1px solid ${BD}`, background: BG_CARD_2, padding: "10px 12px" }}>
-            <Avatar user={user} size={30} fontSize={12} />
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, color: TXT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</p>
-              <p style={{ margin: "2px 0 0", fontFamily: "Inter, sans-serif", fontSize: 10, color: TXT_FAINT }}>
-                {user.plan === "plus_beta" ? dashboardCopy.betaBadge : dashboardCopy.account.freePlanLabel}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {NAV_ACTIVE.map((section) => (
-            <NavLink key={section.id} icon={section.icon} label={section.label} active={active === section.id} onClick={() => setActive(section.id)} />
-          ))}
-        </div>
-
-        <div style={{ margin: "12px 0 8px", padding: "0 13px" }}>
-          <div style={{ height: 1, background: BD_SOFT, marginBottom: 12 }} />
-          <p style={{ margin: 0, marginBottom: 8, fontFamily: "Inter, sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: TXT_FAINT }}>
-            {dashboardCopy.moreSectionsLabel}
-          </p>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {NAV_SOON.map((item) => (
-            <NavLink key={item.label} icon={item.icon} label={item.label} soon />
-          ))}
-        </div>
-
-        <div style={{ flex: 1 }} />
-
-        <div style={{ borderTop: `1px solid ${BD_SOFT}`, paddingTop: 10, marginTop: 12 }}>
-          <button
-            type="button"
-            onClick={() => router.push("/")}
-            style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              padding: "10px 13px",
-              borderRadius: 10,
-              border: "none",
-              background: "transparent",
-              color: TXT_DIM,
-              cursor: "pointer",
-            }}
-          >
-            <ArrowLeft size={14} />
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13 }}>Back to site</span>
-          </button>
-        </div>
-      </aside>
+      <AnimatePresence>
+        {isMobileViewport && isMobileNavOpen ? (
+          <>
+            <motion.button
+              key="mobile-nav-backdrop"
+              type="button"
+              aria-label="Close navigation"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileNavOpen(false)}
+              style={{
+                position: "fixed",
+                inset: 0,
+                border: "none",
+                background: "rgba(2,4,8,0.7)",
+                zIndex: 30,
+                cursor: "pointer",
+              }}
+            />
+            <motion.aside
+              key="mobile-nav-panel"
+              initial={{ x: -24, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -24, opacity: 0 }}
+              transition={{ duration: 0.22 }}
+              style={{
+                position: "fixed",
+                top: 12,
+                left: 12,
+                bottom: 12,
+                width: "min(296px, calc(100vw - 24px))",
+                zIndex: 40,
+                borderRadius: 20,
+                border: `1px solid ${BD}`,
+                background: BG_CARD,
+                padding: "0 12px 16px",
+                display: "flex",
+                flexDirection: "column",
+                boxShadow: "0 28px 80px rgba(0,0,0,0.44)",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "flex-end", padding: "12px 4px 0" }}>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: 10,
+                    border: `1px solid ${BD}`,
+                    background: BG_CARD_2,
+                    color: TXT_DIM,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <X size={15} />
+                </button>
+              </div>
+              {navigationContent}
+            </motion.aside>
+          </>
+        ) : null}
+      </AnimatePresence>
 
       <main style={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
         <div
@@ -963,13 +1092,34 @@ export function AccountPageClient({
             alignItems: "center",
             gap: 16,
             height: 62,
-            padding: "0 32px",
+            padding: isMobileViewport ? "0 18px" : "0 32px",
             background: `${BG}ee`,
             backdropFilter: "blur(14px)",
             WebkitBackdropFilter: "blur(14px)",
             borderBottom: `1px solid ${BD}`,
           }}
         >
+          {isMobileViewport ? (
+            <button
+              type="button"
+              onClick={() => setIsMobileNavOpen(true)}
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 12,
+                border: `1px solid ${BD}`,
+                background: BG_CARD,
+                color: TXT_DIM,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+            >
+              <Menu size={16} />
+            </button>
+          ) : null}
           <div style={{ position: "absolute", left: 0, top: 12, bottom: 12, width: 3, borderRadius: "0 3px 3px 0", background: ACCENT }} />
           <div>
             <p style={{ margin: 0, fontFamily: "DM Serif Display, serif", fontSize: 18, letterSpacing: "-0.01em", color: TXT }}>{activeSection.label}</p>
@@ -984,10 +1134,9 @@ export function AccountPageClient({
           ) : null}
         </div>
 
-        <div style={{ padding: "28px 32px 48px" }}>
+        <div style={{ padding: isMobileViewport ? "22px 18px 36px" : "28px 32px 48px" }}>
           <AnimatePresence mode="wait">
             {active === "account" ? <AccountPanel key="account" user={user} emailConfirmed={emailConfirmed} onSignOut={handleSignOut} /> : null}
-            {active === "api" ? <ApiBetaPanel key="api" user={user} /> : null}
             {active === "security" ? <SecurityPanel key="security" provider={provider} onOpenDetails={() => router.push("/account/security")} /> : null}
             {active === "pricing" ? <PricingPanel key="pricing" user={user} /> : null}
             {active === "settings" ? <SettingsPanel key="settings" /> : null}
