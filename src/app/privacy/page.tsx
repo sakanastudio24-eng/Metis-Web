@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { frontFacingCopy } from "@/content/frontFacingCopy";
+import { createPublicMetadata } from "@/lib/seo";
+
+export const metadata = createPublicMetadata({
+  title: "Privacy policy",
+  description: "Read how Metis handles information provided through the website and auth flow.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   const copy = frontFacingCopy.legal.privacy;

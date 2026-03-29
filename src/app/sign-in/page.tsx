@@ -1,4 +1,10 @@
 import { AuthScreen } from "@/components/auth/AuthScreen";
+import { createPrivateMetadata } from "@/lib/seo";
+
+export const metadata = createPrivateMetadata({
+  title: "Sign in",
+  description: "Access your Metis account securely.",
+});
 
 type SignInPageProps = {
   searchParams?: Promise<{

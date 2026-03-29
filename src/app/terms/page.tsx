@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { frontFacingCopy } from "@/content/frontFacingCopy";
+import { createPublicMetadata } from "@/lib/seo";
+
+export const metadata = createPublicMetadata({
+  title: "Terms of use",
+  description: "Read the baseline terms for using Metis and the Metis website.",
+  path: "/terms",
+});
 
 export default function TermsPage() {
   const copy = frontFacingCopy.legal.terms;
