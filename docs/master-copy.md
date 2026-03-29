@@ -202,6 +202,8 @@ Password label: `Password`
 
 Security support line: `Protected access for metis.zward.studio`
 
+Boundary note: `Sign in on the website to manage your account and legal access, then use the extension for scans and reports.`
+
 Back label: `Back to the site`
 
 Temporary review label: `Local testing only`
@@ -210,33 +212,45 @@ Temporary review body: `Google is temporarily bypassed in local development so o
 
 Temporary review CTA: `Use temporary Google test account`
 
+### Start screen
+
+Header: `Start with Metis`
+
+Primary CTA: `Create account`
+
+Secondary CTA: `Log in`
+
 ### Sign in
 
 Eyebrow: `Sign in`
 
-Header: `Welcome back`
+Header: `Welcome back.`
 
 Body: `Sign in on the website to manage your account, security posture, and beta access before heading back to the extension.`
 
-Submit CTA: `Continue`
+Submit CTA: `Log in`
 
-Footer prompt: `Need an account?`
+Footer prompt: `No account yet?`
 
-Footer link: `Create account`
+Footer link: `Sign up free`
 
 ### Sign up
 
 Eyebrow: `Create account`
 
-Header: `Start with Metis`
+Header: `Create your account.`
 
 Body: `Create your free account on the website, accept the legal terms here, and move straight into your first guided setup.`
 
 Submit CTA: `Create account`
 
-Footer prompt: `Already have access?`
+Footer prompt: `Already have one?`
 
-Footer link: `Sign in`
+Footer link: `Log in`
+
+Field label: `Full name`
+
+Field label: `Email address`
 
 Legal acceptance label: `I agree to the`
 
@@ -260,15 +274,15 @@ Verification dynamic line: ``Verification sent to ${email}``
 
 Recovery eyebrow: `Recovery`
 
-Recovery header: `Reset your password`
+Recovery header: `Forgot your password?`
 
-Recovery body: `Enter your email and we will send a recovery link.`
+Recovery body: `No problem. Enter your email and we'll send a reset link — it expires in 15 minutes.`
 
-Recovery CTA: `Send recovery email`
+Recovery CTA: `Send reset link`
 
-Recovery success header: `Check your inbox`
+Recovery success header: `Check your inbox.`
 
-Recovery success body: ``We sent a recovery link to ${email}. Open it on this device to choose a new password.``
+Recovery success body: `We've sent a reset link to ${email}. Check your spam folder if it doesn't arrive within a minute.`
 
 Reset eyebrow: `New password`
 
@@ -307,6 +321,14 @@ Completion eyebrow: `Saved`
 Completion header: `You are all set`
 
 Completion body: `Welcome to Metis. Your first setup answers are saved and your account areas are ready to review next.`
+
+Completion badge: `All set`
+
+Inline label: `Next step`
+
+CTA: `Install extension. It's free.`
+
+CTA: `Open account settings`
 
 Temporary account label: `Temporary test account`
 
@@ -348,6 +370,10 @@ Section label: `Settings`
 
 Section support label: `More sections coming soon`
 
+Nav state: `Soon`
+
+Back link: `Back to site`
+
 ### Account section
 
 Header: `Account overview`
@@ -365,6 +391,8 @@ Label: `Connected access`
 Label: `Scan usage`
 
 ### API Beta section
+
+Nav state: `Visible in navigation as coming soon`
 
 Header: `API Beta`
 
@@ -387,6 +415,10 @@ CTA: `Join Plus Beta`
 CTA: `Docs coming soon`
 
 Security note: `Never paste beta keys into client-side code. Keep all tokens server-side.`
+
+Badge: `Beta gated`
+
+Support label: `Exact endpoint scope lands in docs.`
 
 ### Security section
 
