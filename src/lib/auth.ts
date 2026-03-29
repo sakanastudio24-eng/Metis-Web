@@ -1,3 +1,10 @@
+const ALLOWED_AUTH_REDIRECTS = new Set([
+  "/logged-in",
+  "/reset-password",
+  "/account",
+  "/account/security",
+]);
+
 function getAuthOrigin(origin?: string): string {
   if (origin) {
     return origin;
@@ -21,7 +28,7 @@ export function getAuthCallbackUrl(origin?: string, nextPath?: string): string {
 }
 
 export function isSafeAuthNextPath(nextPath: string | null | undefined): nextPath is string {
-  return Boolean(nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//"));
+  return Boolean(nextPath && ALLOWED_AUTH_REDIRECTS.has(nextPath));
 }
 
 export function getAuthErrorMessage(code: string | null): string | null {

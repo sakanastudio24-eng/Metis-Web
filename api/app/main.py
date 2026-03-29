@@ -1,8 +1,9 @@
 import json
+from json import JSONDecodeError
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from fastapi import Depends, FastAPI, Header, HTTPException, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Request as FastAPIRequest, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -19,10 +20,24 @@ env = get_env()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[str(env.frontend_url)],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=False,
+    allow_methods=["GET"],
+    allow_headers=["Authorization", "Content-Type"],
+    max_age=600,
 )
+
+
+@app.middleware("http")
+async def add_security_headers(request: FastAPIRequest, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    return response
 
 
 def serialize_env(config: ApiEnv) -> dict[str, object]:
@@ -40,9 +55,19 @@ def get_bearer_token(authorization: str | None = Header(default=None)) -> str:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing bearer token.",
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return authorization.removeprefix("Bearer ").strip()
+    token = authorization.removeprefix("Bearer ").strip()
+
+    if len(token) < 20:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="The auth token is not valid.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return token
 
 
 def fetch_authenticated_user(token: str, config: ApiEnv) -> dict[str, object]:
@@ -51,18 +76,25 @@ def fetch_authenticated_user(token: str, config: ApiEnv) -> dict[str, object]:
         headers={
             "Authorization": f"Bearer {token}",
             "apikey": config.supabase_service_role_key,
+            "Accept": "application/json",
         },
     )
 
     try:
-        with urlopen(request, timeout=10) as response:
+        with urlopen(request, timeout=5) as response:
             return json.loads(response.read().decode("utf-8"))
     except HTTPError as exc:
         if exc.code == 401:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="The auth token is not valid.",
+                headers={"WWW-Authenticate": "Bearer"},
             ) from exc
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Supabase auth verification failed upstream.",
+        ) from exc
+    except JSONDecodeError as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="Supabase auth verification failed upstream.",
