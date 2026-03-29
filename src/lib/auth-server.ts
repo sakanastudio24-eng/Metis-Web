@@ -64,7 +64,7 @@ export async function requireAuthenticatedUser(): Promise<AuthenticatedUserDetai
 export async function redirectIfAuthenticated() {
   const user = await getAuthenticatedUserOrNull();
 
-  if (user) {
+  if (user && !user.isTemporary) {
     redirect("/logged-in");
   }
 }
