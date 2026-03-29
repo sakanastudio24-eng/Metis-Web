@@ -56,6 +56,8 @@ https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback
 
 `.env.example` documents the contract. The Next app validates the public values it needs. The FastAPI layer validates the server contract. Missing values should fail clearly instead of half working.
 
+OAuth provider QA is intentionally the last pass. The redirect contract is already fixed, so the final test round should only need the real provider secrets and dashboard setup.
+
 ## What happens in the shared 1Password step
 
 1. Create the secrets in 1Password.

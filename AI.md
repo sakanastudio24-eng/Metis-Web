@@ -39,6 +39,10 @@ Keep account settings on the website and extension settings in the extension.
 
 Keep Plus Beta wording honest and website managed.
 
+Keep API Beta visible only as a coming-soon roadmap stub until the beta backend surface is ready.
+
+Use a hamburger section menu on mobile dashboard views instead of forcing the desktop rail onto a narrow screen.
+
 ## Important files
 
 `src/app`
@@ -64,6 +68,10 @@ Keep Plus Beta wording honest and website managed.
 `README.md`
 
 `docs/repo-alignment.md`
+
+`docs/production-roadmap.md`
+
+`docs/design-system-logic.md`
 
 `docs/implementation-flow.md`
 

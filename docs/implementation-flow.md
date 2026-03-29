@@ -12,7 +12,7 @@ Once the public story is solid, the next step is access. The website owns sign i
 
 ## 3. Keep product boundaries honest
 
-Metis Web handles the account layer. The extension handles the runtime product. FastAPI stays narrow and only covers backend proof points that need a protected API shape. Supabase stays the source of truth for identity.
+Metis Web handles the account layer. The extension handles the runtime product. FastAPI stays narrow and only covers backend proof points that need a protected API shape. Supabase stays the source of truth for identity. API Beta can be mentioned on the website before launch, but it should stay framed as staged until the live backend surface is actually ready.
 
 ## 4. Keep the notes readable
 
