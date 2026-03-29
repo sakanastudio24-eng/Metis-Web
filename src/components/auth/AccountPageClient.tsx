@@ -8,13 +8,13 @@ import {
   ArrowRight,
   CheckCircle2,
   Crown,
-  LayoutDashboard,
   LogOut,
   Mail,
-  PanelsTopLeft,
   Settings2,
   ShieldCheck,
-  Sparkles,
+  SlidersHorizontal,
+  UserRound,
+  WalletCards,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ type AccountPageClientProps = {
   isTemporary?: boolean;
 };
 
-type DashboardSection = "overview" | "security" | "app-settings";
+type DashboardSection = "account" | "security" | "pricing" | "settings";
 
 function getProviderLabel(provider: string) {
   switch (provider) {
@@ -55,8 +55,7 @@ export function AccountPageClient({
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
   const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
-  const [activeSection, setActiveSection] = useState<DashboardSection>("overview");
-  const [extensionMenuOpen, setExtensionMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<DashboardSection>("account");
   const [isPending, startTransition] = useTransition();
 
   function handleSignOut() {
@@ -77,6 +76,13 @@ export function AccountPageClient({
   let sectionMeta: { eyebrow: string; title: string; body: string };
 
   switch (activeSection) {
+    case "account":
+      sectionMeta = {
+        eyebrow: copy.accountSectionTitle,
+        title: "Account",
+        body: copy.accountSectionBody,
+      };
+      break;
     case "security":
       sectionMeta = {
         eyebrow: "Security",
@@ -84,43 +90,42 @@ export function AccountPageClient({
         body: "Review how access works today and move into the deeper protection flow when you need it.",
       };
       break;
-    case "app-settings":
+    case "pricing":
       sectionMeta = {
-        eyebrow: "App settings",
-        title: "Extension menu",
-        body: "This section opens the extension menu surface so you can review the lightweight browser controls.",
+        eyebrow: copy.pricingSectionTitle,
+        title: "Plan & Pricing",
+        body: copy.pricingSectionBody,
+      };
+      break;
+    case "settings":
+      sectionMeta = {
+        eyebrow: copy.settingsSectionTitle,
+        title: "Metis settings",
+        body: copy.settingsSectionBody,
       };
       break;
     default:
       sectionMeta = {
-        eyebrow: "Overview",
-        title: "Metis dashboard",
-        body: "A calmer account view with the essentials on the left and quick settings on the right.",
+        eyebrow: copy.accountSectionTitle,
+        title: "Account",
+        body: copy.accountSectionBody,
       };
       break;
   }
 
   const sections = [
-    { id: "overview" as const, label: "Overview", icon: LayoutDashboard },
+    { id: "account" as const, label: "Account", icon: UserRound },
     { id: "security" as const, label: "Security", icon: ShieldCheck },
-    { id: "app-settings" as const, label: "App settings", icon: Settings2 },
+    { id: "pricing" as const, label: "Plan & Pricing", icon: WalletCards },
+    { id: "settings" as const, label: "Metis settings", icon: Settings2 },
   ];
 
   const currentProviderLabel = getProviderLabel(provider);
 
   return (
-    <main className="auth-shell flex items-center justify-center">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
-        <div className="space-y-3 px-1 text-white">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            {copy.eyebrow}
-          </span>
-          <h1 className="font-serif text-5xl leading-none tracking-[-0.05em] sm:text-6xl">{sectionMeta.title}</h1>
-          <p className="max-w-3xl text-sm leading-7 text-white/70">{sectionMeta.body}</p>
-        </div>
-
-        <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)_320px]">
+    <main className="auth-shell flex items-start justify-center px-4 py-10 sm:px-6">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4">
+        <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)_300px]">
           <aside className="rounded-[28px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-4 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur">
             <p className="px-3 pb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Sections</p>
             <div className="space-y-2">
@@ -131,12 +136,7 @@ export function AccountPageClient({
                   <button
                     key={id}
                     type="button"
-                    onClick={() => {
-                      setActiveSection(id);
-                      if (id === "app-settings") {
-                        setExtensionMenuOpen(true);
-                      }
-                    }}
+                    onClick={() => setActiveSection(id)}
                     className={`flex w-full items-center gap-3 rounded-[18px] px-3 py-3 text-left transition ${
                       selected
                         ? "border border-[#dc5e5e]/35 bg-[#dc5e5e]/12 text-white"
@@ -152,7 +152,7 @@ export function AccountPageClient({
           </aside>
 
           <section className="rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur sm:p-8">
-            <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+            <div className="mb-8 flex flex-wrap items-start justify-between gap-4 border-b border-white/8 pb-6">
               <div className="space-y-2">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{sectionMeta.eyebrow}</p>
                 <h2 className="text-3xl font-semibold tracking-[-0.04em] text-white">{sectionMeta.title}</h2>
@@ -169,7 +169,7 @@ export function AccountPageClient({
               </span>
             </div>
 
-            {activeSection === "overview" ? (
+            {activeSection === "account" ? (
               <div className="grid gap-4">
                 <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
                   <div className="flex items-start gap-4">
@@ -178,7 +178,7 @@ export function AccountPageClient({
                     </div>
                     <div className="space-y-2">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.providerLabel}</p>
-                      <h3 className="text-xl font-semibold text-white">{currentProviderLabel}</h3>
+                      <h3 className="text-xl font-semibold text-white">{email ?? "No email available"}</h3>
                       <p className="text-sm text-white/60">{email ?? "No email available"}</p>
                       {isTemporary ? <p className="text-sm text-[#ffb8b8]">{copy.temporaryAccountBody}</p> : null}
                     </div>
@@ -192,11 +192,15 @@ export function AccountPageClient({
                         <Crown className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.planLabel}</p>
-                        <p className="text-sm font-medium text-white">{copy.planValue}</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Verification</p>
+                        <p className="text-sm font-medium text-white">{emailConfirmed ? copy.verifiedLabel : copy.unverifiedLabel}</p>
                       </div>
                     </div>
-                    <p className="mt-3 text-sm leading-6 text-white/62">{copy.planBody}</p>
+                    <p className="mt-3 text-sm leading-6 text-white/62">
+                      {emailConfirmed
+                        ? "This account is verified and ready to move through the Metis web flow."
+                        : "Finish verification to unlock the full production auth path."}
+                    </p>
                     {isTemporary ? <p className="mt-3 text-sm font-medium text-[#ffb8b8]">{copy.temporaryAccountLabel}</p> : null}
                   </div>
 
@@ -211,7 +215,7 @@ export function AccountPageClient({
                       </div>
                     </div>
                     <p className="mt-3 text-sm leading-6 text-white/62">
-                      Sign in, onboarding, account, and the extension menu preview are all available from this dashboard.
+                      Sign in, onboarding, account, and the core dashboard sections are all available from this view.
                     </p>
                   </div>
                 </div>
@@ -220,6 +224,20 @@ export function AccountPageClient({
 
             {activeSection === "security" ? (
               <div className="grid gap-4">
+                <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/6 text-white/75">
+                      <ShieldCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.providerLabel}</p>
+                      <p className="text-sm font-medium text-white">{currentProviderLabel}</p>
+                      <p className="mt-1 text-sm text-white/55">{email ?? "No email available"}</p>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-sm leading-6 text-white/62">{copy.providerBody}</p>
+                </div>
+
                 <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/6 text-white/75">
@@ -241,25 +259,51 @@ export function AccountPageClient({
               </div>
             ) : null}
 
-            {activeSection === "app-settings" ? (
+            {activeSection === "pricing" ? (
               <div className="grid gap-4">
                 <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#dc5e5e]/12 text-[#ffb8b8]">
-                      <PanelsTopLeft className="h-4 w-4" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/6 text-white/75">
+                      <WalletCards className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.extensionTitle}</p>
-                      <p className="text-sm font-medium text-white">{copy.extensionBody}</p>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.planLabel}</p>
+                      <p className="text-sm font-medium text-white">{copy.planValue}</p>
                     </div>
                   </div>
-                  <Button
+                  <p className="mt-4 text-sm leading-6 text-white/62">{copy.planBody}</p>
+                  <div className="mt-5 rounded-[18px] border border-[#dc5e5e]/20 bg-[#dc5e5e]/8 px-4 py-4">
+                    <p className="text-sm font-medium text-white">Pricing stays visible</p>
+                    <p className="mt-2 text-sm leading-6 text-white/62">
+                      Free remains the starting point. Upgrade and billing controls can land here later without changing the dashboard structure.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            {activeSection === "settings" ? (
+              <div className="grid gap-4">
+                <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/6 text-white/75">
+                      <SlidersHorizontal className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.appSettingsTitle}</p>
+                      <p className="text-sm font-medium text-white">{copy.appSettingsBody}</p>
+                    </div>
+                  </div>
+                  <button
                     type="button"
-                    className="mt-5 rounded-full bg-[#dc5e5e] px-5 text-white hover:bg-[#c24a4a]"
-                    onClick={() => setExtensionMenuOpen(true)}
+                    className="mt-5 flex w-full items-center justify-between rounded-[18px] border border-dashed border-white/15 bg-white/[0.04] px-4 py-4 text-left transition hover:border-white/20 hover:bg-white/[0.06]"
                   >
-                    Open extension menu
-                  </Button>
+                    <div>
+                      <p className="text-sm font-medium text-white">{copy.appSettingsLinkLabel}</p>
+                      <p className="mt-1 text-sm text-white/50">{copy.appSettingsLinkState}</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-[#ffb8b8]" />
+                  </button>
                 </div>
               </div>
             ) : null}
@@ -271,26 +315,29 @@ export function AccountPageClient({
               <div className="mt-4 space-y-3">
                 <button
                   type="button"
-                  onClick={() => setExtensionMenuOpen(true)}
+                  onClick={() => setActiveSection(activeSection === "account" ? "security" : "account")}
                   className="flex w-full items-center justify-between rounded-[18px] border border-white/10 bg-white/5 px-4 py-3 text-left text-white/80 transition hover:border-white/20 hover:bg-white/8 hover:text-white"
                 >
                   <div>
-                    <p className="text-sm font-medium">App settings</p>
-                    <p className="mt-1 text-sm text-white/50">Open the extension menu preview</p>
+                    <p className="text-sm font-medium">{activeSection === "account" ? "Open security" : "Back to account"}</p>
+                    <p className="mt-1 text-sm text-white/50">
+                      {activeSection === "account" ? "Review provider access and protection settings" : "Return to the main account section"}
+                    </p>
                   </div>
                   <ArrowRight className="h-4 w-4 text-[#ffb8b8]" />
                 </button>
 
-                <Link
-                  href="/account/security"
-                  className="flex items-center justify-between rounded-[18px] border border-white/10 bg-white/5 px-4 py-3 text-white/80 transition hover:border-white/20 hover:bg-white/8 hover:text-white"
+                <button
+                  type="button"
+                  onClick={() => setActiveSection("settings")}
+                  className="flex w-full items-center justify-between rounded-[18px] border border-white/10 bg-white/5 px-4 py-3 text-left text-white/80 transition hover:border-white/20 hover:bg-white/8 hover:text-white"
                 >
                   <div>
-                    <p className="text-sm font-medium">Security settings</p>
-                    <p className="mt-1 text-sm text-white/50">Open the dedicated security screen</p>
+                    <p className="text-sm font-medium">Metis settings</p>
+                    <p className="mt-1 text-sm text-white/50">Open the extension settings placeholder section</p>
                   </div>
                   <ArrowRight className="h-4 w-4 text-[#ffb8b8]" />
-                </Link>
+                </button>
               </div>
             </div>
 
@@ -313,37 +360,6 @@ export function AccountPageClient({
                 <LogOut className="h-4 w-4" />
                 {copy.signOutLabel}
               </Button>
-            </div>
-
-            <div className="rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Extension menu</p>
-              {extensionMenuOpen ? (
-                <div className="mt-4 rounded-[22px] border border-[#dc5e5e]/20 bg-[#dc5e5e]/8 p-4">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#dc5e5e] text-white shadow-[0_14px_30px_rgba(220,94,94,0.32)]">
-                      <PanelsTopLeft className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-white">Metis browser menu</p>
-                      <p className="text-xs text-white/50">Quick controls preview</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    {["Open side panel", "Run scan", "Theme", "Notifications"].map((item) => (
-                      <div key={item} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/6 px-3 py-3">
-                        <span className="text-sm text-white/80">{item}</span>
-                        <span className="rounded-full border border-white/10 bg-white/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/45">
-                          Menu
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-4 rounded-[22px] border border-dashed border-white/15 bg-white/4 px-4 py-5 text-sm leading-6 text-white/55">
-                  Open App settings to reveal the extension menu panel.
-                </div>
-              )}
             </div>
           </aside>
         </div>
