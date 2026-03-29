@@ -11,7 +11,7 @@ export const authCopy = {
   signUp: {
     eyebrow: "Create account",
     title: "Start with Metis",
-    intro: "Create your free account and move straight into your first guided setup.",
+    intro: "Create your free account on the website, accept the legal terms here, and move straight into your first guided setup.",
     submitLabel: "Create account",
     alternateLabel: "Sign in",
     alternateHref: "/sign-in",
@@ -51,6 +51,8 @@ export const authCopy = {
     resetPasswordSuccess: "Password updated. You can sign in now.",
     resetPasswordExpired: "That reset link is expired or incomplete.",
     legalBlurb: "Protected access for metis.zward.studio",
+    legalAcceptanceLabel: "I agree to the Terms of Use and Privacy Policy.",
+    legalAcceptanceError: "You need to accept the Terms of Use and Privacy Policy before creating an account.",
     temporaryAccessLabel: "Local testing only",
     temporaryAccessBody: "Google is temporarily bypassed in local development so onboarding and account flows can be reviewed quickly.",
     temporaryAccessAction: "Use temporary Google test account",

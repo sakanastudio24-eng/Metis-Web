@@ -390,6 +390,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
   const [signupName, setSignupName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [acceptedLegal, setAcceptedLegal] = useState(false);
   const [signupErrors, setSignupErrors] = useState<Record<string, string>>({});
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -486,6 +487,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
     if (!signupName.trim()) nextErrors.name = "Name is required";
     if (!signupEmail.includes("@")) nextErrors.email = "Enter a valid email address";
     if (signupPassword.length < 8) nextErrors.password = "Password must be at least 8 characters";
+    if (!acceptedLegal) nextErrors.legal = sharedCopy.legalAcceptanceError;
     setSignupErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
@@ -510,6 +512,18 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
       await supabase.auth.signOut();
       router.replace(`/verify?email=${encodeURIComponent(signupEmail)}`);
     });
+  }
+
+  function handleSignUpProvider(provider: "google" | "github") {
+    if (!acceptedLegal) {
+      setSignupErrors((current) => ({
+        ...current,
+        legal: sharedCopy.legalAcceptanceError,
+      }));
+      return;
+    }
+
+    handleProvider(provider);
   }
 
   function handleEmailLogin(event: React.FormEvent<HTMLFormElement>) {
@@ -908,6 +922,43 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 error={signupErrors.password}
                 autoComplete="new-password"
               />
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 10,
+                  padding: "12px 14px",
+                  borderRadius: 12,
+                  background: "rgba(255,255,255,0.04)",
+                  border: `1px solid ${signupErrors.legal ? "#ef4444" : BORDER}`,
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={acceptedLegal}
+                  onChange={(event) => {
+                    setAcceptedLegal(event.target.checked);
+                    setSignupErrors((current) => ({ ...current, legal: "" }));
+                  }}
+                  style={{ marginTop: 2 }}
+                />
+                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM, lineHeight: 1.6 }}>
+                  I agree to the{" "}
+                  <Link href={siteLinks.termsUrl} style={{ color: "#dc8d72", textDecoration: "none", fontWeight: 600 }}>
+                    Terms of Use
+                  </Link>{" "}
+                  and{" "}
+                  <Link href={siteLinks.privacyUrl} style={{ color: "#dc8d72", textDecoration: "none", fontWeight: 600 }}>
+                    Privacy Policy
+                  </Link>
+                  .
+                </span>
+              </label>
+              {signupErrors.legal ? (
+                <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: "#ef4444" }}>
+                  {signupErrors.legal}
+                </p>
+              ) : null}
               {signupPassword ? (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
                   <div style={{ display: "flex", gap: 4, marginTop: -4 }}>
@@ -940,7 +991,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                   type="button"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => handleProvider(provider as "google" | "github")}
+                  onClick={() => handleSignUpProvider(provider as "google" | "github")}
                   style={{
                     flex: 1,
                     display: "flex",
@@ -962,8 +1013,8 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 </motion.button>
               ))}
             </div>
-            {isTemporaryGoogleEnabled ? (
-              <motion.button
+              {isTemporaryGoogleEnabled ? (
+                <motion.button
                 type="button"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -987,11 +1038,11 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                   cursor: isPending || oauthLoading !== null ? "not-allowed" : "pointer",
                   opacity: isPending || oauthLoading !== null ? 0.65 : 1,
                 }}
-              >
-                <CheckCheck size={14} />
-                Testing token
-              </motion.button>
-            ) : null}
+                >
+                  <CheckCheck size={14} />
+                  Testing token
+                </motion.button>
+              ) : null}
             <BackButton onClick={() => setView("auth")} />
           </motion.div>
         ) : null}
