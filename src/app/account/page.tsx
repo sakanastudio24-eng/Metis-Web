@@ -1,13 +1,16 @@
+import { unstable_noStore as noStore } from "next/cache";
+
 import { AccountPageClient } from "@/components/auth/AccountPageClient";
 import { requireAuthenticatedUser } from "@/lib/auth-server";
 import { createPrivateMetadata } from "@/lib/seo";
 
 export const metadata = createPrivateMetadata({
-  title: "Account",
-  description: "Manage your Metis profile, plan, and account access.",
+  title: "Metis Dash",
+  description: "Review your Metis Dash account, API beta status, security posture, and plan access.",
 });
 
 export default async function AccountPage() {
+  noStore();
   const user = await requireAuthenticatedUser();
 
   return (

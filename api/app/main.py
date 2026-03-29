@@ -54,7 +54,7 @@ def get_bearer_token(authorization: str | None = Header(default=None)) -> str:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing bearer token.",
+            detail="Unauthorized.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -63,7 +63,7 @@ def get_bearer_token(authorization: str | None = Header(default=None)) -> str:
     if len(token) < 20:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="The auth token is not valid.",
+            detail="Unauthorized.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -87,7 +87,7 @@ def fetch_authenticated_user(token: str, config: ApiEnv) -> dict[str, object]:
         if exc.code == 401:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="The auth token is not valid.",
+                detail="Unauthorized.",
                 headers={"WWW-Authenticate": "Bearer"},
             ) from exc
         raise HTTPException(

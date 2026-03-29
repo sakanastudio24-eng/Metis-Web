@@ -1,3 +1,5 @@
+import { unstable_noStore as noStore } from "next/cache";
+
 import { AuthOverlay } from "@/components/auth/AuthOverlay";
 import { LoggedInState } from "@/components/auth/LoggedInState";
 import { LandingPage } from "@/components/landing/LandingPage";
@@ -10,6 +12,7 @@ export const metadata = createPrivateMetadata({
 });
 
 export default async function LoggedInPage() {
+  noStore();
   const user = await requireAuthenticatedUser();
 
   return (
