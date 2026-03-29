@@ -51,7 +51,17 @@ Important implementation boundaries:
 - email sign up should require verification before the user is treated as fully signed in
 - callback handling should stay centralized at `/auth/callback`
 - auth copy should stay separate from landing-page marketing copy
+- `/logged-in` is onboarding/setup only
+- `/account` is the canonical account destination
+- account settings are managed on the website, while extension settings stay in the extension
+- Plus is website-managed beta access only
+- sign-up should require privacy and terms acceptance
 - the temporary Google test account is local-only and should be removed after review
+
+## Current repo status
+
+- the website side of the alignment pass is currently resolved
+- keep website copy as the source of truth for Plus Beta posture, account ownership, and legal promises
 
 ## Key files
 
@@ -90,6 +100,7 @@ Important implementation boundaries:
 ## Docs worth reading first
 
 - `README.md`
+- `docs/repo-alignment.md`
 - `docs/implementation-flow.md`
 - `docs/runtime-secrets-flow.md`
 
@@ -116,6 +127,7 @@ Important implementation boundaries:
 - only add or update docs when they add real value to future work
 - if a doc feels redundant or should be merged into another doc, ask the user before removing or merging it
 - when a flow changes, update the matching flow doc instead of creating overlapping notes
+- when website and extension ownership boundaries change, update `docs/repo-alignment.md`
 - never inspect `.env` files directly
 - if environment shape matters, ask the user or update `.env.example`
 - when reporting work back, include the git segmentation for the feature that was added or changed
