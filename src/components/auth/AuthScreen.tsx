@@ -16,6 +16,7 @@ import {
   Lock,
   Mail,
   Send,
+  Sparkles,
   User,
   X,
 } from "lucide-react";
@@ -584,6 +585,21 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
+            <div
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 14,
+                background: "rgba(220,94,94,0.14)",
+                border: "1px solid rgba(220,94,94,0.28)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 24,
+              }}
+            >
+              <Sparkles size={20} style={{ color: RED }} />
+            </div>
             <h2
               style={{
                 fontFamily: "DM Serif Display, serif",
@@ -595,7 +611,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 marginBottom: 8,
               }}
             >
-              Start with Metis.
+              Start with Metis
             </h2>
             <p
               style={{
@@ -607,8 +623,61 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 marginBottom: 28,
               }}
             >
-              Create your free account — no credit card needed.
+              Create your free account and move into your first setup without leaving the page.
             </p>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 10,
+                padding: "14px 16px",
+                marginBottom: 18,
+                borderRadius: 16,
+                background: "rgba(255,255,255,0.04)",
+                border: `1px solid ${BORDER}`,
+              }}
+            >
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 10,
+                  background: "rgba(220,94,94,0.12)",
+                  border: "1px solid rgba(220,94,94,0.24)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <ArrowRight size={14} style={{ color: RED }} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                <span
+                  style={{
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: TEXT_DIM,
+                  }}
+                >
+                  {sharedCopy.stageTitle}
+                </span>
+                <p
+                  style={{
+                    margin: 0,
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: 13,
+                    lineHeight: 1.6,
+                    color: TEXT_DIM,
+                  }}
+                >
+                  {sharedCopy.stageBody}
+                </p>
+              </div>
+            </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
               {isTemporaryGoogleEnabled ? (
                 <motion.button
