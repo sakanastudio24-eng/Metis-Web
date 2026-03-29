@@ -3,6 +3,12 @@ import { MailCheck } from "lucide-react";
 import AuthCard07 from "@/components/block/AuthCard/authcard-07/authcard";
 import { authCopy } from "@/content/authCopy";
 import { siteLinks } from "@/content/frontFacingCopy";
+import { createPrivateMetadata } from "@/lib/seo";
+
+export const metadata = createPrivateMetadata({
+  title: "Verify email",
+  description: "Finish email verification before signing in to Metis.",
+});
 
 type VerifyPageProps = {
   searchParams?: Promise<{
@@ -24,16 +30,15 @@ export default async function VerifyPage({ searchParams }: VerifyPageProps) {
         primaryAction={{ href: "/sign-in", label: copy.primaryLabel }}
         secondaryAction={{ href: "/sign-up", label: copy.secondaryLabel }}
       >
-        <div className="space-y-3 rounded-[28px] bg-slate-50 p-4 text-sm leading-6 text-slate-600">
+        <div className="space-y-3 rounded-[28px] border border-white/10 bg-white/5 p-4 text-sm leading-6 text-white/65">
           {params?.email ? (
-            <p className="rounded-2xl bg-white px-4 py-3 font-medium text-slate-700">{copy.emailLabel(params.email)}</p>
+            <p className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 font-medium text-white/85">
+              {copy.emailLabel(params.email)}
+            </p>
           ) : null}
           <p>{copy.body}</p>
-          <p>
-            Allowed callback URLs stay on <span className="font-medium text-slate-900">/auth/callback</span>, and this
-            verification step keeps the front-facing flow clear.
-          </p>
-          <a href={siteLinks.waitlistUrl} className="inline-flex font-semibold text-[#c44a4a] hover:text-[#a93b3b]">
+          <p>Your verification link returns to the secure Metis access flow once it is complete.</p>
+          <a href={siteLinks.waitlistUrl} className="inline-flex font-semibold text-[#ffb8b8] hover:text-white">
             Continue exploring Metis
           </a>
         </div>

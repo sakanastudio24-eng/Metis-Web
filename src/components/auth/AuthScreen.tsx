@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 
-import { ArrowRight, Github, LoaderCircle, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Github, LoaderCircle, Mail, ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 
@@ -163,21 +163,36 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
 
   return (
     <main className="auth-shell flex items-center justify-center">
-      <div className="mx-auto flex w-full max-w-md flex-col gap-5">
-        <div className="space-y-3 px-1 text-metis-cream">
+      <div className="mx-auto grid w-full max-w-5xl gap-8 lg:grid-cols-[0.9fr_1fr] lg:items-center">
+        <section className="space-y-6 px-1 text-metis-cream">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
             <ShieldCheck className="h-3.5 w-3.5" />
             {authCopy.shared.brandLabel}
           </span>
-          <div className="space-y-1">
-            <h2 className="font-serif text-4xl leading-none tracking-[-0.05em] text-white sm:text-5xl">
-              Smaller access
-            </h2>
-            <p className="max-w-sm text-sm leading-6 text-white/72">
-              Real provider auth, real email access, and a short setup step once you are in.
-            </p>
+          <div className="space-y-3">
+            <h1 className="max-w-lg font-serif text-5xl leading-none tracking-[-0.05em] text-white sm:text-6xl">
+              {sharedCopy.stageTitle}
+            </h1>
+            <p className="max-w-md text-sm leading-7 text-white/70">{sharedCopy.stageBody}</p>
           </div>
-        </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Protected access</p>
+              <p className="mt-2 text-sm leading-6 text-white/72">
+                Google, GitHub, magic link, and email access in one compact entry flow.
+              </p>
+            </div>
+            <div className="rounded-[24px] border border-[#dc5e5e]/20 bg-[#dc5e5e]/10 p-4">
+              <div className="flex items-center gap-2 text-[#ffb8b8]">
+                <Zap className="h-4 w-4" />
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em]">V3 Auth</p>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-white/72">
+                Designed to move quickly from secure sign-on into onboarding, account, and security surfaces.
+              </p>
+            </div>
+          </div>
+        </section>
 
         <AuthCard03
           badge={copy.eyebrow}
@@ -188,11 +203,30 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
           footerLabel={copy.alternateLabel}
         >
           <div className="space-y-5">
+            <div className="inline-flex rounded-full border border-white/10 bg-white/5 p-1">
+              <Link
+                href="/sign-in"
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  mode === "sign-in" ? "bg-[#dc5e5e] text-white" : "text-white/65 hover:text-white"
+                }`}
+              >
+                {sharedCopy.signInTab}
+              </Link>
+              <Link
+                href="/sign-up"
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  mode === "sign-up" ? "bg-[#dc5e5e] text-white" : "text-white/65 hover:text-white"
+                }`}
+              >
+                {sharedCopy.signUpTab}
+              </Link>
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <Button
                 type="button"
                 variant="outline"
-                className="h-12 rounded-2xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                className="h-12 rounded-2xl border-white/12 bg-white/5 text-white hover:bg-white/8"
                 disabled={isPending}
                 onClick={() => handleOAuth("google")}
               >
@@ -202,7 +236,7 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
               <Button
                 type="button"
                 variant="outline"
-                className="h-12 rounded-2xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                className="h-12 rounded-2xl border-white/12 bg-white/5 text-white hover:bg-white/8"
                 disabled={isPending}
                 onClick={() => handleOAuth("github")}
               >
@@ -214,7 +248,7 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
             <Button
               type="button"
               variant="outline"
-              className="h-12 w-full rounded-2xl border-dashed border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100"
+              className="h-12 w-full rounded-2xl border-dashed border-white/14 bg-white/4 text-white/88 hover:bg-white/7"
               disabled={isPending}
               onClick={handleMagicLink}
             >
@@ -222,19 +256,19 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
               {sharedCopy.magicLinkLabel}
             </Button>
 
-            <div className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-              <span className="h-px flex-1 bg-slate-200" />
+            <div className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/30">
+              <span className="h-px flex-1 bg-white/10" />
               {sharedCopy.emailDividerLabel}
-              <span className="h-px flex-1 bg-slate-200" />
+              <span className="h-px flex-1 bg-white/10" />
             </div>
 
             <form className="space-y-4" onSubmit={handleEmailAuth}>
               <div className="space-y-2">
-                <label htmlFor={`${mode}-email`} className="text-sm font-medium text-slate-700">
+                <label htmlFor={`${mode}-email`} className="text-sm font-medium text-white/70">
                   {sharedCopy.emailLabel}
                 </label>
                 <div className="relative">
-                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
                   <Input
                     id={`${mode}-email`}
                     type="email"
@@ -242,7 +276,7 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
                     onChange={(event) => setEmail(event.target.value)}
                     placeholder={sharedCopy.emailPlaceholder}
                     autoComplete="email"
-                    className="h-12 rounded-2xl border-slate-200 bg-white pl-11 text-slate-900 placeholder:text-slate-400"
+                    className="h-12 rounded-2xl border-white/12 bg-white/5 pl-11 text-white placeholder:text-white/25"
                     required
                   />
                 </div>
@@ -250,11 +284,11 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label htmlFor={`${mode}-password`} className="text-sm font-medium text-slate-700">
+                  <label htmlFor={`${mode}-password`} className="text-sm font-medium text-white/70">
                     {sharedCopy.passwordLabel}
                   </label>
                   {mode === "sign-in" ? (
-                    <Link href="/forgot-password" className="text-sm font-medium text-[#c44a4a] transition hover:text-[#a93b3b]">
+                    <Link href="/forgot-password" className="text-sm font-medium text-[#ffb8b8] transition hover:text-white">
                       {sharedCopy.forgotPasswordLabel}
                     </Link>
                   ) : null}
@@ -266,7 +300,7 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder={mode === "sign-in" ? sharedCopy.passwordPlaceholder : sharedCopy.createPasswordPlaceholder}
                   autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
-                  className="h-12 rounded-2xl border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+                  className="h-12 rounded-2xl border-white/12 bg-white/5 text-white placeholder:text-white/25"
                   minLength={8}
                   required
                 />
@@ -276,8 +310,8 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
                 <div
                   className={`rounded-2xl border px-4 py-3 text-sm leading-6 ${
                     feedback.tone === "success"
-                      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                      : "border-red-200 bg-red-50 text-red-700"
+                      ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200"
+                      : "border-red-400/30 bg-red-400/10 text-red-200"
                   }`}
                 >
                   {feedback.text}
@@ -294,9 +328,9 @@ export function AuthScreen({ mode, initialError = null, initialMessage = null }:
               </Button>
             </form>
 
-            <div className="flex items-center justify-between text-sm text-slate-500">
-              <span>Secure access via Supabase</span>
-              <Link href="/" className="font-medium text-slate-700 transition hover:text-slate-950">
+            <div className="flex items-center justify-between text-sm text-white/42">
+              <span>{sharedCopy.legalBlurb}</span>
+              <Link href="/" className="font-medium text-white/65 transition hover:text-white">
                 {sharedCopy.backToSite}
               </Link>
             </div>

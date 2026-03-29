@@ -1,17 +1,14 @@
-import { redirect } from "next/navigation";
-
 import { LoggedInState } from "@/components/auth/LoggedInState";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { requireAuthenticatedUser } from "@/lib/auth-server";
+import { createPrivateMetadata } from "@/lib/seo";
+
+export const metadata = createPrivateMetadata({
+  title: "Setup",
+  description: "Complete your first secure Metis setup steps.",
+});
 
 export default async function LoggedInPage() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await requireAuthenticatedUser();
 
-  if (!user) {
-    redirect("/sign-in");
-  }
-
-  return <LoggedInState email={user.email ?? null} />;
+  return <LoggedInState email={user.email} />;
 }

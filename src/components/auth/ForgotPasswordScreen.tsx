@@ -81,24 +81,24 @@ export function ForgotPasswordScreen() {
       >
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label htmlFor="forgot-password-email" className="text-sm font-medium text-slate-700">
+            <label htmlFor="forgot-password-email" className="text-sm font-medium text-white/70">
               {sharedCopy.emailLabel}
             </label>
             <div className="relative">
-              <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
               <Input
                 id="forgot-password-email"
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder={sharedCopy.emailPlaceholder}
-                className="h-12 rounded-2xl border-slate-200 bg-white pl-11 text-slate-900 placeholder:text-slate-400"
+                className="h-12 rounded-2xl border-white/12 bg-white/5 pl-11 text-white placeholder:text-white/25"
               />
             </div>
           </div>
 
           {message ? (
-            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">
+            <div className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm leading-6 text-red-200">
               {message}
             </div>
           ) : null}

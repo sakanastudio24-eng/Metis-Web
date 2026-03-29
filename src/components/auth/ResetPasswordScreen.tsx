@@ -136,7 +136,7 @@ export function ResetPasswordScreen() {
       >
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label htmlFor="reset-password" className="text-sm font-medium text-slate-700">
+            <label htmlFor="reset-password" className="text-sm font-medium text-white/70">
               {sharedCopy.passwordLabel}
             </label>
             <Input
@@ -145,12 +145,12 @@ export function ResetPasswordScreen() {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder={sharedCopy.createPasswordPlaceholder}
-              className="h-12 rounded-2xl border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+              className="h-12 rounded-2xl border-white/12 bg-white/5 text-white placeholder:text-white/25"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="reset-password-confirm" className="text-sm font-medium text-slate-700">
+            <label htmlFor="reset-password-confirm" className="text-sm font-medium text-white/70">
               {copy.passwordConfirmLabel}
             </label>
             <Input
@@ -159,12 +159,12 @@ export function ResetPasswordScreen() {
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
               placeholder={copy.passwordConfirmPlaceholder}
-              className="h-12 rounded-2xl border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+              className="h-12 rounded-2xl border-white/12 bg-white/5 text-white placeholder:text-white/25"
             />
           </div>
 
           {message ? (
-            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">
+            <div className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm leading-6 text-red-200">
               {message}
             </div>
           ) : null}

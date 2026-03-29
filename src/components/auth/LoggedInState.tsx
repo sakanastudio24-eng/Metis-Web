@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 
-import { ArrowRight, CheckCircle2, LoaderCircle, LogOut } from "lucide-react";
+import { ArrowRight, CheckCircle2, LoaderCircle, LogOut, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { authCopy } from "@/content/authCopy";
@@ -52,30 +52,31 @@ export function LoggedInState({ email }: LoggedInStateProps) {
   }
 
   return (
-    <main className="min-h-screen bg-metis-onboarding px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-        <div className="space-y-2 px-1 text-white">
-          <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
+    <main className="auth-shell flex items-center justify-center">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-5">
+        <div className="space-y-3 px-1 text-white">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
+            <ShieldCheck className="h-3.5 w-3.5" />
             {copy.eyebrow}
           </span>
-          <h1 className="font-serif text-4xl leading-none tracking-[-0.05em] sm:text-5xl">{copy.title}</h1>
-          <p className="max-w-2xl text-sm leading-6 text-white/78">{copy.panelBody}</p>
+          <h1 className="max-w-2xl font-serif text-5xl leading-none tracking-[-0.05em] sm:text-6xl">{copy.title}</h1>
+          <p className="max-w-2xl text-sm leading-7 text-white/72">{copy.panelBody}</p>
         </div>
 
-        <div className="rounded-[32px] bg-white p-6 shadow-[0_28px_90px_rgba(7,11,18,0.24)] sm:p-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div className="rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur sm:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5">
             <div className="space-y-2">
-              <span className="inline-flex rounded-full bg-[#fce8e8] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#b93f3f]">
+              <span className="inline-flex rounded-full border border-[#dc5e5e]/30 bg-[#dc5e5e]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#ffb8b8]">
                 {email ? copy.readyForEmail(email) : copy.readyForYou}
               </span>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-white/55">
                 {answeredCount} of {copy.questions.length} sections answered
               </p>
             </div>
             <Button
               type="button"
               variant="outline"
-              className="rounded-full border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="rounded-full border-white/12 bg-white/5 text-white hover:bg-white/8"
               onClick={handleSignOut}
               disabled={isPending}
             >
@@ -87,25 +88,25 @@ export function LoggedInState({ email }: LoggedInStateProps) {
           {isComplete ? (
             <div className="space-y-6 py-6">
               <div className="space-y-4 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#fce8e8] text-[#c44848]">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-[#dc5e5e]/25 bg-[#dc5e5e]/12 text-[#ffb8b8]">
                   <CheckCircle2 className="h-8 w-8" />
                 </div>
                 <div className="space-y-2">
-                  <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">
                     {copy.completionEyebrow}
                   </span>
-                  <h2 className="font-serif text-3xl leading-none tracking-[-0.04em] text-slate-950">
+                  <h2 className="font-serif text-3xl leading-none tracking-[-0.04em] text-[#fff5f0]">
                     {copy.completionTitle}
                   </h2>
-                  <p className="mx-auto max-w-xl text-sm leading-6 text-slate-600">{copy.completionBody}</p>
+                  <p className="mx-auto max-w-xl text-sm leading-6 text-white/62">{copy.completionBody}</p>
                 </div>
               </div>
 
-              <div className="grid gap-3 rounded-[28px] bg-slate-50 p-4">
+              <div className="grid gap-3 rounded-[28px] bg-white/5 p-4">
                 {copy.questions.map((question) => (
-                  <div key={question.id} className="rounded-2xl bg-white px-4 py-3">
-                    <p className="text-sm font-semibold text-slate-900">{question.title}</p>
-                    <p className="mt-1 text-sm text-slate-500">
+                  <div key={question.id} className="rounded-2xl border border-white/10 bg-white/4 px-4 py-3">
+                    <p className="text-sm font-semibold text-white">{question.title}</p>
+                    <p className="mt-1 text-sm text-white/55">
                       {answers[question.id].length > 0 ? answers[question.id].join(", ") : "Skipped"}
                     </p>
                   </div>
@@ -114,10 +115,10 @@ export function LoggedInState({ email }: LoggedInStateProps) {
 
               <div className="flex flex-wrap justify-center gap-3">
                 <Link
-                  href="/"
-                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-slate-200 px-5 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                  href="/account"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/12 px-5 text-sm font-semibold text-white/78 transition hover:border-white/20 hover:bg-white/5 hover:text-white"
                 >
-                  Back to the site
+                  Open account
                 </Link>
                 <Button
                   type="button"
@@ -132,10 +133,10 @@ export function LoggedInState({ email }: LoggedInStateProps) {
           ) : (
             <div className="space-y-5 py-6">
               {copy.questions.map((question) => (
-                <article key={question.id} className="rounded-[28px] border border-slate-200 p-5">
+                <article key={question.id} className="rounded-[28px] border border-white/10 bg-white/4 p-5">
                   <div className="space-y-1">
-                    <h2 className="text-lg font-semibold text-slate-950">{question.title}</h2>
-                    <p className="text-sm text-slate-500">{question.helper}</p>
+                    <h2 className="text-lg font-semibold text-white">{question.title}</h2>
+                    <p className="text-sm text-white/50">{question.helper}</p>
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -150,7 +151,7 @@ export function LoggedInState({ email }: LoggedInStateProps) {
                           className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                             selected
                               ? "border-[#dc5e5e] bg-[#dc5e5e] text-white"
-                              : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+                              : "border-white/12 bg-white/5 text-white/80 hover:border-white/20 hover:bg-white/8 hover:text-white"
                           }`}
                         >
                           {option}
@@ -161,11 +162,11 @@ export function LoggedInState({ email }: LoggedInStateProps) {
                 </article>
               ))}
 
-              <div className="flex flex-wrap justify-between gap-3 border-t border-slate-200 pt-4">
+              <div className="flex flex-wrap justify-between gap-3 border-t border-white/10 pt-4">
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-full border-slate-200 text-slate-700 hover:bg-slate-50"
+                  className="rounded-full border-white/12 bg-white/5 text-white hover:bg-white/8"
                   onClick={() => router.replace("/")}
                 >
                   {copy.skipLabel}
