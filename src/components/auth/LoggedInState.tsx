@@ -166,9 +166,9 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2 }}>
-              {done ? "All set ✓" : "Quick setup"}
-            </span>
+            {done ? (
+              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2 }}>All set ✓</span>
+            ) : null}
             <button
               type="button"
               onClick={closeOverlay}
@@ -293,10 +293,8 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                 transition={{ delay: 0.8 }}
                 style={{ display: "flex", flexDirection: "column", gap: 10 }}
               >
-                <motion.a
-                  href={siteLinks.waitlistUrl}
-                  whileHover={{ scale: 1.03, boxShadow: "0 8px 32px rgba(255,255,255,0.16)" }}
-                  whileTap={{ scale: 0.97 }}
+                <motion.button
+                  type="button"
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -310,15 +308,15 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                     fontSize: 15,
                     fontWeight: 700,
                     color: RED,
-                    cursor: "pointer",
+                    cursor: "default",
                     boxShadow: "0 4px 20px rgba(255,255,255,0.1)",
-                    textDecoration: "none",
+                    pointerEvents: "none",
                   }}
                 >
                   <Chrome size={15} style={{ color: RED }} />
                   Install extension — it&apos;s free
                   <ArrowRight size={14} />
-                </motion.a>
+                </motion.button>
                 <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
                   <Link
                     href="/account"
