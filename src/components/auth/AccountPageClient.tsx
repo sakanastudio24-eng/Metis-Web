@@ -61,10 +61,10 @@ type NavId = (typeof authCopy.dashboard.sectionOrder)[number]["id"];
 type DashboardSection = (typeof authCopy.dashboard.sectionOrder)[number];
 type PricingPlan = (typeof authCopy.dashboard.pricing.plans)[number];
 
-const ACCENT = "#6366f1";
-const ACCENT_DIM = "rgba(99,102,241,0.16)";
-const ACCENT_BD = "rgba(99,102,241,0.34)";
-const ACCENT_GLOW = "rgba(99,102,241,0.1)";
+const ACCENT = "#dc5e5e";
+const ACCENT_DIM = "rgba(220,94,94,0.16)";
+const ACCENT_BD = "rgba(220,94,94,0.34)";
+const ACCENT_GLOW = "rgba(220,94,94,0.1)";
 const DANGER = "#dc5e5e";
 const DANGER_DIM = "rgba(220,94,94,0.12)";
 const DANGER_BD = "rgba(220,94,94,0.25)";
@@ -280,7 +280,7 @@ function Avatar({ user, size = 42, fontSize = 16 }: { user: DashboardUser; size?
         width: size,
         height: size,
         borderRadius: "50%",
-        background: `linear-gradient(135deg, ${ACCENT}, #4f46e5)`,
+        background: `linear-gradient(135deg, ${ACCENT}, rgba(220,94,94,0.78))`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -547,7 +547,7 @@ function ApiBetaPanel({ user }: { user: DashboardUser }) {
               fontSize: 13,
               fontWeight: 700,
               cursor: "pointer",
-              boxShadow: "0 12px 28px rgba(79,70,229,0.28)",
+              boxShadow: "0 12px 28px rgba(220,94,94,0.28)",
             }}
           >
             {copy.primaryCta}
@@ -892,7 +892,7 @@ export function AccountPageClient({
       >
         <div style={{ padding: "20px 6px 16px", marginBottom: 12, borderBottom: `1px solid ${BD_SOFT}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-            <div style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 14px 30px rgba(79,70,229,0.28)" }}>
+            <div style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 14px 30px rgba(220,94,94,0.28)" }}>
               <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 16, color: "white", lineHeight: 1 }}>M</span>
             </div>
             <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 17, letterSpacing: "-0.02em", color: TXT }}>{dashboardCopy.brandLabel}</span>
