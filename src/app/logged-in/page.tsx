@@ -1,4 +1,6 @@
+import { AuthOverlay } from "@/components/auth/AuthOverlay";
 import { LoggedInState } from "@/components/auth/LoggedInState";
+import { LandingPage } from "@/components/landing/LandingPage";
 import { requireAuthenticatedUser } from "@/lib/auth-server";
 import { createPrivateMetadata } from "@/lib/seo";
 
@@ -10,5 +12,12 @@ export const metadata = createPrivateMetadata({
 export default async function LoggedInPage() {
   const user = await requireAuthenticatedUser();
 
-  return <LoggedInState email={user.email} isTemporary={user.isTemporary} />;
+  return (
+    <>
+      <LandingPage />
+      <AuthOverlay>
+        <LoggedInState email={user.email} isTemporary={user.isTemporary} />
+      </AuthOverlay>
+    </>
+  );
 }

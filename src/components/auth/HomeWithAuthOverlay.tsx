@@ -3,13 +3,13 @@ import { AuthScreen } from "@/components/auth/AuthScreen";
 import { LandingPage } from "@/components/landing/LandingPage";
 
 type HomeWithAuthOverlayProps = {
-  mode: "sign-in" | "sign-up";
+  initialView: "auth" | "signup" | "login";
   initialError?: string | null;
   initialMessage?: string | null;
 };
 
 export function HomeWithAuthOverlay({
-  mode,
+  initialView,
   initialError = null,
   initialMessage = null,
 }: HomeWithAuthOverlayProps) {
@@ -17,7 +17,7 @@ export function HomeWithAuthOverlay({
     <>
       <LandingPage />
       <AuthOverlay>
-        <AuthScreen mode={mode} initialError={initialError} initialMessage={initialMessage} />
+        <AuthScreen initialView={initialView} initialError={initialError} initialMessage={initialMessage} />
       </AuthOverlay>
     </>
   );
