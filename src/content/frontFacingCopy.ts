@@ -10,7 +10,7 @@ export type MockIssue = {
 export const siteLinks = {
   wardStudioUrl: "https://zward.studio",
   repoUrl: "https://github.com/sakanastudio24-eng/Metis-Web",
-  waitlistUrl: "/sign-in",
+  waitlistUrl: "/sign-up",
   privacyUrl: "/privacy",
   termsUrl: "/terms",
 } as const;
@@ -149,12 +149,12 @@ export const frontFacingCopy = {
     tag: "The result",
     heading: ["Start free", "Fix in minutes"],
     body:
-      "Install Metis, open a page, and get a clear read on where cost pressure starts. The website handles the story. The extension handles the scan.",
+      "Create access on the website, manage your account there, then use the extension for the actual scan and report workflow.",
     checklist: [
       "Score any running page in under 2 seconds",
       "See exactly what's costing you, per session",
       "Get ranked code fixes with savings estimates",
-      "Free to start, with room for Plus Beta access later",
+      "Keep account settings on the website and extension settings in the extension",
     ],
     resultCaption: "Minimal Risk",
     primaryCta: "Get early access",
@@ -164,7 +164,7 @@ export const frontFacingCopy = {
     badge: "Beta Access",
     heading: ["Get early access.", "Free, always."],
     body:
-      "Join the list and be first to hear when Metis opens up deeper auth flows, Plus Beta access, and polished release builds.",
+      "Create a free account on the website, complete setup there, and manage Plus Beta access from your account when beta enrollment opens.",
     emailPlaceholder: "you@company.com",
     submitLabel: "Join beta",
     successMessage: "You're on the list. We'll be in touch.",
@@ -182,18 +182,18 @@ export const frontFacingCopy = {
       eyebrow: "Protected access",
       title: "Sign in to Metis",
       intro:
-        "This screen is ready for the real auth pass. For now, it shows the shape of the product entry flow without pretending the credentials layer is finished.",
+        "Sign in on the website to manage your account, security, and beta access. The extension stays focused on scans and reports.",
     },
     signUp: {
       eyebrow: "Early access",
       title: "Create your Metis account",
       intro:
-        "This is the first stop for the future Google and email/password signup flow. The page is intentionally honest: the account system is planned, not switched on yet.",
+        "Create access on the website, accept the legal terms here, and move straight into the onboarding flow before opening the extension.",
     },
     stack: [
-      { title: "Planned providers", body: "Google OAuth and email/password" },
-      { title: "Secret delivery", body: "1Password runtime injection with strict env validation" },
-      { title: "Backend pairing", body: "Next.js session layer with FastAPI-protected product routes" },
+      { title: "Auth today", body: "Google, GitHub, magic link, and email/password all start on the website." },
+      { title: "Account settings", body: "Billing, beta access, and security settings are managed on the website account surfaces." },
+      { title: "Extension role", body: "The browser extension stays focused on scanning, reporting, and extension-local controls." },
     ],
     backToSite: "Back to the site",
     needAccount: "Need an account?",
@@ -204,18 +204,18 @@ export const frontFacingCopy = {
       eyebrow: "Privacy",
       title: "Privacy policy",
       paragraphs: [
-        "Metis respects the difference between explaining a product and quietly collecting data. This website does not ask visitors for account details unless they choose to use the sign in or sign up flow, and it does not present itself as a live analytics dashboard.",
-        "If you contact Metis, join a waitlist, or create access through the auth flow, the information you provide may be used to respond to you, manage access, and improve the service. Metis is not intended to sell personal information or use hidden tracking as a product strategy.",
-        "As the authenticated product expands, this policy should be updated to describe what product data is stored, how long it is retained, who can access it, and how deletion requests are handled.",
+        "Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls. If you create an account or use the website auth flow, the information you provide can be used to authenticate you, secure your account, and operate the service.",
+        "The browser extension remains local-first for scan behavior in this phase. Website account data and extension scan data are not described as fully synced unless a future feature explicitly says so.",
+        "Metis does not position hidden tracking or resale of personal information as part of the product strategy. Privacy updates should stay explicit as account, beta, and extension-connected features expand.",
       ],
     },
     terms: {
       eyebrow: "Terms",
       title: "Terms of use",
       paragraphs: [
-        "Metis is provided as a developing product and website. The material on this site is intended to explain the service clearly, but access, features, and availability may change as the product evolves.",
-        "You agree not to misuse the site, interfere with access, attempt to bypass security controls, or use the service in a way that harms the product, its operators, or other users. If authenticated features are enabled, account access remains your responsibility.",
-        "Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability. The source code in this repository is available under the MIT license included at the repo root.",
+        "Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, security controls, and availability may change as the product evolves.",
+        "You agree not to misuse the website, interfere with auth or account security, attempt to bypass beta access controls, or use the service in a way that harms the product, its operators, or other users. You remain responsible for activity under your account.",
+        "Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability or exact financial outcomes. The extension remains a diagnostic tool, and any future website-to-extension account bridge should not be assumed complete until explicitly released.",
       ],
     },
     backLink: "Back to Metis",
