@@ -82,7 +82,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
   }, [isTemporary]);
 
   function closeOverlay() {
-    router.replace("/");
+    router.replace("/account");
   }
 
   function handleNext() {
@@ -278,8 +278,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
               >
                 <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_DIM, margin: 0, lineHeight: 1.55 }}>
                   <span style={{ color: TEXT, fontWeight: 600 }}>Next step: </span>
-                  Pin the Metis extension, open any web app, and click the tab — your first cost score appears in under 2
-                  seconds.
+                  Open your website account to review beta access and security, then use the extension for scans and extension-only settings.
                 </p>
               </motion.div>
               {isTemporary ? (
@@ -336,7 +335,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                       textDecoration: "none",
                     }}
                   >
-                    Go to my dashboard <ArrowRight size={14} />
+                    Open account settings <ArrowRight size={14} />
                   </Link>
                 </motion.div>
               </motion.div>
@@ -465,6 +464,22 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
               >
                 {isLastQuestion ? "Finish setup" : "Next"} <ArrowRight size={14} />
               </motion.button>
+              <button
+                type="button"
+                onClick={() => router.replace("/account")}
+                style={{
+                  marginTop: 12,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: 12,
+                  color: TEXT_DIM_2,
+                  padding: 0,
+                }}
+              >
+                Skip for now
+              </button>
             </motion.div>
           )}
         </AnimatePresence>

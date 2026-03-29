@@ -420,7 +420,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
       const { data } = await supabase.auth.getUser();
 
       if (!cancelled && data.user) {
-        router.replace("/logged-in");
+        router.replace("/account");
       }
     })();
 
@@ -849,7 +849,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
               </div>
             ) : null}
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_DIM_2, marginTop: 20, lineHeight: 1.5 }}>
-              By continuing you agree to Metis&apos;s Terms of Service and Privacy Policy.
+              Sign in on the website to manage your account and legal access, then use the extension for scans and reports.
             </p>
           </motion.div>
         ) : null}
@@ -1040,7 +1040,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 }}
                 >
                   <CheckCheck size={14} />
-                  Testing token
+                  Dev-only test login
                 </motion.button>
               ) : null}
             <BackButton onClick={() => setView("auth")} />

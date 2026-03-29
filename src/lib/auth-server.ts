@@ -65,6 +65,6 @@ export async function redirectIfAuthenticated() {
   const user = await getAuthenticatedUserOrNull();
 
   if (user && !user.isTemporary) {
-    redirect("/logged-in");
+    redirect("/account");
   }
 }
