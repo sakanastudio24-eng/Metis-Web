@@ -9,7 +9,7 @@ Metis Web is the website and auth shell for the Metis product.
 Current surface split:
 
 - public website: product story, problem framing, fixes, solution, legal pages
-- auth routes: V3 sign up and sign in as centered overlays over the homepage, plus Google OAuth, GitHub OAuth, and magic link
+- auth routes: V4-aligned sign up and sign in as centered overlays over the homepage, plus Google OAuth, GitHub OAuth, and magic link
 - recovery routes: verify email, forgot password, and reset password
 - callback route: shared auth completion at `/auth/callback`
 - signed-in routes: onboarding, account, and security surfaces
@@ -83,6 +83,7 @@ Important implementation boundaries:
 - `src/lib/env.ts`
 - `api/app/main.py`
 - `api/app/config.py`
+- `Metis Design Figma (V4).zip`
 
 ## Docs worth reading first
 
@@ -103,6 +104,8 @@ Important implementation boundaries:
 - frontend changes should stay humanized, intentional, and readable, not generic scaffold output
 - keep auth work separate from unrelated landing-page or mobile-layout changes
 - keep front-facing auth copy in `src/content/authCopy.ts`
+- use `Metis Design Figma (V4).zip` as the active local design source for auth, onboarding, account, security, and related docs
+- treat `Metis Figma Design (V.3).zip` as historical reference only unless the user explicitly asks to revive it
 
 ## Agent operating rules
 
