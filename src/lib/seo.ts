@@ -3,8 +3,7 @@ import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site";
 
 const DEFAULT_TITLE = "Metis | Frontend cost intelligence for the modern web";
-const DEFAULT_DESCRIPTION =
-  "Metis helps teams surface frontend cost risk, understand real session spend, and move from guesswork to ranked fixes.";
+const DEFAULT_DESCRIPTION = siteConfig.description;
 
 type PublicMetadataOptions = {
   title: string;
@@ -27,6 +26,7 @@ export function createPublicMetadata({
   return {
     title,
     description,
+    keywords: siteConfig.keywords,
     alternates: {
       canonical: path,
     },
@@ -36,15 +36,23 @@ export function createPublicMetadata({
       title,
       description,
       siteName: siteConfig.name,
+      locale: "en_US",
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
     },
+    category: "technology",
     robots: {
       index: true,
       follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   };
 }
@@ -78,12 +86,18 @@ export const defaultSiteMetadata: Metadata = {
   },
   description: DEFAULT_DESCRIPTION,
   applicationName: "Metis",
+  keywords: siteConfig.keywords,
+  authors: [{ name: "zward.studio", url: siteConfig.wardStudioUrl }],
+  creator: "zward.studio",
+  publisher: "zward.studio",
+  category: "technology",
   openGraph: {
     type: "website",
     url: siteConfig.url,
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
     siteName: siteConfig.name,
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
@@ -96,5 +110,11 @@ export const defaultSiteMetadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
