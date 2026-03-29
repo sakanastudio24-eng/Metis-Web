@@ -16,7 +16,6 @@ import {
   Lock,
   Mail,
   Send,
-  Sparkles,
   User,
   X,
 } from "lucide-react";
@@ -585,21 +584,6 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 14,
-                background: "rgba(220,94,94,0.13)",
-                border: "1px solid rgba(220,94,94,0.27)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 24,
-              }}
-            >
-              <Sparkles size={20} style={{ color: RED }} />
-            </div>
             <h2
               style={{
                 fontFamily: "DM Serif Display, serif",
@@ -626,6 +610,34 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
               Create your free account — no credit card needed.
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+              {isTemporaryGoogleEnabled ? (
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleTemporaryTestingAccess}
+                  disabled={isPending || oauthLoading !== null}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    padding: "12px 16px",
+                    borderRadius: 12,
+                    background: "rgba(220,94,94,0.08)",
+                    border: "1px dashed rgba(220,94,94,0.38)",
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#ffb8b8",
+                    cursor: isPending || oauthLoading !== null ? "not-allowed" : "pointer",
+                    opacity: isPending || oauthLoading !== null ? 0.65 : 1,
+                  }}
+                >
+                  <CheckCheck size={14} />
+                  Testing login
+                </motion.button>
+              ) : null}
               <motion.button
                 type="button"
                 whileHover={{ scale: 1.02 }}
