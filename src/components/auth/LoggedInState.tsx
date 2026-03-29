@@ -1,14 +1,13 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowRight, Check, CheckCircle2, Chrome, ChevronRight, Sparkles, X } from "lucide-react";
+import { ArrowRight, Check, CheckCircle2, Chrome, Sparkles, X } from "lucide-react";
 
 import { siteLinks } from "@/content/frontFacingCopy";
-import { clearTemporaryAuthSession } from "@/lib/temp-auth-client";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
 
@@ -68,12 +67,10 @@ const READY_ITEMS = [
 
 export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps) {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
   const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
-  const [isPending, startTransition] = useTransition();
 
   const currentQuestion = QUESTIONS[currentIndex];
   const hasSelection = Boolean(answers[currentQuestion.id]);
@@ -86,18 +83,6 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
 
   function closeOverlay() {
     router.replace("/");
-  }
-
-  function handleSignOut() {
-    startTransition(async () => {
-      if (isTemporary) {
-        await clearTemporaryAuthSession();
-      } else {
-        await supabase.auth.signOut();
-      }
-
-      router.replace("/sign-in");
-    });
   }
 
   function handleNext() {
@@ -135,10 +120,10 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
       <div
         style={{
           position: "absolute",
-          top: -70,
-          right: -70,
-          width: 200,
-          height: 200,
+          top: -80,
+          right: -60,
+          width: 220,
+          height: 220,
           borderRadius: "50%",
           background: "radial-gradient(circle,rgba(220,94,94,0.1) 0%,transparent 70%)",
           pointerEvents: "none",
@@ -233,14 +218,29 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
               <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_DIM, lineHeight: 1.6, margin: 0, marginBottom: 28 }}>
                 Welcome to Metis {providerLabel}. Here&apos;s what&apos;s ready for you.
               </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 10,
+                  marginBottom: 24,
+                }}
+              >
                 {READY_ITEMS.map(({ label, icon: Icon }, index) => (
                   <motion.div
                     key={label}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.12 + index * 0.09, duration: 0.3 }}
-                    style={{ display: "flex", alignItems: "center", gap: 10 }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      padding: "12px 14px",
+                      borderRadius: 14,
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      background: "rgba(255,255,255,0.04)",
+                    }}
                   >
                     <motion.div
                       initial={{ scale: 0 }}
@@ -260,7 +260,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                     >
                       <Icon size={12} style={{ color: "#4ade80" }} />
                     </motion.div>
-                    <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_DIM }}>{label}</span>
+                    <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_DIM, lineHeight: 1.45 }}>{label}</span>
                   </motion.div>
                 ))}
               </div>
@@ -273,7 +273,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   borderRadius: 12,
                   background: "rgba(220,94,94,0.07)",
                   border: "1px solid rgba(220,94,94,0.18)",
-                  marginBottom: 24,
+                  marginBottom: 18,
                 }}
               >
                 <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_DIM, margin: 0, lineHeight: 1.55 }}>
@@ -283,7 +283,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                 </p>
               </motion.div>
               {isTemporary ? (
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "#ffb8b8", margin: "0 0 16px" }}>
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "#ffb8b8", margin: "0 0 16px", opacity: 0.8 }}>
                   Temporary local test account. Remove this flow before shipping.
                 </p>
               ) : null}
@@ -339,29 +339,6 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                     Go to my dashboard <ArrowRight size={14} />
                   </Link>
                 </motion.div>
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  disabled={isPending}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 5,
-                    padding: "10px 0",
-                    marginTop: 6,
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: 13,
-                    color: TEXT_DIM_2,
-                    width: "100%",
-                  }}
-                >
-                  <ChevronRight size={13} style={{ transform: "rotate(180deg)" }} />
-                  {isPending ? "Signing out" : "Sign out"}
-                </button>
               </motion.div>
             </motion.div>
           ) : (
@@ -372,12 +349,13 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 28 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 32 }}>
                 {QUESTIONS.map((question, index) => (
                   <motion.div
                     key={question.id}
                     animate={{
-                      width: index === currentIndex ? 22 : 7,
+                      width: index === currentIndex ? 28 : 8,
+                      height: index === currentIndex ? 6 : 5,
                       background:
                         index < currentIndex
                           ? "#22c55e"
@@ -386,7 +364,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                             : "rgba(255,255,255,0.2)",
                     }}
                     transition={{ duration: 0.3 }}
-                    style={{ height: 5, borderRadius: 999 }}
+                    style={{ borderRadius: 999 }}
                   />
                 ))}
                 <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2, marginLeft: 2 }}>
@@ -401,15 +379,25 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   lineHeight: 1.15,
                   letterSpacing: "-0.02em",
                   margin: 0,
-                  marginBottom: 6,
+                  marginBottom: 10,
                 }}
               >
                 {currentQuestion.prompt}
               </h2>
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_DIM, margin: 0, marginBottom: 24 }}>
+              <p
+                style={{
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: 13,
+                  color: TEXT_DIM,
+                  margin: 0,
+                  marginBottom: 28,
+                  maxWidth: 360,
+                  lineHeight: 1.6,
+                }}
+              >
                 {currentQuestion.subtext}
               </p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 28 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 34 }}>
                 {currentQuestion.options.map((option) => {
                   const selected = answers[currentQuestion.id] === option.id;
 
@@ -424,12 +412,13 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                         display: "flex",
                         alignItems: "center",
                         gap: 10,
-                        padding: "13px 14px",
-                        borderRadius: 12,
+                        padding: "15px 16px",
+                        borderRadius: 14,
                         cursor: "pointer",
                         background: selected ? "rgba(220,94,94,0.2)" : "rgba(255,255,255,0.05)",
                         border: `1px solid ${selected ? "rgba(220,94,94,0.55)" : BORDER}`,
                         textAlign: "left",
+                        boxShadow: selected ? "0 14px 28px rgba(220,94,94,0.12)" : "none",
                       }}
                     >
                       <span style={{ fontSize: 18 }}>{option.emoji}</span>
@@ -439,6 +428,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                           fontSize: 13,
                           fontWeight: selected ? 600 : 400,
                           color: selected ? TEXT : TEXT_DIM,
+                          lineHeight: 1.45,
                         }}
                       >
                         {option.label}
@@ -461,7 +451,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   display: "flex",
                   alignItems: "center",
                   gap: 8,
-                  padding: "14px 28px",
+                  padding: "14px 30px",
                   borderRadius: 999,
                   background: hasSelection ? RED : "rgba(255,255,255,0.08)",
                   border: "none",
