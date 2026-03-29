@@ -261,6 +261,7 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
   return (
     <section
       id="hero"
+      className="metis-hero"
       ref={sectionRef as React.RefObject<HTMLElement>}
       style={{
         minHeight: "100vh",
@@ -313,6 +314,7 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
 
       {/* Primary + secondary CTAs */}
       <motion.div
+        className="metis-hero-actions"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
@@ -351,6 +353,7 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
 
       {/* Stats row */}
       <motion.div
+        className="metis-hero-stats"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.05, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -830,6 +833,7 @@ function BigFooter() {
             <AnimatePresence mode="wait">
               {!submitted ? (
                 <motion.form
+                  className="metis-footer-form"
                   key="form"
                   onSubmit={handleSubmit}
                   exit={{ opacity: 0, y: -8 }}

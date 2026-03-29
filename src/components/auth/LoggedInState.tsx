@@ -63,6 +63,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
 
   return (
     <motion.div
+      className="metis-auth-overlay"
       initial={{ scale: 0.93, y: 24 }}
       animate={{ scale: 1, y: 0 }}
       exit={{ scale: 0.93, y: 16 }}
@@ -90,7 +91,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
           pointerEvents: "none",
         }}
       />
-      <div style={{ maxHeight: "calc(100svh - 48px)", overflowY: "auto", padding: "36px 40px 40px" }}>
+      <div className="metis-auth-overlay-body" style={{ maxHeight: "calc(100svh - 48px)", overflowY: "auto", padding: "36px 40px 40px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 32 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div

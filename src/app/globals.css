@@ -191,6 +191,10 @@
     padding-bottom: 92px;
   }
 
+  .metis-page section {
+    scroll-margin-top: 88px;
+  }
+
   .metis-nav-shell {
     top: auto !important;
     bottom: 12px;
@@ -232,6 +236,34 @@
   .metis-footer-grid {
     grid-template-columns: 1fr !important;
   }
+
+  .metis-hero {
+    min-height: auto !important;
+    padding-top: 112px !important;
+    padding-bottom: 56px !important;
+  }
+
+  .metis-hero-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .metis-hero-actions button {
+    width: min(100%, 320px);
+    justify-content: center;
+  }
+
+  .metis-footer-form {
+    max-width: none !important;
+    flex-direction: column;
+    gap: 10px !important;
+  }
+
+  .metis-footer-form > div,
+  .metis-footer-form > button {
+    width: 100%;
+    border-radius: 12px !important;
+  }
 }
 
 @media (max-width: 720px) {
@@ -244,5 +276,52 @@
   .auth-success-panel {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .metis-shell {
+    padding: 0 16px !important;
+  }
+
+  .metis-hero {
+    align-items: flex-start !important;
+    text-align: left !important;
+    padding: 112px 20px 52px !important;
+  }
+
+  .metis-hero-stats {
+    width: 100%;
+    justify-content: flex-start !important;
+    gap: 16px !important;
+  }
+
+  .metis-hero-stats > div {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 118px;
+    text-align: left !important;
+  }
+
+  .metis-nav-links {
+    overflow-x: auto;
+    justify-content: flex-start;
+    scrollbar-width: none;
+  }
+
+  .metis-nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .metis-nav-link {
+    flex: 0 0 auto;
+    min-width: max-content;
+  }
+
+  .metis-auth-overlay {
+    max-width: 100% !important;
+    border-radius: 20px !important;
+  }
+
+  .metis-auth-overlay-body {
+    max-height: calc(100svh - 32px) !important;
+    padding: 24px 20px 24px !important;
   }
 }
