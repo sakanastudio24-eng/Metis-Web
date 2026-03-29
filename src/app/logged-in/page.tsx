@@ -10,5 +10,5 @@ export const metadata = createPrivateMetadata({
 export default async function LoggedInPage() {
   const user = await requireAuthenticatedUser();
 
-  return <LoggedInState email={user.email} />;
+  return <LoggedInState email={user.email} isTemporary={user.isTemporary} />;
 }

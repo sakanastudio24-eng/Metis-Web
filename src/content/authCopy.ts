@@ -51,6 +51,10 @@ export const authCopy = {
     resetPasswordSuccess: "Password updated. You can sign in now.",
     resetPasswordExpired: "That reset link is expired or incomplete.",
     legalBlurb: "Protected access for metis.zward.studio",
+    temporaryAccessLabel: "Local testing only",
+    temporaryAccessBody: "Google is temporarily bypassed in local development so onboarding and account flows can be reviewed quickly.",
+    temporaryAccessAction: "Use temporary Google test account",
+    temporaryAccessError: "The temporary test account could not be started.",
   },
   verify: {
     eyebrow: "Verify email",
@@ -95,6 +99,8 @@ export const authCopy = {
     completionEyebrow: "Saved",
     completionTitle: "Your setup is captured",
     completionBody: "You are in. Your first setup answers are recorded and more account features are coming next.",
+    temporaryAccountLabel: "Temporary test account",
+    temporaryAccountBody: "This local-only session is for reviewing onboarding and account flows. Remove it before shipping.",
     questions: [
       {
         id: "role",
@@ -133,6 +139,8 @@ export const authCopy = {
     extensionBody: "The account layer stays lightweight while the browser product handles scans and reports.",
     extensionCta: "Back to the website",
     signOutLabel: "Sign out",
+    temporaryAccountLabel: "Temporary local account",
+    temporaryAccountBody: "This session exists only for local auth review and does not grant backend API access.",
   },
   security: {
     eyebrow: "Security",
@@ -163,5 +171,7 @@ export const authCopy = {
     providerSectionBody: "Your current provider determines whether password changes happen here or with the provider you used to sign in.",
     sessionNote: "Protected routes stay private and are excluded from public indexing.",
     backLabel: "Back to account",
+    temporaryAccountLabel: "Temporary security preview",
+    temporaryAccountBody: "This local-only account can review the security UI, but it does not represent a real provider-backed session.",
   },
 } as const;

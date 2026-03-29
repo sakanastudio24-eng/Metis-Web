@@ -19,6 +19,7 @@ import { authCopy } from "@/content/authCopy";
 type SecurityPageClientProps = {
   email: string | null;
   provider: string;
+  isTemporary?: boolean;
 };
 
 const PREVIEW_STEP_CONTENT = [
@@ -46,12 +47,14 @@ function getProviderLabel(provider: string) {
       return "Google";
     case "github":
       return "GitHub";
+    case "google-test":
+      return "Google test account";
     default:
       return "Email";
   }
 }
 
-export function SecurityPageClient({ email, provider }: SecurityPageClientProps) {
+export function SecurityPageClient({ email, provider, isTemporary = false }: SecurityPageClientProps) {
   const copy = authCopy.security;
   const [previewOpen, setPreviewOpen] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
@@ -68,6 +71,7 @@ export function SecurityPageClient({ email, provider }: SecurityPageClientProps)
           </span>
           <h1 className="font-serif text-5xl leading-none tracking-[-0.05em] sm:text-6xl">{copy.title}</h1>
           <p className="max-w-2xl text-sm leading-7 text-white/70">{copy.subtitle}</p>
+          {isTemporary ? <p className="max-w-2xl text-sm leading-7 text-[#ffb8b8]">{copy.temporaryAccountBody}</p> : null}
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_0.95fr]">

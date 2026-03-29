@@ -1,4 +1,5 @@
-import { AuthScreen } from "@/components/auth/AuthScreen";
+import { HomeWithAuthOverlay } from "@/components/auth/HomeWithAuthOverlay";
+import { redirectIfAuthenticated } from "@/lib/auth-server";
 import { createPrivateMetadata } from "@/lib/seo";
 
 export const metadata = createPrivateMetadata({
@@ -14,10 +15,11 @@ type SignInPageProps = {
 };
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
+  await redirectIfAuthenticated();
   const params = searchParams ? await searchParams : undefined;
 
   return (
-    <AuthScreen
+    <HomeWithAuthOverlay
       mode="sign-in"
       initialError={params?.error ?? null}
       initialMessage={params?.message ?? null}

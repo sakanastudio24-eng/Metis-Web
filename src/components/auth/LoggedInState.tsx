@@ -9,14 +9,16 @@ import { ArrowRight, CheckCircle2, LoaderCircle, LogOut, ShieldCheck } from "luc
 import { Button } from "@/components/ui/button";
 import { authCopy } from "@/content/authCopy";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { clearTemporaryAuthSession } from "@/lib/temp-auth-client";
 
 type LoggedInStateProps = {
   email: string | null;
+  isTemporary?: boolean;
 };
 
 type AnswersState = Record<string, string[]>;
 
-export function LoggedInState({ email }: LoggedInStateProps) {
+export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps) {
   const copy = authCopy.loggedIn;
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -46,7 +48,11 @@ export function LoggedInState({ email }: LoggedInStateProps) {
 
   function handleSignOut() {
     startTransition(async () => {
-      await supabase.auth.signOut();
+      if (isTemporary) {
+        await clearTemporaryAuthSession();
+      } else {
+        await supabase.auth.signOut();
+      }
       router.replace("/sign-in");
     });
   }
@@ -69,6 +75,9 @@ export function LoggedInState({ email }: LoggedInStateProps) {
               <span className="inline-flex rounded-full border border-[#dc5e5e]/30 bg-[#dc5e5e]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#ffb8b8]">
                 {email ? copy.readyForEmail(email) : copy.readyForYou}
               </span>
+              {isTemporary ? (
+                <p className="text-sm text-[#ffb8b8]">{copy.temporaryAccountBody}</p>
+              ) : null}
               <p className="text-sm text-white/55">
                 {answeredCount} of {copy.questions.length} sections answered
               </p>
@@ -95,6 +104,9 @@ export function LoggedInState({ email }: LoggedInStateProps) {
                   <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">
                     {copy.completionEyebrow}
                   </span>
+                  {isTemporary ? (
+                    <p className="text-sm font-medium text-[#ffb8b8]">{copy.temporaryAccountLabel}</p>
+                  ) : null}
                   <h2 className="font-serif text-3xl leading-none tracking-[-0.04em] text-[#fff5f0]">
                     {copy.completionTitle}
                   </h2>

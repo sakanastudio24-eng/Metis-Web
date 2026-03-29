@@ -17,11 +17,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { authCopy } from "@/content/authCopy";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { clearTemporaryAuthSession } from "@/lib/temp-auth-client";
 
 type AccountPageClientProps = {
   email: string | null;
   provider: string;
   emailConfirmed: boolean;
+  isTemporary?: boolean;
 };
 
 function getProviderLabel(provider: string) {
@@ -30,6 +32,8 @@ function getProviderLabel(provider: string) {
       return "Google";
     case "github":
       return "GitHub";
+    case "google-test":
+      return "Google test account";
     default:
       return "Email";
   }
@@ -39,6 +43,7 @@ export function AccountPageClient({
   email,
   provider,
   emailConfirmed,
+  isTemporary = false,
 }: AccountPageClientProps) {
   const copy = authCopy.account;
   const supabase = createSupabaseBrowserClient();
@@ -47,7 +52,11 @@ export function AccountPageClient({
 
   function handleSignOut() {
     startTransition(async () => {
-      await supabase.auth.signOut();
+      if (isTemporary) {
+        await clearTemporaryAuthSession();
+      } else {
+        await supabase.auth.signOut();
+      }
       router.replace("/sign-in");
     });
   }
@@ -75,6 +84,7 @@ export function AccountPageClient({
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/35">{copy.providerLabel}</p>
                   <h2 className="text-xl font-semibold text-white">{getProviderLabel(provider)}</h2>
                   <p className="text-sm text-white/60">{email ?? "No email available"}</p>
+                  {isTemporary ? <p className="text-sm text-[#ffb8b8]">{copy.temporaryAccountBody}</p> : null}
                 </div>
               </div>
 
@@ -101,6 +111,9 @@ export function AccountPageClient({
                   </div>
                 </div>
                 <p className="mt-3 text-sm leading-6 text-white/62">{copy.planBody}</p>
+                {isTemporary ? (
+                  <p className="mt-3 text-sm font-medium text-[#ffb8b8]">{copy.temporaryAccountLabel}</p>
+                ) : null}
               </div>
 
               <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">

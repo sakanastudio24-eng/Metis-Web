@@ -10,5 +10,5 @@ export const metadata = createPrivateMetadata({
 export default async function SecurityPage() {
   const user = await requireAuthenticatedUser();
 
-  return <SecurityPageClient email={user.email} provider={user.provider} />;
+  return <SecurityPageClient email={user.email} provider={user.provider} isTemporary={user.isTemporary} />;
 }
