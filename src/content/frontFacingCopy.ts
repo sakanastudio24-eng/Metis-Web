@@ -10,7 +10,7 @@ export type MockIssue = {
 export const siteLinks = {
   wardStudioUrl: "https://zward.studio",
   repoUrl: "https://github.com/sakanastudio24-eng/Metis-Web",
-  waitlistUrl: "/sign-up",
+  waitlistUrl: "/sign-in",
   privacyUrl: "/privacy",
   termsUrl: "/terms",
 } as const;

@@ -15,6 +15,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { authCopy } from "@/content/authCopy";
+import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
 
 type SecurityPageClientProps = {
   email: string | null;
@@ -56,10 +57,15 @@ function getProviderLabel(provider: string) {
 
 export function SecurityPageClient({ email, provider, isTemporary = false }: SecurityPageClientProps) {
   const copy = authCopy.security;
+  const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
 
   const step = useMemo(() => PREVIEW_STEP_CONTENT[stepIndex], [stepIndex]);
+
+  if (isResettingTemporarySession) {
+    return null;
+  }
 
   return (
     <main className="auth-shell flex items-center justify-center">

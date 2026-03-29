@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { authCopy } from "@/content/authCopy";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { clearTemporaryAuthSession } from "@/lib/temp-auth-client";
+import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
 
 type AccountPageClientProps = {
   email: string | null;
@@ -48,6 +49,7 @@ export function AccountPageClient({
   const copy = authCopy.account;
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
+  const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
   const [isPending, startTransition] = useTransition();
 
   function handleSignOut() {
@@ -59,6 +61,10 @@ export function AccountPageClient({
       }
       router.replace("/sign-in");
     });
+  }
+
+  if (isResettingTemporarySession) {
+    return null;
   }
 
   return (

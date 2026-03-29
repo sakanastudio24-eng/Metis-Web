@@ -451,18 +451,6 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
     setOauthLoading(provider);
 
     startTransition(async () => {
-      if (provider === "google" && isTemporaryGoogleEnabled) {
-        try {
-          await startTemporaryAuthSession();
-          router.replace("/logged-in");
-          return;
-        } catch {
-          showNotice(sharedCopy.temporaryAccessError, "error");
-          setOauthLoading(null);
-          return;
-        }
-      }
-
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
@@ -473,6 +461,19 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
       if (error) {
         showNotice(sharedCopy.providerLaunchError, "error");
         setOauthLoading(null);
+      }
+    });
+  }
+
+  function handleTemporaryTestingAccess() {
+    clearFormFeedback();
+
+    startTransition(async () => {
+      try {
+        await startTemporaryAuthSession();
+        router.replace("/logged-in");
+      } catch {
+        showNotice(sharedCopy.temporaryAccessError, "error");
       }
     });
   }
@@ -880,6 +881,36 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 </motion.button>
               ))}
             </div>
+            {isTemporaryGoogleEnabled ? (
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleTemporaryTestingAccess}
+                disabled={isPending || oauthLoading !== null}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  marginTop: 18,
+                  padding: "12px 16px",
+                  borderRadius: 12,
+                  background: "rgba(220,94,94,0.08)",
+                  border: "1px dashed rgba(220,94,94,0.38)",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#ffb8b8",
+                  cursor: isPending || oauthLoading !== null ? "not-allowed" : "pointer",
+                  opacity: isPending || oauthLoading !== null ? 0.65 : 1,
+                }}
+              >
+                <CheckCheck size={14} />
+                Testing token
+              </motion.button>
+            ) : null}
             <BackButton onClick={() => setView("auth")} />
           </motion.div>
         ) : null}

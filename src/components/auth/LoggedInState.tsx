@@ -10,6 +10,7 @@ import { ArrowRight, Check, CheckCircle2, Chrome, ChevronRight, Sparkles, X } fr
 import { siteLinks } from "@/content/frontFacingCopy";
 import { clearTemporaryAuthSession } from "@/lib/temp-auth-client";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
 
 type LoggedInStateProps = {
   email: string | null;
@@ -68,6 +69,7 @@ const READY_ITEMS = [
 export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
+  const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
@@ -107,6 +109,10 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
     }
 
     setCurrentIndex((value) => value + 1);
+  }
+
+  if (isResettingTemporarySession) {
+    return null;
   }
 
   return (
