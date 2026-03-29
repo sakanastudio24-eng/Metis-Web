@@ -493,9 +493,9 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
     clearFormFeedback();
 
     const nextErrors: Record<string, string> = {};
-    if (!signupName.trim()) nextErrors.name = "Name is required";
-    if (!signupEmail.includes("@")) nextErrors.email = "Enter a valid email address";
-    if (signupPassword.length < 8) nextErrors.password = "Password must be at least 8 characters";
+    if (!signupName.trim()) nextErrors.name = sharedCopy.requiredNameError;
+    if (!signupEmail.includes("@")) nextErrors.email = sharedCopy.invalidEmailError;
+    if (signupPassword.length < 8) nextErrors.password = sharedCopy.shortPasswordError;
     if (!acceptedLegal) nextErrors.legal = sharedCopy.legalAcceptanceError;
     setSignupErrors(nextErrors);
 
@@ -540,8 +540,8 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
     clearFormFeedback();
 
     const nextErrors: Record<string, string> = {};
-    if (!loginEmail.includes("@")) nextErrors.email = "Enter a valid email";
-    if (!loginPassword) nextErrors.password = "Enter your password";
+    if (!loginEmail.includes("@")) nextErrors.email = sharedCopy.invalidEmailError;
+    if (!loginPassword) nextErrors.password = sharedCopy.missingPasswordError;
     setLoginErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
@@ -569,7 +569,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
     clearFormFeedback();
 
     if (!forgotEmail.includes("@")) {
-      setForgotError("Enter a valid email address");
+      setForgotError(sharedCopy.invalidEmailError);
       return;
     }
 
@@ -858,7 +858,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
               </div>
             ) : null}
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_DIM_2, marginTop: 20, lineHeight: 1.5 }}>
-              Sign in on the website to manage your account and legal access, then use the extension for scans and reports.
+              {sharedCopy.websiteBoundaryNote}
             </p>
           </motion.div>
         ) : null}

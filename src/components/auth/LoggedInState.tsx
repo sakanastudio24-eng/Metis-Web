@@ -21,60 +21,25 @@ const TEXT_DIM = "rgba(255,245,240,0.65)";
 const TEXT_DIM_2 = "rgba(255,245,240,0.35)";
 const BORDER = "rgba(255,255,255,0.12)";
 
-const QUESTIONS = [
-  {
-    id: "type",
-    prompt: "What are you building?",
-    subtext: "We'll personalise your first scan for your project type.",
-    options: [
-      { id: "saas", label: "SaaS app", emoji: "🚀" },
-      { id: "ecommerce", label: "E-commerce", emoji: "🛍️" },
-      { id: "internal", label: "Internal tool", emoji: "🔧" },
-      { id: "other", label: "Something else", emoji: "✨" },
-    ],
-  },
-  {
-    id: "team",
-    prompt: "How big is your team?",
-    subtext: "Helps us tune how we present team-level insights.",
-    options: [
-      { id: "solo", label: "Just me", emoji: "🧑‍💻" },
-      { id: "small", label: "2 – 5", emoji: "👥" },
-      { id: "mid", label: "6 – 20", emoji: "🏢" },
-      { id: "large", label: "20+", emoji: "🏗️" },
-    ],
-  },
-  {
-    id: "concern",
-    prompt: "What worries you most?",
-    subtext: "We'll surface those insights first on your dashboard.",
-    options: [
-      { id: "api", label: "API costs", emoji: "💸" },
-      { id: "perf", label: "Performance", emoji: "⚡" },
-      { id: "ai", label: "AI spend", emoji: "🤖" },
-      { id: "everything", label: "All of it", emoji: "😅" },
-    ],
-  },
-] as const;
-
 const READY_ITEMS = [
-  { label: "Account created", icon: CheckCircle2 },
-  { label: "Preferences saved", icon: CheckCircle2 },
-  { label: "Chrome extension ready to install", icon: Chrome },
-  { label: "First scan prepared", icon: Sparkles },
+  { key: "Account created", icon: CheckCircle2 },
+  { key: "Preferences saved", icon: CheckCircle2 },
+  { key: "Chrome extension ready to install", icon: Chrome },
+  { key: "First scan prepared", icon: Sparkles },
 ] as const;
 
 export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps) {
   const router = useRouter();
   const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
   const copy = authCopy.loggedIn;
+  const questions = copy.questions;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
 
-  const currentQuestion = QUESTIONS[currentIndex];
+  const currentQuestion = questions[currentIndex];
   const hasSelection = Boolean(answers[currentQuestion.id]);
-  const isLastQuestion = currentIndex === QUESTIONS.length - 1;
+  const isLastQuestion = currentIndex === questions.length - 1;
   const signedInLine = email ? copy.readyForEmail(email) : null;
 
   function closeOverlay() {
@@ -148,7 +113,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {done ? (
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2 }}>All set ✓</span>
+              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2 }}>{copy.completionBadge} ✓</span>
             ) : null}
             <button
               type="button"
@@ -225,9 +190,9 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   marginBottom: 24,
                 }}
               >
-                {READY_ITEMS.map(({ label, icon: Icon }, index) => (
+                {READY_ITEMS.map(({ key, icon: Icon }, index) => (
                   <motion.div
-                    key={label}
+                    key={key}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.12 + index * 0.09, duration: 0.3 }}
@@ -259,7 +224,9 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                     >
                       <Icon size={12} style={{ color: "#4ade80" }} />
                     </motion.div>
-                    <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_DIM, lineHeight: 1.45 }}>{label}</span>
+                    <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_DIM, lineHeight: 1.45 }}>
+                      {copy.readyItems[index] ?? key}
+                    </span>
                   </motion.div>
                 ))}
               </div>
@@ -276,7 +243,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                 }}
               >
                 <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_DIM, margin: 0, lineHeight: 1.55 }}>
-                  <span style={{ color: TEXT, fontWeight: 600 }}>Next step: </span>
+                  <span style={{ color: TEXT, fontWeight: 600 }}>{copy.nextStepLabel}: </span>
                   {copy.nextDestinationLabel}
                 </p>
               </motion.div>
@@ -312,7 +279,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   }}
                 >
                   <Chrome size={15} style={{ color: RED }} />
-                  Install extension — it&apos;s free
+                  {copy.installExtensionLabel}
                   <ArrowRight size={14} />
                 </motion.button>
                 <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
@@ -334,7 +301,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                       textDecoration: "none",
                     }}
                   >
-                    Open account settings <ArrowRight size={14} />
+                    {copy.openAccountLabel} <ArrowRight size={14} />
                   </Link>
                 </motion.div>
               </motion.div>
@@ -348,7 +315,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 32 }}>
-                {QUESTIONS.map((question, index) => (
+                {questions.map((question, index) => (
                   <motion.div
                     key={question.id}
                     animate={{
@@ -366,7 +333,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   />
                 ))}
                 <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2, marginLeft: 2 }}>
-                  {currentIndex + 1} / {QUESTIONS.length}
+                  {currentIndex + 1} / {questions.length}
                 </span>
               </div>
               <h2
@@ -380,7 +347,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   marginBottom: 10,
                 }}
               >
-                {currentQuestion.prompt}
+                {currentQuestion.title}
               </h2>
               <p
                 style={{
@@ -393,7 +360,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   lineHeight: 1.6,
                 }}
               >
-                {currentQuestion.subtext}
+                  {currentQuestion.helper}
               </p>
               {signedInLine ? (
                 <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2, margin: "0 0 20px" }}>{signedInLine}</p>

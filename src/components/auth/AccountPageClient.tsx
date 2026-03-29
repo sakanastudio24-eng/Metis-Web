@@ -95,6 +95,8 @@ const NAV_ACTIVE: Array<DashboardSection & { icon: React.ElementType }> = dashbo
   icon: SECTION_ICONS[section.id],
 }));
 
+// API Beta stays visible in the nav so the roadmap is honest, but the full panel
+// remains staged until the beta backend surface is ready for review.
 const NAV_VISIBLE = NAV_ACTIVE.map((section) =>
   section.id === "api"
     ? {
@@ -273,7 +275,7 @@ function NavLink({
             textTransform: "uppercase",
           }}
         >
-          Soon
+          {dashboardCopy.navSoonLabel}
         </span>
       ) : null}
     </button>
@@ -514,13 +516,13 @@ function ApiBetaPanel({ user }: { user: DashboardUser }) {
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 18, flexWrap: "wrap" }}>
-            <Badge>
-              <ShieldCheck size={11} />
-              Beta gated
-            </Badge>
-            <Badge color={TXT_DIM} background="rgba(255,255,255,0.04)" border={BD}>
-              Exact endpoint scope lands in docs
-            </Badge>
+              <Badge>
+                <ShieldCheck size={11} />
+                {copy.gatedLabel}
+              </Badge>
+              <Badge color={TXT_DIM} background="rgba(255,255,255,0.04)" border={BD}>
+                {copy.scopeNote}
+              </Badge>
           </div>
         </Card>
 
@@ -979,7 +981,7 @@ export function AccountPageClient({
           }}
         >
           <ArrowLeft size={14} />
-          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13 }}>Back to site</span>
+          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13 }}>{dashboardCopy.backToSiteLabel}</span>
         </button>
       </div>
     </>
@@ -1137,6 +1139,8 @@ export function AccountPageClient({
         <div style={{ padding: isMobileViewport ? "22px 18px 36px" : "28px 32px 48px" }}>
           <AnimatePresence mode="wait">
             {active === "account" ? <AccountPanel key="account" user={user} emailConfirmed={emailConfirmed} onSignOut={handleSignOut} /> : null}
+            {/* The API Beta panel stays implemented in code, but it is intentionally
+                withheld from the main dashboard flow until the beta launch pass. */}
             {active === "security" ? <SecurityPanel key="security" provider={provider} onOpenDetails={() => router.push("/account/security")} /> : null}
             {active === "pricing" ? <PricingPanel key="pricing" user={user} /> : null}
             {active === "settings" ? <SettingsPanel key="settings" /> : null}
