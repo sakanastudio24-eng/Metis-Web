@@ -48,6 +48,8 @@ export async function getAuthenticatedUserOrNull(): Promise<AuthenticatedUserDet
     return null;
   }
 
+  // Temporary sessions are only for local UI review. They never stand in for
+  // real backend auth and should stay fenced to development.
   return buildTemporarySession();
 }
 

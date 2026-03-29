@@ -176,6 +176,12 @@ function OverlayShell({
   );
 }
 
+const LEGAL_LINK_STYLE = {
+  color: "#dc8d72",
+  textDecoration: "none",
+  fontWeight: 600,
+} as const;
+
 function OrDivider() {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "4px 0" }}>
@@ -419,6 +425,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
     void (async () => {
       const { data } = await supabase.auth.getUser();
 
+      // Real signed-in users should land in account, not back in the overlay.
       if (!cancelled && data.user) {
         router.replace("/account");
       }
@@ -471,6 +478,8 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
 
     startTransition(async () => {
       try {
+        // This bypass is for local UI review only. It never replaces provider auth
+        // in production and it never crosses the backend trust boundary.
         await startTemporaryAuthSession();
         router.replace("/logged-in");
       } catch {
@@ -943,12 +952,12 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                   style={{ marginTop: 2 }}
                 />
                 <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM, lineHeight: 1.6 }}>
-                  I agree to the{" "}
-                  <Link href={siteLinks.termsUrl} style={{ color: "#dc8d72", textDecoration: "none", fontWeight: 600 }}>
+                  {sharedCopy.legalAcceptanceLabel}{" "}
+                  <Link href={siteLinks.termsUrl} style={LEGAL_LINK_STYLE}>
                     Terms of Use
                   </Link>{" "}
                   and{" "}
-                  <Link href={siteLinks.privacyUrl} style={{ color: "#dc8d72", textDecoration: "none", fontWeight: 600 }}>
+                  <Link href={siteLinks.privacyUrl} style={LEGAL_LINK_STYLE}>
                     Privacy Policy
                   </Link>
                   .
@@ -1013,8 +1022,8 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 </motion.button>
               ))}
             </div>
-              {isTemporaryGoogleEnabled ? (
-                <motion.button
+            {isTemporaryGoogleEnabled ? (
+              <motion.button
                 type="button"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -1038,11 +1047,11 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                   cursor: isPending || oauthLoading !== null ? "not-allowed" : "pointer",
                   opacity: isPending || oauthLoading !== null ? 0.65 : 1,
                 }}
-                >
-                  <CheckCheck size={14} />
-                  Dev-only test login
-                </motion.button>
-              ) : null}
+              >
+                <CheckCheck size={14} />
+                {sharedCopy.temporaryAccessAction}
+              </motion.button>
+            ) : null}
             <BackButton onClick={() => setView("auth")} />
           </motion.div>
         ) : null}

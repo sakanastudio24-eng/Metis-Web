@@ -1,14 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, CheckCircle2, Chrome, Sparkles, X } from "lucide-react";
 
-import { siteLinks } from "@/content/frontFacingCopy";
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { authCopy } from "@/content/authCopy";
 import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
 
 type LoggedInStateProps = {
@@ -68,6 +67,7 @@ const READY_ITEMS = [
 export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps) {
   const router = useRouter();
   const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
+  const copy = authCopy.loggedIn;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
@@ -75,11 +75,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
   const currentQuestion = QUESTIONS[currentIndex];
   const hasSelection = Boolean(answers[currentQuestion.id]);
   const isLastQuestion = currentIndex === QUESTIONS.length - 1;
-
-  const providerLabel = useMemo(() => {
-    if (isTemporary) return "via Google";
-    return "via email";
-  }, [isTemporary]);
+  const signedInLine = email ? copy.readyForEmail(email) : null;
 
   function closeOverlay() {
     router.replace("/account");
@@ -213,11 +209,14 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   marginBottom: 8,
                 }}
               >
-                You&apos;re all set.
+                {copy.completionTitle}
               </h2>
               <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_DIM, lineHeight: 1.6, margin: 0, marginBottom: 28 }}>
-                Welcome to Metis {providerLabel}. Here&apos;s what&apos;s ready for you.
+                {copy.completionBody}
               </p>
+              {signedInLine ? (
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2, margin: "0 0 20px" }}>{signedInLine}</p>
+              ) : null}
               <div
                 style={{
                   display: "grid",
@@ -278,7 +277,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
               >
                 <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_DIM, margin: 0, lineHeight: 1.55 }}>
                   <span style={{ color: TEXT, fontWeight: 600 }}>Next step: </span>
-                  Open your website account to review beta access and security, then use the extension for scans and extension-only settings.
+                  {copy.nextDestinationLabel}
                 </p>
               </motion.div>
               {isTemporary ? (
@@ -396,6 +395,9 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
               >
                 {currentQuestion.subtext}
               </p>
+              {signedInLine ? (
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2, margin: "0 0 20px" }}>{signedInLine}</p>
+              ) : null}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 34 }}>
                 {currentQuestion.options.map((option) => {
                   const selected = answers[currentQuestion.id] === option.id;
@@ -462,7 +464,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   boxShadow: hasSelection ? "0 4px 18px rgba(220,94,94,0.3)" : "none",
                 }}
               >
-                {isLastQuestion ? "Finish setup" : "Next"} <ArrowRight size={14} />
+                {isLastQuestion ? copy.finishLabel : "Next"} <ArrowRight size={14} />
               </motion.button>
               <button
                 type="button"
@@ -478,7 +480,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   padding: 0,
                 }}
               >
-                Skip for now
+                {copy.skipLabel}
               </button>
             </motion.div>
           )}
