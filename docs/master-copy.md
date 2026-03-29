@@ -211,28 +211,27 @@ Footer stack badges:
 
 - Eyebrow: `Setup`
 - Header: `Tell Metis what matters first`
-- Support body: `This first pass stays short and helps Metis prioritize what you want to see first.`
+- Support body: `This stays short and points your first dashboard toward the signals you care about most.`
 - Signed-in support line: ``Signed in as ${email}``
-- Sign out label: `Sign out`
 - Finish CTA: `Finish setup`
 - Skip CTA: `Skip for now`
 - Completion eyebrow: `Saved`
-- Completion header: `Your setup is captured`
-- Completion body: `You are in. Your first setup answers are recorded and more account features are coming next.`
+- Completion header: `You're all set.`
+- Completion body: `Welcome to Metis via ${provider}. Here's what's ready for you.`
 - Temporary account label: `Temporary test account`
 - Temporary account body: `This local-only session is for reviewing onboarding and account flows. Remove it before shipping.`
 
 Onboarding questions:
 
-- Question header: `Who are you setting Metis up for`
-  Question helper: `Choose every role that fits`
-  Answer options: `Founder`, `Engineer`, `Product`, `Design`, `Growth`, `Ops`
-- Question header: `What should Metis help with first`
-  Question helper: `Choose more than one if needed`
-  Answer options: `Cost visibility`, `AI spend`, `Fix priority`, `Team reporting`, `Site audits`, `Release checks`
-- Question header: `What shows up most in your stack`
-  Question helper: `Pick the tools or surfaces you expect Metis to touch first`
-  Answer options: `Next.js`, `React`, `Vercel`, `OpenAI`, `Cloudflare`, `Third party scripts`
+- Question header: `What are you building?`
+  Question helper: `We'll personalise your first scan for your project type.`
+  Answer options: `SaaS app`, `E-commerce`, `Internal tool`, `Something else`
+- Question header: `How big is your team?`
+  Question helper: `Helps us tune how we present team-level insights.`
+  Answer options: `Just me`, `2 – 5`, `6 – 20`, `20+`
+- Question header: `What worries you most?`
+  Question helper: `We'll surface those insights first on your dashboard.`
+  Answer options: `API costs`, `Performance`, `AI spend`, `All of it`
 
 ### Account
 
@@ -243,16 +242,20 @@ Onboarding questions:
 - Verification label: `Verification pending`
 - Temporary label: `Temporary local account`
 - Temporary body: `This session exists only for local auth review and does not grant backend API access.`
-- Section label: `Sign-in method`
-- Section label: `Current plan`
-- Plan value: `Metis Free`
-- Plan body: `Start free and upgrade later when deeper reports and team workflows open up.`
+- Section label: `Account`
+- Section body: `Identity basics, verification state, and a quick snapshot of what is ready.`
 - Section label: `Security`
-- Security body: `Review your secure access settings and future two-factor options.`
-- Security CTA: `Open security settings`
-- Section label: `Extension access`
-- Extension body: `The account layer stays lightweight while the browser product handles scans and reports.`
-- Extension CTA: `Back to the website`
+- Section body: `Review your secure access settings and future two-factor options.`
+- Section CTA: `Open security settings`
+- Section label: `Plan & Pricing`
+- Plan value: `Metis Free`
+- Plan body: `Start free and keep pricing visible as Metis expands into deeper reports and team workflows.`
+- Section label: `Metis settings`
+- Section body: `The browser extension remains the place for lightweight controls and in-product settings.`
+- Link-style row label: `App settings`
+- Link-style row body: `Extension settings will connect here once the browser entry point is wired.`
+- Link-state note: `Inactive for now`
+- Dashboard sign out label: `Sign out`
 
 ### Security
 
@@ -264,7 +267,7 @@ Onboarding questions:
 - Section header: `Coming next`
 - Section body: `These surfaces are designed now, but they still require backend activation before they become live controls.`
 - Preview header: `Two-factor authentication preview`
-- Preview body: `The V3 design includes a four-step 2FA flow. This preview is intentionally staged until secrets and server support are ready.`
+- Preview body: `The V4 design keeps two-factor as a four-step flow: intro, verify, backup, then confirmation. This preview stays staged until secrets and server support are ready.`
 - Preview CTA: `Preview 2FA flow`
 - Preview badge: `Requires backend activation`
 - Temporary label: `Temporary security preview`
