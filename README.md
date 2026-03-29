@@ -20,6 +20,13 @@ Use the website when the job is identity, onboarding, account review, security, 
 
 Use the extension when the job is scanning a page, reading the report, adjusting extension behavior, or working inside the side panel flow.
 
+## Docs worth reading first
+
+- [docs/front-facing-foundation.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/front-facing-foundation.md)
+- [docs/repo-alignment.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/repo-alignment.md)
+- [docs/production-roadmap.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/production-roadmap.md)
+- [docs/design-system-logic.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/design-system-logic.md)
+
 ## Who made it
 
 Metis is made by [zward.studio](https://zward.studio).

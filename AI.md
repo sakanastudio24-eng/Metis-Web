@@ -73,6 +73,8 @@ Use a hamburger section menu on mobile dashboard views instead of forcing the de
 
 `docs/design-system-logic.md`
 
+`docs/front-facing-foundation.md`
+
 `docs/implementation-flow.md`
 
 `docs/runtime-secrets-flow.md`
