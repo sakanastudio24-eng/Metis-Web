@@ -42,7 +42,7 @@ Keep beta wording honest. If something is staged, say it is staged.
 
 ## Guardrails for temporary auth
 
-Temporary auth is only for local review. It should never read like a public feature and it should never cross the backend trust boundary.
+Temporary auth is only for local review. It should never read like a public feature and it should never cross the backend trust boundary. Keep it opt-in, local-only, and easy to remove once provider QA is complete.
 
 ## Current repo state
 

@@ -2,7 +2,7 @@
 
 This document is the website-side path to production. It assumes `Metis-Web` owns auth, onboarding, account, legal, beta posture, provider flows, email delivery, and public product messaging.
 
-The remaining work is now a short release list instead of a vague cleanup bucket: auth hardening, provider secrets, final mobile polish, then launch prep.
+The remaining work is now a short release list instead of a vague cleanup bucket: provider QA, temporary auth removal, final hardening, then launch prep.
 
 ## Launch goal
 
@@ -22,7 +22,7 @@ Recent cleanup reduced drift in auth and copy:
 The open items are now:
 
 - removing the local temporary auth bypass before release
-- finishing real Google and GitHub provider setup
+- finishing real Google and GitHub provider testing
 - final mobile polish on account and security
 - real entitlement wiring if Plus Beta or API Beta becomes live
 - a final production pass on SEO, OG assets, and deployment config
@@ -33,14 +33,12 @@ The open items are now:
 
 - magic link flow
 - provider flow testing
-- Resend
 - remove temporary auth bypass
 
 ### Scope
 
 - verify magic link sign-in end to end
-- verify provider auth launch, cancel, callback, failure, and recovery states for Google and GitHub
-- wire Resend cleanly if a temporary email bridge is still needed beyond Supabase magic link delivery
+- verify provider auth launch, cancel, callback, failure, and retry states for Google and GitHub
 - remove the local temporary auth bypass before release and keep only the real Supabase flows
 - confirm sign-up, sign-in, onboarding, account, and security flows all reflect the real provider/account state
 
@@ -48,7 +46,6 @@ The open items are now:
 
 - every auth path has a tested happy path and failure path
 - provider copy matches real behavior
-- temporary email delivery works without implying the final reporting system is finished
 - temporary auth is no longer part of the release path
 
 ## Phase 2: Runtime, API, and deployment hardening
@@ -57,7 +54,7 @@ The open items are now:
 
 - runtime injection
 - api prep grouping
-- enspah hardening
+- environment and callback hardening
 - extension auth validation contract
 
 ### Scope
@@ -113,7 +110,5 @@ The open items are now:
 
 ## Still unresolved
 
-- `api prep grouping` is currently interpreted as staging and documenting the final FastAPI boundary before launch; the exact grouping may need refinement
-- `enspah hardening` is currently interpreted as environment, callback-path, and deploy hardening; the label should be clarified if it meant something narrower
 - the final long-term replacement for temporary report-to-email is still unresolved and should not be implied in public copy yet
 - final live entitlement wiring for Plus Beta or API Beta is still unresolved unless those sections move beyond staged UI

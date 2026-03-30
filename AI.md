@@ -104,6 +104,7 @@ Keep auth and security routes out of public indexing.
 Do not move identity logic into FastAPI unless there is a product reason.
 
 Keep temporary auth fenced to development.
+Keep it opt-in and easy to remove after provider QA.
 
 ## Main risk before shipping
 
