@@ -194,11 +194,17 @@ Provider button: `Send magic link`
 
 Magic link success: `Magic link sent. Check your inbox and continue from the email.`
 
+Magic link sent header: `Check your email`
+
+Magic link sent body: `We sent a secure sign-in link to ${email}. Open it on this device to continue into Metis.`
+
+Magic link expiry label: `This link expires in about 10 minutes.`
+
+Magic link resend CTA: `Resend link`
+
 Divider label: `or use email`
 
 Email label: `Work email`
-
-Password label: `Password`
 
 Security support line: `Protected access for metis.zward.studio`
 
@@ -212,13 +218,13 @@ Temporary review body: `Google is temporarily bypassed in local development so o
 
 Temporary review CTA: `Use temporary Google test account`
 
-### Start screen
+### Passwordless entry
 
 Header: `Start with Metis`
 
-Primary CTA: `Create account`
+Primary CTA: `Continue with Google`
 
-Secondary CTA: `Log in`
+Secondary CTA: `Continue with GitHub`
 
 ### Sign in
 
@@ -226,79 +232,25 @@ Eyebrow: `Sign in`
 
 Header: `Welcome back.`
 
-Body: `Sign in on the website to manage your account, security posture, and beta access before heading back to the extension.`
-
-Submit CTA: `Log in`
+Body: `Use Google, GitHub, or an email magic link to get back into your Metis account on the website.`
 
 Footer prompt: `No account yet?`
 
-Footer link: `Sign up free`
+Footer link: `Create account`
 
 ### Sign up
 
 Eyebrow: `Create account`
 
-Header: `Create your account.`
+Header: `Start with Metis`
 
-Body: `Create your free account on the website, accept the legal terms here, and move straight into your first guided setup.`
-
-Submit CTA: `Create account`
+Body: `Create access on the website with Google, GitHub, or an email magic link, then move straight into your first guided setup.`
 
 Footer prompt: `Already have one?`
 
-Footer link: `Log in`
-
-Field label: `Full name`
+Footer link: `Sign in`
 
 Field label: `Email address`
-
-Legal acceptance label: `I agree to the`
-
-Legal link: `Terms of Use`
-
-Legal link: `Privacy Policy`
-
-Legal error: `You need to accept the Terms of Use and Privacy Policy before creating an account.`
-
-## Verification and recovery
-
-Verification eyebrow: `Verify email`
-
-Verification header: `Check your inbox`
-
-Verification body: `Open the email from Metis and use the secure link to finish access.`
-
-Verification support body: `Once verification is complete you can return to sign in and move into onboarding without extra setup.`
-
-Verification dynamic line: ``Verification sent to ${email}``
-
-Recovery eyebrow: `Recovery`
-
-Recovery header: `Forgot your password?`
-
-Recovery body: `No problem. Enter your email and we'll send a reset link — it expires in 15 minutes.`
-
-Recovery CTA: `Send reset link`
-
-Recovery success header: `Check your inbox.`
-
-Recovery success body: `We've sent a reset link to ${email}. Check your spam folder if it doesn't arrive within a minute.`
-
-Reset eyebrow: `New password`
-
-Reset header: `Choose a new password`
-
-Reset body: `Enter your new password to finish recovery.`
-
-Reset CTA: `Update password`
-
-Reset error header: `Recovery link needed`
-
-Reset error body: `Use a fresh recovery email so Metis can confirm it is really you.`
-
-Reset success header: `Password updated`
-
-Reset success body: `You can sign in now and move straight back into Metis.`
 
 ## Onboarding
 
@@ -494,11 +446,11 @@ Section label: `Available now`
 
 Item: `Supabase session handling`
 
-Item: `Email verification checks`
+Item: `Magic link and provider callback handling`
 
 Item: `Provider-based sign-in with Google and GitHub`
 
-Item: `Password recovery with callback validation`
+Item: `Protected route checks on website account pages`
 
 Section label: `Coming next`
 
@@ -550,7 +502,7 @@ Assurance body: `AAL shows how strongly the current session is verified. aal2 me
 
 Provider section header: `Current sign-in method`
 
-Provider section body: `Your current provider determines whether password changes happen here or with the provider you used to sign in.`
+Provider section body: `Your current provider is shown here so you can keep website access clear and know which sign-in path you used most recently.`
 
 Session note: `Protected routes stay private and are excluded from public indexing.`
 
@@ -562,27 +514,13 @@ Temporary security body: `This local-only account can review the security UI, bu
 
 ## Errors and helper responses
 
-Callback error: `That sign-in link is not usable anymore. Try again.`
+Callback error: `Link expired or already used. Send a new link to keep going.`
 
 Provider cancel error: `The provider sign-in was cancelled before it finished.`
-
-Credential error: `That email and password combination did not work.`
-
-Verification required error: `Check your inbox and confirm your email before signing in.`
-
-Recovery link error: `That recovery link is not usable anymore. Request a new one.`
 
 Provider launch error: `The provider sign-in could not start.`
 
 Magic link error: `The magic link could not be sent.`
-
-Create account error: `We could not create that account.`
-
-Recovery request error: `We could not send a recovery email right now.`
-
-Reset password error: `We could not update your password right now.`
-
-Reset password success: `Password updated. You can sign in now.`
 
 Temporary access error: `The temporary test account could not be started.`
 

@@ -32,8 +32,6 @@ The open items are now:
 ### Priority work
 
 - magic link flow
-- forgot password flow
-- change password flow
 - provider flow testing
 - Resend
 - remove temporary auth bypass
@@ -41,12 +39,10 @@ The open items are now:
 ### Scope
 
 - verify magic link sign-in end to end
-- verify forgot-password email send, reset link return, and password reset completion
-- verify change-password behavior from the security surface for supported providers
 - verify provider auth launch, cancel, callback, failure, and recovery states for Google and GitHub
-- wire Resend cleanly for temporary email delivery and recovery messaging where applicable
+- wire Resend cleanly if a temporary email bridge is still needed beyond Supabase magic link delivery
 - remove the local temporary auth bypass before release and keep only the real Supabase flows
-- confirm sign-up, sign-in, verify, reset, account, and security flows all reflect the real provider/account state
+- confirm sign-up, sign-in, onboarding, account, and security flows all reflect the real provider/account state
 
 ### Exit criteria
 
@@ -69,6 +65,7 @@ The open items are now:
 - finish runtime secret injection for Next.js and FastAPI deploy targets
 - verify callback URLs, public app URLs, and backend URLs stay aligned across Supabase, provider dashboards, and deployment config
 - group API prep work so the FastAPI layer has a clear production-ready boundary for health, readiness, protected routes, and account-type validation support
+- keep the first live API scope anchored to `docs/api-beta-plan.md`
 - define the account-type validation contract the extension will rely on for free vs Plus Beta behavior
 - harden route guards for `/logged-in`, `/account`, and `/account/security`
 

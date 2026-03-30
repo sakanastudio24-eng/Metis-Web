@@ -9,15 +9,15 @@ Metis Web is the website and account layer for Metis.
 Current surfaces:
 
 1. Public website pages for the product story and legal pages
-2. Auth overlay for sign in and sign up
-3. Recovery routes for verification and password reset
+2. Passwordless auth overlay for sign in and sign up
+3. Shared auth callback at `/auth/callback`
 4. Onboarding at `/logged-in`
 5. Account and security at `/account` and `/account/security`
 6. FastAPI proof endpoints for health, readiness, and future protected backend work
 
 ## Runtime model
 
-Supabase owns identity, sessions, provider auth, recovery, and callback exchange.
+Supabase owns identity, sessions, provider auth, magic link delivery, and callback exchange.
 
 The website completes auth at `/auth/callback`.
 
@@ -78,6 +78,8 @@ Use a hamburger section menu on mobile dashboard views instead of forcing the de
 `docs/implementation-flow.md`
 
 `docs/runtime-secrets-flow.md`
+
+`docs/api-beta-plan.md`
 
 `docs/git-segmentation.md`
 
