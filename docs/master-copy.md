@@ -178,14 +178,6 @@ Brand label: `Metis Web`
 
 Stage header: `A quiet layer for frontend cost risk`
 
-Stage body: `Metis keeps website auth focused on access, account settings, and beta controls so the extension can stay focused on signal.`
-
-Tab label: `Sign in`
-
-Tab label: `Sign up`
-
-Provider label: `Continue with`
-
 Provider button: `Google`
 
 Provider button: `GitHub`
@@ -202,19 +194,11 @@ Magic link expiry label: `This link expires in about 10 minutes.`
 
 Magic link resend CTA: `Resend link`
 
-Divider label: `or use email`
-
 Email label: `Work email`
 
 Security support line: `Protected access for metis.zward.studio`
 
-Boundary note: `Sign in on the website to manage your account and legal access, then use the extension for scans and reports.`
-
-Back label: `Back to the site`
-
-Temporary review label: `Local testing only`
-
-Temporary review body: `Google is temporarily bypassed in local development so onboarding and account flows can be reviewed quickly.`
+Temporary review body: `Local-only review access. It never reaches backend auth and should be removed before release.`
 
 Temporary review CTA: `Use temporary Google test account`
 
@@ -234,7 +218,7 @@ Header: `Welcome back.`
 
 Body: `Use Google, GitHub, or an email magic link to get back into your Metis account on the website.`
 
-Footer prompt: `No account yet?`
+Footer prompt: `Need an account?`
 
 Footer link: `Create account`
 
@@ -246,11 +230,11 @@ Header: `Start with Metis`
 
 Body: `Create access on the website with Google, GitHub, or an email magic link, then move straight into your first guided setup.`
 
-Footer prompt: `Already have one?`
+Footer prompt: `Already have access?`
 
 Footer link: `Sign in`
 
-Field label: `Email address`
+Field label: `Work email`
 
 ## Onboarding
 
@@ -380,7 +364,7 @@ Body: `Keep the current sign-in method visible, preview two-factor, and stage de
 
 Label: `Good security posture`
 
-Body: `Email verification, provider auth, and recovery flows are active. Two-factor is next.`
+Body: `Email verification, provider auth, and magic-link access are active. Two-factor is next.`
 
 Label: `Sign-in method`
 
