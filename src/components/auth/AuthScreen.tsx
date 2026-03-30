@@ -11,11 +11,13 @@ import { toast } from "sonner";
 import { authCopy } from "@/content/authCopy";
 import { siteLinks } from "@/content/frontFacingCopy";
 import { getAuthCallbackUrl, getAuthErrorMessage } from "@/lib/auth";
+import { type MetisAuthSource, METIS_EXTENSION_SOURCE } from "@/lib/contracts/communication";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { startTemporaryAuthSession } from "@/lib/temp-auth-client";
 
 type AuthScreenProps = {
   initialView: "signup" | "login";
+  source?: MetisAuthSource | null;
   initialError?: string | null;
   initialMessage?: string | null;
 };
@@ -323,14 +325,21 @@ const OAUTH_PROVIDERS = [
   { id: "github", labelKey: "githubLabel" as const },
 ] as const;
 
-export function AuthScreen({ initialView, initialError = null, initialMessage = null }: AuthScreenProps) {
+export function AuthScreen({
+  initialView,
+  source = null,
+  initialError = null,
+  initialMessage = null,
+}: AuthScreenProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const sharedCopy = authCopy.shared;
   const routeCopy = initialView === "signup" ? authCopy.signUp : authCopy.signIn;
   // Temporary review access stays opt-in, local-only, and frontend-only.
   const isTemporaryGoogleEnabled =
-    process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_ENABLE_TEMP_AUTH === "true";
+    source !== METIS_EXTENSION_SOURCE &&
+    process.env.NODE_ENV === "development" &&
+    process.env.NEXT_PUBLIC_ENABLE_TEMP_AUTH === "true";
   const [view, setView] = useState<ViewState>("auth");
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [oauthLoading, setOauthLoading] = useState<"google" | "github" | null>(null);
@@ -338,6 +347,10 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
   const [emailError, setEmailError] = useState("");
   const [sentTo, setSentTo] = useState("");
   const [isPending, startTransition] = useTransition();
+  const callbackNextPath = source === METIS_EXTENSION_SOURCE ? "/auth/success" : undefined;
+  const alternateRouteHref =
+    source === METIS_EXTENSION_SOURCE ? `${routeCopy.alternateHref}?source=${METIS_EXTENSION_SOURCE}` : routeCopy.alternateHref;
+  const intro = source === METIS_EXTENSION_SOURCE ? routeCopy.extensionIntro : routeCopy.intro;
 
   useEffect(() => {
     const errorMessage = getAuthErrorMessage(initialError);
@@ -395,7 +408,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: getAuthCallbackUrl(window.location.origin),
+          redirectTo: getAuthCallbackUrl(window.location.origin, callbackNextPath, source),
         },
       });
 
@@ -420,7 +433,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
       const { error } = await supabase.auth.signInWithOtp({
         email: targetEmail,
         options: {
-          emailRedirectTo: getAuthCallbackUrl(window.location.origin),
+          emailRedirectTo: getAuthCallbackUrl(window.location.origin, callbackNextPath, source),
         },
       });
 
@@ -492,7 +505,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
               {routeCopy.title}
             </h2>
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_DIM, lineHeight: 1.65, margin: 0, marginBottom: 24 }}>
-              {routeCopy.intro}
+              {intro}
             </p>
 
             {feedback ? (
@@ -631,7 +644,7 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
 
             <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
               <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2 }}>{routeCopy.footerPrompt}</p>
-              <Link href={routeCopy.alternateHref} style={{ color: "#ffb8b8", textDecoration: "none", fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600 }}>
+              <Link href={alternateRouteHref} style={{ color: "#ffb8b8", textDecoration: "none", fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600 }}>
                 {routeCopy.alternateLabel}
               </Link>
               <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_DIM_2 }}>{sharedCopy.legalBlurb}</p>

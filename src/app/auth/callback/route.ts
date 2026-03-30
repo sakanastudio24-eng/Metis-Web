@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { isSafeAuthNextPath } from "@/lib/auth";
+import { getDefaultAuthCompletionPath, isSafeAuthNextPath } from "@/lib/auth";
+import { METIS_EXTENSION_SOURCE, isExtensionAuthSource } from "@/lib/contracts/communication";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
@@ -10,10 +11,16 @@ export async function GET(request: NextRequest) {
   const errorDescription = requestUrl.searchParams.get("error_description");
   const redirectBase = requestUrl.origin;
   const nextPath = requestUrl.searchParams.get("next");
-  const redirectPath = isSafeAuthNextPath(nextPath) ? nextPath : "/logged-in";
+  const source = isExtensionAuthSource(requestUrl.searchParams.get("source")) ? METIS_EXTENSION_SOURCE : null;
+  // Extension auth keeps its own completion path, but normal web auth keeps
+  // the usual post-auth destinations when the source marker is absent.
+  const redirectPath = isSafeAuthNextPath(nextPath) ? nextPath : getDefaultAuthCompletionPath(source);
 
   if (error) {
     const failureUrl = new URL("/sign-in", redirectBase);
+    if (source) {
+      failureUrl.searchParams.set("source", source);
+    }
     failureUrl.searchParams.set("error", error === "access_denied" ? "oauth_cancelled" : "callback_failed");
 
     if (errorDescription) {
@@ -25,6 +32,9 @@ export async function GET(request: NextRequest) {
 
   if (!code) {
     const failureUrl = new URL("/sign-in", redirectBase);
+    if (source) {
+      failureUrl.searchParams.set("source", source);
+    }
     failureUrl.searchParams.set("error", "callback_failed");
     return NextResponse.redirect(failureUrl);
   }
@@ -34,6 +44,9 @@ export async function GET(request: NextRequest) {
 
   if (exchangeError) {
     const failureUrl = new URL("/sign-in", redirectBase);
+    if (source) {
+      failureUrl.searchParams.set("source", source);
+    }
     failureUrl.searchParams.set("error", "callback_failed");
     return NextResponse.redirect(failureUrl);
   }

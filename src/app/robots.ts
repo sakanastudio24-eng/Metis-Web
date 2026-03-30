@@ -14,6 +14,7 @@ export default function robots(): MetadataRoute.Robots {
           "/verify",
           "/forgot-password",
           "/reset-password",
+          "/auth/success",
           "/logged-in",
           "/account",
           "/account/security",

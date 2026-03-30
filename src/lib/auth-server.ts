@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 
 import type { User } from "@supabase/supabase-js";
 
+import { METIS_AUTH_SUCCESS_PATH, type MetisAuthSource, isExtensionAuthSource } from "@/lib/contracts/communication";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   buildTemporarySession,
@@ -63,12 +64,12 @@ export async function requireAuthenticatedUser(): Promise<AuthenticatedUserDetai
   return user;
 }
 
-export async function redirectIfAuthenticated() {
+export async function redirectIfAuthenticated(source?: MetisAuthSource | null) {
   const user = await getAuthenticatedUserOrNull();
 
   // Temporary review sessions should stay visible on auth entry routes so local
   // testing does not accidentally mask the real sign-in experience.
   if (user && !user.isTemporary) {
-    redirect("/account");
+    redirect(isExtensionAuthSource(source) ? METIS_AUTH_SUCCESS_PATH : "/account");
   }
 }
