@@ -8,8 +8,10 @@ import {
   ArrowRight,
   CheckCircle2,
   Copy,
+  Github,
   KeyRound,
   Lock,
+  Mail,
   ShieldCheck,
   Smartphone,
   Trash2,
@@ -17,6 +19,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { authCopy } from "@/content/authCopy";
+import { getAuthCallbackUrl } from "@/lib/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
 
@@ -40,6 +43,8 @@ type EnrollmentState = {
   uri: string;
   friendlyName: string;
 };
+
+type LinkableProvider = "google" | "github";
 
 function getProviderLabel(provider: string) {
   switch (provider) {
@@ -92,6 +97,9 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
   const [nextAalLevel, setNextAalLevel] = useState<string | null>(null);
   const [enrollment, setEnrollment] = useState<EnrollmentState | null>(null);
   const [code, setCode] = useState("");
+  const [linkedProviders, setLinkedProviders] = useState<string[]>(provider ? [provider] : []);
+  const [passwordValue, setPasswordValue] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [secretCopied, setSecretCopied] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: "success" | "error"; message: string } | null>(null);
 
@@ -103,9 +111,10 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
 
     setIsLoading(true);
 
-    const [factorsResult, aalResult] = await Promise.all([
+    const [factorsResult, aalResult, userResult] = await Promise.all([
       supabase.auth.mfa.listFactors(),
       supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+      supabase.auth.getUser(),
     ]);
 
     if (factorsResult.error) {
@@ -136,8 +145,21 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
     setUnverifiedFactorId(unverified?.id ?? null);
     setAalLevel(aalResult.data.currentLevel);
     setNextAalLevel(aalResult.data.nextLevel);
+
+    const nextLinkedProviders = new Set<string>();
+    for (const identity of userResult.data.user?.identities ?? []) {
+      if (typeof identity.provider === "string") {
+        nextLinkedProviders.add(identity.provider);
+      }
+    }
+
+    if (nextLinkedProviders.size === 0 && provider) {
+      nextLinkedProviders.add(provider);
+    }
+
+    setLinkedProviders(Array.from(nextLinkedProviders));
     setIsLoading(false);
-  }, [copy.loadError, isTemporary, supabase.auth.mfa]);
+  }, [copy.loadError, isTemporary, provider, supabase.auth]);
 
   useEffect(() => {
     void loadMfaState();
@@ -154,6 +176,15 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
 
     return 0;
   }, [enrollment, unverifiedFactorId, verifiedFactor]);
+
+  const availableProviderLinks = useMemo(
+    () =>
+      ([
+        { id: "google", label: copy.linkGoogleLabel },
+        { id: "github", label: copy.linkGithubLabel },
+      ] as const).filter((item) => !linkedProviders.includes(item.id)),
+    [copy.linkGithubLabel, copy.linkGoogleLabel, linkedProviders],
+  );
 
   async function startEnrollment() {
     setFeedback(null);
@@ -253,6 +284,60 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
     await navigator.clipboard.writeText(enrollment.secret).catch(() => {});
     setSecretCopied(true);
     setTimeout(() => setSecretCopied(false), 1800);
+  }
+
+  async function startIdentityLink(nextProvider: LinkableProvider) {
+    setFeedback(null);
+
+    startTransition(async () => {
+      const { error } = await supabase.auth.linkIdentity({
+        provider: nextProvider,
+        options: {
+          redirectTo: getAuthCallbackUrl(window.location.origin, "/account/security"),
+        },
+      });
+
+      if (error) {
+        setFeedback({
+          tone: "error",
+          message: `${copy.linkMethodError} ${copy.linkMethodHint}`,
+        });
+        return;
+      }
+
+      setFeedback({ tone: "success", message: copy.linkMethodPending });
+    });
+  }
+
+  async function addPasswordSignIn() {
+    const trimmedPassword = passwordValue.trim();
+    const trimmedConfirm = passwordConfirm.trim();
+
+    if (trimmedPassword.length < 8) {
+      setFeedback({ tone: "error", message: copy.passwordTooShort });
+      return;
+    }
+
+    if (trimmedPassword !== trimmedConfirm) {
+      setFeedback({ tone: "error", message: copy.passwordMismatch });
+      return;
+    }
+
+    setFeedback(null);
+
+    startTransition(async () => {
+      const { error } = await supabase.auth.updateUser({ password: trimmedPassword });
+
+      if (error) {
+        setFeedback({ tone: "error", message: copy.passwordSaveError });
+        return;
+      }
+
+      setLinkedProviders((current) => (current.includes("email") ? current : [...current, "email"]));
+      setPasswordValue("");
+      setPasswordConfirm("");
+      setFeedback({ tone: "success", message: copy.passwordAddedLabel });
+    });
   }
 
   if (isResettingTemporarySession) {
@@ -460,6 +545,95 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
                 </div>
               </div>
               <p className="mt-3 text-sm leading-6 text-white/62">{copy.providerSectionBody}</p>
+            </div>
+
+            <div className="rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.identitySectionTitle}</p>
+              <p className="mt-3 text-sm leading-6 text-white/62">{copy.identitySectionBody}</p>
+
+              <div className="mt-5 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.linkedMethodsLabel}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {linkedProviders.map((linkedProvider) => (
+                    <span
+                      key={linkedProvider}
+                      className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/6 px-3 py-2 text-xs font-semibold text-white/80"
+                    >
+                      {getProviderLabel(linkedProvider)}
+                      {linkedProvider === provider ? (
+                        <span className="rounded-full border border-[#dc5e5e]/30 bg-[#dc5e5e]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#ffb8b8]">
+                          {copy.currentLabel}
+                        </span>
+                      ) : (
+                        <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-emerald-200">
+                          {copy.linkedLabel}
+                        </span>
+                      )}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {isTemporary ? (
+                <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4 text-sm leading-6 text-white/62">
+                  {copy.temporaryAccountBody}
+                </div>
+              ) : (
+                <>
+                  <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.availableMethodsLabel}</p>
+                    <div className="mt-3 flex flex-wrap gap-3">
+                      {availableProviderLinks.length > 0 ? (
+                        availableProviderLinks.map((link) => (
+                          <Button
+                            key={link.id}
+                            type="button"
+                            variant="outline"
+                            className="rounded-full border-white/12 bg-white/5 text-white hover:bg-white/8"
+                            onClick={() => startIdentityLink(link.id)}
+                            disabled={isPending || isLoading}
+                          >
+                            {link.label}
+                          </Button>
+                        ))
+                      ) : (
+                        <p className="text-sm text-white/55">{copy.linkedLabel}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {!linkedProviders.includes("email") ? (
+                    <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.passwordMethodTitle}</p>
+                      <p className="mt-2 text-sm leading-6 text-white/62">{copy.passwordMethodBody}</p>
+                      <input
+                        value={passwordValue}
+                        onChange={(event) => setPasswordValue(event.target.value)}
+                        type="password"
+                        placeholder={copy.passwordPlaceholder}
+                        autoComplete="new-password"
+                        className="mt-4 h-12 w-full rounded-2xl border border-white/12 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-white/35"
+                      />
+                      <input
+                        value={passwordConfirm}
+                        onChange={(event) => setPasswordConfirm(event.target.value)}
+                        type="password"
+                        placeholder={copy.passwordConfirmPlaceholder}
+                        autoComplete="new-password"
+                        className="mt-3 h-12 w-full rounded-2xl border border-white/12 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-white/35"
+                      />
+                      <Button
+                        type="button"
+                        className="mt-4 rounded-full bg-[#dc5e5e] px-5 text-white hover:bg-[#c24a4a]"
+                        onClick={addPasswordSignIn}
+                        disabled={isPending || isLoading}
+                      >
+                        {copy.passwordSaveLabel}
+                      </Button>
+                    </div>
+                  ) : null}
+                </>
+              )}
             </div>
 
             <div className="rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur">
