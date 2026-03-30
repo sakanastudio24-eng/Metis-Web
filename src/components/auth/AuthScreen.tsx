@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -15,7 +15,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { startTemporaryAuthSession } from "@/lib/temp-auth-client";
 
 type AuthScreenProps = {
-  initialView: "auth" | "signup" | "login";
+  initialView: "signup" | "login";
   initialError?: string | null;
   initialMessage?: string | null;
 };
@@ -318,11 +318,17 @@ const OVERLAY_LABELS: Record<ViewState, string> = {
   "email-sent": "Check your email",
 };
 
+const OAUTH_PROVIDERS = [
+  { id: "google", labelKey: "googleLabel" as const },
+  { id: "github", labelKey: "githubLabel" as const },
+] as const;
+
 export function AuthScreen({ initialView, initialError = null, initialMessage = null }: AuthScreenProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const sharedCopy = authCopy.shared;
   const routeCopy = initialView === "signup" ? authCopy.signUp : authCopy.signIn;
+  // Temporary review access stays opt-in, local-only, and frontend-only.
   const isTemporaryGoogleEnabled =
     process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_ENABLE_TEMP_AUTH === "true";
   const [view, setView] = useState<ViewState>("auth");
@@ -361,9 +367,6 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
       cancelled = true;
     };
   }, [router, supabase]);
-
-  const alternateRouteLabel = useMemo(() => routeCopy.alternateLabel, [routeCopy.alternateLabel]);
-  const alternateRouteHref = useMemo(() => routeCopy.alternateHref, [routeCopy.alternateHref]);
 
   function closeOverlay() {
     router.replace("/");
@@ -519,13 +522,13 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
             ) : null}
 
             <div style={{ display: "flex", gap: 10, marginTop: 4, marginBottom: 14 }}>
-              {["google", "github"].map((provider) => (
+              {OAUTH_PROVIDERS.map((provider) => (
                 <motion.button
-                  key={provider}
+                  key={provider.id}
                   type="button"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => handleProvider(provider as "google" | "github")}
+                  onClick={() => handleProvider(provider.id)}
                   style={{
                     flex: 1,
                     display: "flex",
@@ -542,8 +545,8 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                     cursor: "pointer",
                   }}
                 >
-                  {provider === "google" ? <GoogleIcon size={14} /> : <Github size={14} />}
-                  {provider === "google" ? sharedCopy.googleLabel : sharedCopy.githubLabel}
+                  {provider.id === "google" ? <GoogleIcon size={14} /> : <Github size={14} />}
+                  {sharedCopy[provider.labelKey]}
                 </motion.button>
               ))}
             </div>
@@ -585,40 +588,51 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
             </div>
 
             {isTemporaryGoogleEnabled ? (
-              <motion.button
-                type="button"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleTemporaryTestingAccess}
-                disabled={isPending || oauthLoading !== null}
+              <div
                 style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
                   marginTop: 18,
-                  padding: "12px 16px",
-                  borderRadius: 12,
-                  background: "rgba(220,94,94,0.08)",
+                  borderRadius: 14,
                   border: "1px dashed rgba(220,94,94,0.38)",
-                  fontFamily: "Inter, sans-serif",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "#ffb8b8",
-                  cursor: isPending || oauthLoading !== null ? "not-allowed" : "pointer",
-                  opacity: isPending || oauthLoading !== null ? 0.65 : 1,
+                  background: "rgba(220,94,94,0.08)",
+                  padding: "12px 14px",
                 }}
               >
-                <CheckCheck size={14} />
-                {sharedCopy.temporaryAccessAction}
-              </motion.button>
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleTemporaryTestingAccess}
+                  disabled={isPending || oauthLoading !== null}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    padding: "4px 0",
+                    border: "none",
+                    background: "transparent",
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#ffb8b8",
+                    cursor: isPending || oauthLoading !== null ? "not-allowed" : "pointer",
+                    opacity: isPending || oauthLoading !== null ? 0.65 : 1,
+                  }}
+                >
+                  <CheckCheck size={14} />
+                  {sharedCopy.temporaryAccessAction}
+                </motion.button>
+                <p style={{ margin: "8px 0 0", fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_DIM_2, lineHeight: 1.6 }}>
+                  {sharedCopy.temporaryAccessBody}
+                </p>
+              </div>
             ) : null}
 
             <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
               <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2 }}>{routeCopy.footerPrompt}</p>
-              <Link href={alternateRouteHref} style={{ color: "#ffb8b8", textDecoration: "none", fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600 }}>
-                {alternateRouteLabel}
+              <Link href={routeCopy.alternateHref} style={{ color: "#ffb8b8", textDecoration: "none", fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600 }}>
+                {routeCopy.alternateLabel}
               </Link>
               <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_DIM_2 }}>{sharedCopy.legalBlurb}</p>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>

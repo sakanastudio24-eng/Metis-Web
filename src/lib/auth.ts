@@ -19,6 +19,8 @@ function getAuthOrigin(origin?: string): string {
 export function getAuthCallbackUrl(origin?: string, nextPath?: string): string {
   const url = new URL("/auth/callback", getAuthOrigin(origin));
 
+  // The callback only completes provider auth and magic-link auth. It should
+  // never become a generic redirect surface.
   if (nextPath && isSafeAuthNextPath(nextPath)) {
     url.searchParams.set("next", nextPath);
   }

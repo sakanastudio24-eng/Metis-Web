@@ -3,7 +3,7 @@ import { AuthScreen } from "@/components/auth/AuthScreen";
 import { LandingPage } from "@/components/landing/LandingPage";
 
 type HomeWithAuthOverlayProps = {
-  initialView: "auth" | "signup" | "login";
+  initialView: "signup" | "login";
   initialError?: string | null;
   initialMessage?: string | null;
 };

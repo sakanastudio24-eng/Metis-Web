@@ -16,6 +16,8 @@ function isTemporaryAuthOptInEnabled() {
 }
 
 export function isTemporaryAuthEnabled(hostname?: string): boolean {
+  // This path is deliberately narrower than normal auth so it cannot leak out
+  // of local development by accident.
   if (process.env.NODE_ENV !== "development") {
     return false;
   }

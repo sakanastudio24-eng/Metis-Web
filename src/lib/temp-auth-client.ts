@@ -1,4 +1,6 @@
 export async function startTemporaryAuthSession() {
+  // The temporary route only prepares a local review cookie. It is never a
+  // substitute for a provider-backed or backend-valid session.
   const response = await fetch("/auth/temp-login", {
     method: "POST",
     credentials: "same-origin",

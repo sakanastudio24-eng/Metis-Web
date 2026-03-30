@@ -66,6 +66,8 @@ export async function requireAuthenticatedUser(): Promise<AuthenticatedUserDetai
 export async function redirectIfAuthenticated() {
   const user = await getAuthenticatedUserOrNull();
 
+  // Temporary review sessions should stay visible on auth entry routes so local
+  // testing does not accidentally mask the real sign-in experience.
   if (user && !user.isTemporary) {
     redirect("/account");
   }

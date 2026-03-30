@@ -250,7 +250,7 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
               </motion.div>
               {isTemporary ? (
                 <p style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "#ffb8b8", margin: "0 0 16px", opacity: 0.8 }}>
-                  Temporary local test account. Remove this flow before shipping.
+                  {copy.temporaryAccountBody}
                 </p>
               ) : null}
               <motion.div
