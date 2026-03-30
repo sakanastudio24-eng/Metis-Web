@@ -31,7 +31,7 @@ OAuth archive
 ```txt
 GOOGLE_CLIENT_ID
 GOOGLE_CLIENT_SECRET
-GOOGLE_CALLBACK_URL
+SUPPA_CALLBACK_URL
 GITHUB_CLIENT_ID
 GITHUB_CLIENT_SECRET
 ```
@@ -53,7 +53,7 @@ For Google and GitHub, the provider dashboard redirect URI should point at the S
 https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback
 ```
 
-If you keep a callback archive value in runtime secrets, `GOOGLE_CALLBACK_URL` should match that exact Supabase callback URL.
+If you keep a callback archive value in runtime secrets, `SUPPA_CALLBACK_URL` should match that exact Supabase callback URL.
 
 ## What happens today
 
