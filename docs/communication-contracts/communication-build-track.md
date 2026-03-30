@@ -187,3 +187,11 @@ Expected result:
 3. backend receives summaries, not surveillance
 4. communication is event-based, not constant streaming
 5. every payload should answer: why does Metis need this?
+
+## Current completion status
+
+- [ ] Step 1 extension internal messaging first
+- [x] Step 2 communication contract lock
+- [x] Step 3 auth bridge
+- [x] Step 4 backend validation and API communication
+- [ ] Step 5 gated features

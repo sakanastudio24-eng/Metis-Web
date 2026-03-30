@@ -30,3 +30,12 @@ Use it when work crosses:
 - use `access-state-contract.md` for account-tier and gating rules
 
 If a communication change affects more than one lane, update all touched contracts on purpose.
+
+## Done in Metis-Web
+
+- [x] contract docs are tracked in git
+- [x] website auth bridge contract is implemented with `source=extension`
+- [x] `/auth/success` posts the authenticated handoff payload and waits for ACK
+- [x] backend account validation exists at `POST /v1/extension/validate`
+- [x] first upload routes exist for events, scan summary, and premium report request
+- [ ] extension-side listener, storage, queueing, and gated UI adoption still need to land in `Metis`

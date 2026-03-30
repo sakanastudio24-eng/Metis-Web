@@ -234,3 +234,11 @@ Backend responsibilities:
 - `api-upload-contract.md`
 - `website-backend-contract.md`
 - `access-state-contract.md`
+
+## Done in Metis-Web
+
+- [x] `/sign-in?source=extension` and `/sign-up?source=extension` preserve extension intent
+- [x] `/auth/callback` routes extension-aware auth into `/auth/success`
+- [x] `/auth/success` posts `METIS_AUTH_SUCCESS`, waits for `METIS_AUTH_SUCCESS_ACK`, and shows fallback UI
+- [x] bridge route is private and kept out of indexing
+- [ ] extension-side listener, storage, ACK, and connected UI wiring still need to land in `Metis`
