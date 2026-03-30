@@ -11,8 +11,16 @@ export type TemporarySessionDetails = {
   user: null;
 };
 
+function isTemporaryAuthOptInEnabled() {
+  return process.env.NEXT_PUBLIC_ENABLE_TEMP_AUTH === "true";
+}
+
 export function isTemporaryAuthEnabled(hostname?: string): boolean {
   if (process.env.NODE_ENV !== "development") {
+    return false;
+  }
+
+  if (!isTemporaryAuthOptInEnabled()) {
     return false;
   }
 

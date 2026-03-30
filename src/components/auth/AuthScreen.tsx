@@ -390,7 +390,8 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const sharedCopy = authCopy.shared;
-  const isTemporaryGoogleEnabled = process.env.NODE_ENV === "development";
+  const isTemporaryGoogleEnabled =
+    process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_ENABLE_TEMP_AUTH === "true";
   const [view, setView] = useState<ViewState>(initialError ? "login" : initialView);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [oauthLoading, setOauthLoading] = useState<"google" | "github" | null>(null);
