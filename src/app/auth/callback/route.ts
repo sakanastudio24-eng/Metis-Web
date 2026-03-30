@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { getDefaultAuthCompletionPath, isSafeAuthNextPath } from "@/lib/auth";
-import { METIS_EXTENSION_SOURCE, isExtensionAuthSource } from "@/lib/contracts/communication";
+import { getAuthSource } from "@/lib/contracts/communication";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   const errorDescription = requestUrl.searchParams.get("error_description");
   const redirectBase = requestUrl.origin;
   const nextPath = requestUrl.searchParams.get("next");
-  const source = isExtensionAuthSource(requestUrl.searchParams.get("source")) ? METIS_EXTENSION_SOURCE : null;
+  const source = getAuthSource(requestUrl.searchParams.get("source"));
   // Extension auth keeps its own completion path, but normal web auth keeps
   // the usual post-auth destinations when the source marker is absent.
   const redirectPath = isSafeAuthNextPath(nextPath) ? nextPath : getDefaultAuthCompletionPath(source);

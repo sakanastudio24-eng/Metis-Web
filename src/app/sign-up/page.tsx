@@ -1,4 +1,4 @@
-import { METIS_EXTENSION_SOURCE, isExtensionAuthSource } from "@/lib/contracts/communication";
+import { getAuthSource } from "@/lib/contracts/communication";
 import { HomeWithAuthOverlay } from "@/components/auth/HomeWithAuthOverlay";
 import { redirectIfAuthenticated } from "@/lib/auth-server";
 import { createPrivateMetadata } from "@/lib/seo";
@@ -18,7 +18,7 @@ type SignUpPageProps = {
 
 export default async function SignUpPage({ searchParams }: SignUpPageProps) {
   const params = searchParams ? await searchParams : undefined;
-  const source = isExtensionAuthSource(params?.source) ? METIS_EXTENSION_SOURCE : null;
+  const source = getAuthSource(params?.source);
   await redirectIfAuthenticated(source);
 
   return (

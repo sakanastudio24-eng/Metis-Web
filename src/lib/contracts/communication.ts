@@ -1,5 +1,7 @@
 export const METIS_EXTENSION_SOURCE = "extension";
 export const METIS_AUTH_SUCCESS_PATH = "/auth/success";
+// Only the first-party website origins should be allowed to originate the
+// bridge payload that the extension accepts.
 export const METIS_ALLOWED_BRIDGE_ORIGINS = [
   "https://metis.zward.studio",
   "http://localhost:3000",
@@ -63,6 +65,10 @@ export type PremiumReportRequestPayload = {
 
 export function isExtensionAuthSource(source: string | null | undefined): source is MetisAuthSource {
   return source === METIS_EXTENSION_SOURCE;
+}
+
+export function getAuthSource(source: string | null | undefined): MetisAuthSource | null {
+  return isExtensionAuthSource(source) ? METIS_EXTENSION_SOURCE : null;
 }
 
 export function isAllowedBridgeOrigin(origin: string): boolean {

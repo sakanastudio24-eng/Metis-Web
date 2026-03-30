@@ -4,6 +4,8 @@ import {
   isExtensionAuthSource,
 } from "@/lib/contracts/communication";
 
+// Callback completion is deliberately narrow so auth cannot bounce users
+// through arbitrary internal paths.
 const ALLOWED_AUTH_REDIRECTS = new Set([
   "/logged-in",
   "/account",
