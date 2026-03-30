@@ -1,11 +1,5 @@
-import { ResetPasswordScreen } from "@/components/auth/ResetPasswordScreen";
-import { createPrivateMetadata } from "@/lib/seo";
-
-export const metadata = createPrivateMetadata({
-  title: "Choose a new password",
-  description: "Set a new password to regain secure access to Metis.",
-});
+import { redirect } from "next/navigation";
 
 export default function ResetPasswordPage() {
-  return <ResetPasswordScreen />;
+  redirect("/sign-in?message=Use%20a%20fresh%20magic%20link%20instead.");
 }

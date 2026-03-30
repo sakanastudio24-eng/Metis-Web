@@ -1,11 +1,5 @@
-import { ForgotPasswordScreen } from "@/components/auth/ForgotPasswordScreen";
-import { createPrivateMetadata } from "@/lib/seo";
-
-export const metadata = createPrivateMetadata({
-  title: "Reset password",
-  description: "Request a secure Metis password recovery link.",
-});
+import { redirect } from "next/navigation";
 
 export default function ForgotPasswordPage() {
-  return <ForgotPasswordScreen />;
+  redirect("/sign-in?message=Use%20a%20magic%20link%20instead.");
 }

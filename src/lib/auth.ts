@@ -1,6 +1,5 @@
 const ALLOWED_AUTH_REDIRECTS = new Set([
   "/logged-in",
-  "/reset-password",
   "/account",
   "/account/security",
 ]);
@@ -34,34 +33,10 @@ export function isSafeAuthNextPath(nextPath: string | null | undefined): nextPat
 export function getAuthErrorMessage(code: string | null): string | null {
   switch (code) {
     case "callback_failed":
-      return "That sign-in link is not usable anymore. Try again.";
+      return "Link expired or already used. Send a new link to keep going.";
     case "oauth_cancelled":
       return "The provider sign-in was cancelled before it finished.";
-    case "invalid_credentials":
-      return "That email and password combination did not work.";
-    case "verification_required":
-      return "Check your inbox and confirm your email before signing in.";
-    case "reset_failed":
-      return "That recovery link is not usable anymore. Request a new one.";
     default:
       return null;
   }
-}
-
-export function getSupabaseAuthErrorCode(error: unknown): string | null {
-  if (!(error instanceof Error) || !error.message) {
-    return null;
-  }
-
-  const message = error.message.toLowerCase();
-
-  if (message.includes("email not confirmed")) {
-    return "verification_required";
-  }
-
-  if (message.includes("invalid login credentials") || message.includes("invalid grant")) {
-    return "invalid_credentials";
-  }
-
-  return null;
 }

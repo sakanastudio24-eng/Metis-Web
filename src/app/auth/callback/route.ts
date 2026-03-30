@@ -10,11 +10,7 @@ export async function GET(request: NextRequest) {
   const errorDescription = requestUrl.searchParams.get("error_description");
   const redirectBase = requestUrl.origin;
   const nextPath = requestUrl.searchParams.get("next");
-  const redirectPath = isSafeAuthNextPath(nextPath)
-    ? nextPath
-    : requestUrl.searchParams.get("type") === "recovery"
-      ? "/reset-password"
-      : "/logged-in";
+  const redirectPath = isSafeAuthNextPath(nextPath) ? nextPath : "/logged-in";
 
   if (error) {
     const failureUrl = new URL("/sign-in", redirectBase);
@@ -38,7 +34,7 @@ export async function GET(request: NextRequest) {
 
   if (exchangeError) {
     const failureUrl = new URL("/sign-in", redirectBase);
-    failureUrl.searchParams.set("error", redirectPath === "/reset-password" ? "reset_failed" : "callback_failed");
+    failureUrl.searchParams.set("error", "callback_failed");
     return NextResponse.redirect(failureUrl);
   }
 
