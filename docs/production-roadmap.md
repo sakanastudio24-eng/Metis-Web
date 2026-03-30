@@ -2,7 +2,7 @@
 
 This document is the website-side path to production. It assumes `Metis-Web` owns auth, onboarding, account, legal, beta posture, provider flows, email delivery, and public product messaging.
 
-The remaining work is now a short release list instead of a vague cleanup bucket: provider QA, temporary auth removal, final hardening, then launch prep.
+The remaining work is now a short release list instead of a vague cleanup bucket: provider QA, temporary auth removal, final hardening, extension-side contract adoption, then launch prep.
 
 ## Launch goal
 
@@ -23,6 +23,7 @@ The open items are now:
 
 - removing the local temporary auth bypass before release
 - finishing real Google and GitHub provider testing
+- extension-side adoption of the shipped auth bridge and backend validation contract
 - final mobile polish on account and security
 - real entitlement wiring if Plus Beta or API Beta becomes live
 - a final production pass on SEO, OG assets, and deployment config
@@ -63,14 +64,15 @@ The open items are now:
 - verify callback URLs, public app URLs, and backend URLs stay aligned across Supabase, provider dashboards, and deployment config
 - group API prep work so the FastAPI layer has a clear production-ready boundary for health, readiness, protected routes, and account-type validation support
 - keep the first live API scope anchored to `docs/api-beta-plan.md`
-- define the account-type validation contract the extension will rely on for free vs Plus Beta behavior
+- keep bridge, upload, and access-state work aligned to `docs/communication-contracts`
+- adopt the account-type validation contract the extension will rely on for free vs Plus Beta behavior
 - harden route guards for `/logged-in`, `/account`, and `/account/security`
 
 ### Exit criteria
 
 - deployment config is stable and repeatable
 - API responsibilities are narrow and documented
-- extension-facing account validation has a clear contract
+- extension-facing account validation is wired against the clear contract
 
 ## Phase 3: Growth and launch polish
 

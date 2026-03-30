@@ -11,15 +11,18 @@ Current surfaces:
 1. Public website pages for the product story and legal pages
 2. Passwordless auth overlay for sign in and sign up
 3. Shared auth callback at `/auth/callback`
-4. Onboarding at `/logged-in`
-5. Account and security at `/account` and `/account/security`
-6. FastAPI proof endpoints for health, readiness, and future protected backend work
+4. Extension-aware auth completion at `/auth/success`
+5. Onboarding at `/logged-in`
+6. Account and security at `/account` and `/account/security`
+7. FastAPI proof endpoints for health, readiness, extension validation, and narrow upload contracts
 
 ## Runtime model
 
 Supabase owns identity, sessions, provider auth, magic link delivery, and callback exchange.
 
 The website completes auth at `/auth/callback`.
+
+When auth starts from the extension, the website preserves `source=extension`, lands on `/auth/success`, posts the authenticated handoff payload, and waits for extension ACK before trying to close the page.
 
 FastAPI does not issue credentials. It only verifies protected access where backend proof is needed.
 
@@ -81,6 +84,16 @@ Use a hamburger section menu on mobile dashboard views instead of forcing the de
 
 `docs/api-beta-plan.md`
 
+`docs/communication-contracts/README.md`
+
+`docs/communication-contracts/communication-build-track.md`
+
+`docs/communication-contracts/auth-contract.md`
+
+`docs/communication-contracts/website-backend-contract.md`
+
+`docs/communication-contracts/access-state-contract.md`
+
 `docs/git-segmentation.md`
 
 ## Working rules
@@ -94,6 +107,10 @@ If a commit turns out too broad, re segment it right away.
 Do not inspect `.env` directly.
 
 Update `.env.example` or the docs when the contract changes.
+
+Use `docs/communication-contracts/README.md` before changing communication behavior across lanes.
+
+Use `docs/communication-contracts/auth-contract.md` before changing bridge behavior between website and extension.
 
 ## Security rules
 
