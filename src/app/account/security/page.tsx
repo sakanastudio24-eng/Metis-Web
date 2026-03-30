@@ -6,7 +6,7 @@ import { createPrivateMetadata } from "@/lib/seo";
 
 export const metadata = createPrivateMetadata({
   title: "Security",
-  description: "Review current protection and staged two-factor security for Metis.",
+  description: "Review current protection and linked sign-in methods for Metis.",
 });
 
 export default async function SecurityPage() {
