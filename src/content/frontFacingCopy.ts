@@ -197,7 +197,7 @@ export const frontFacingCopy = {
         "Create access on the website, accept the legal terms here, and move straight into the onboarding flow before opening the extension.",
     },
     stack: [
-      { title: "Auth today", body: "Google, GitHub, magic link, and email/password all start on the website." },
+      { title: "Auth today", body: "Google, GitHub, and magic link all start on the website." },
       { title: "Account settings", body: "Billing, beta access, and security settings are managed on the website account surfaces." },
       { title: "Extension role", body: "The browser extension stays focused on scanning, reporting, and extension-local controls." },
     ],
