@@ -5,26 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { AnimatePresence, motion } from "motion/react";
-import {
-  ArrowRight,
-  Check,
-  CheckCheck,
-  ChevronRight,
-  Eye,
-  EyeOff,
-  Github,
-  Lock,
-  Mail,
-  Send,
-  Sparkles,
-  User,
-  X,
-} from "lucide-react";
+import { ArrowRight, CheckCheck, ChevronRight, Github, Mail, Send, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { authCopy } from "@/content/authCopy";
 import { siteLinks } from "@/content/frontFacingCopy";
-import { getAuthCallbackUrl, getAuthErrorMessage, getSupabaseAuthErrorCode } from "@/lib/auth";
+import { getAuthCallbackUrl, getAuthErrorMessage } from "@/lib/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { startTemporaryAuthSession } from "@/lib/temp-auth-client";
 
@@ -34,7 +20,7 @@ type AuthScreenProps = {
   initialMessage?: string | null;
 };
 
-type ViewState = "auth" | "signup" | "login" | "forgot" | "forgot-sent";
+type ViewState = "auth" | "email-sent";
 
 type FeedbackState =
   | {
@@ -177,12 +163,6 @@ function OverlayShell({
   );
 }
 
-const LEGAL_LINK_STYLE = {
-  color: "#dc8d72",
-  textDecoration: "none",
-  fontWeight: 600,
-} as const;
-
 function OrDivider() {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "4px 0" }}>
@@ -193,7 +173,7 @@ function OrDivider() {
   );
 }
 
-function BackButton({ onClick, label = "Back" }: { onClick: () => void; label?: string }) {
+function BackButton({ onClick, label }: { onClick: () => void; label: string }) {
   return (
     <motion.button
       type="button"
@@ -228,20 +208,16 @@ function Field({
   value,
   onChange,
   icon: Icon,
-  type = "text",
   error,
   autoComplete,
-  right,
 }: {
   label: string;
   placeholder: string;
   value: string;
   onChange: (value: string) => void;
   icon?: React.ElementType;
-  type?: string;
   error?: string;
   autoComplete?: string;
-  right?: React.ReactNode;
 }) {
   const [focused, setFocused] = useState(false);
 
@@ -272,7 +248,7 @@ function Field({
       >
         {Icon ? <Icon size={14} style={{ color: error ? "#ef4444" : focused ? RED : TEXT_DIM_2, flexShrink: 0 }} /> : null}
         <input
-          type={type}
+          type="email"
           value={value}
           placeholder={placeholder}
           autoComplete={autoComplete}
@@ -290,50 +266,9 @@ function Field({
             padding: "13px 0",
           }}
         />
-        {right}
       </div>
       {error ? <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: "#ef4444" }}>{error}</p> : null}
     </div>
-  );
-}
-
-function PasswordField({
-  label,
-  placeholder,
-  value,
-  onChange,
-  error,
-  autoComplete,
-}: {
-  label: string;
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-  error?: string;
-  autoComplete?: string;
-}) {
-  const [show, setShow] = useState(false);
-
-  return (
-    <Field
-      label={label}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      icon={Lock}
-      type={show ? "text" : "password"}
-      error={error}
-      autoComplete={autoComplete}
-      right={
-        <button
-          type="button"
-          onClick={() => setShow((current) => !current)}
-          style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: TEXT_DIM_2 }}
-        >
-          {show ? <EyeOff size={14} /> : <Eye size={14} />}
-        </button>
-      }
-    />
   );
 }
 
@@ -379,32 +314,22 @@ function PrimaryButton({
 }
 
 const OVERLAY_LABELS: Record<ViewState, string> = {
-  auth: "Get started",
-  signup: "Sign up",
-  login: "Log in",
-  forgot: "Reset password",
-  "forgot-sent": "Reset password",
+  auth: "Access",
+  "email-sent": "Check your email",
 };
 
 export function AuthScreen({ initialView, initialError = null, initialMessage = null }: AuthScreenProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const sharedCopy = authCopy.shared;
+  const routeCopy = initialView === "signup" ? authCopy.signUp : authCopy.signIn;
   const isTemporaryGoogleEnabled =
     process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_ENABLE_TEMP_AUTH === "true";
-  const [view, setView] = useState<ViewState>(initialError ? "login" : initialView);
+  const [view, setView] = useState<ViewState>("auth");
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [oauthLoading, setOauthLoading] = useState<"google" | "github" | null>(null);
-  const [signupName, setSignupName] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-  const [acceptedLegal, setAcceptedLegal] = useState(false);
-  const [signupErrors, setSignupErrors] = useState<Record<string, string>>({});
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [loginErrors, setLoginErrors] = useState<Record<string, string>>({});
-  const [forgotEmail, setForgotEmail] = useState("");
-  const [forgotError, setForgotError] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [sentTo, setSentTo] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -427,7 +352,6 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
     void (async () => {
       const { data } = await supabase.auth.getUser();
 
-      // Real signed-in users should land in account, not back in the overlay.
       if (!cancelled && data.user) {
         router.replace("/account");
       }
@@ -438,6 +362,9 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
     };
   }, [router, supabase]);
 
+  const alternateRouteLabel = useMemo(() => routeCopy.alternateLabel, [routeCopy.alternateLabel]);
+  const alternateRouteHref = useMemo(() => routeCopy.alternateHref, [routeCopy.alternateHref]);
+
   function closeOverlay() {
     router.replace("/");
   }
@@ -447,9 +374,10 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
 
     if (tone === "success") {
       toast.success(text);
-    } else {
-      toast.error(text);
+      return;
     }
+
+    toast.error(text);
   }
 
   function clearFormFeedback() {
@@ -475,111 +403,21 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
     });
   }
 
-  function handleTemporaryTestingAccess() {
+  function handleMagicLinkRequest(targetEmail = email) {
     clearFormFeedback();
 
-    startTransition(async () => {
-      try {
-        // This bypass is for local UI review only. It never replaces provider auth
-        // in production and it never crosses the backend trust boundary.
-        await startTemporaryAuthSession();
-        router.replace("/logged-in");
-      } catch {
-        showNotice(sharedCopy.temporaryAccessError, "error");
-      }
-    });
-  }
-
-  function handleEmailSignUp(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    clearFormFeedback();
-
-    const nextErrors: Record<string, string> = {};
-    if (!signupName.trim()) nextErrors.name = sharedCopy.requiredNameError;
-    if (!signupEmail.includes("@")) nextErrors.email = sharedCopy.invalidEmailError;
-    if (signupPassword.length < 8) nextErrors.password = sharedCopy.shortPasswordError;
-    if (!acceptedLegal) nextErrors.legal = sharedCopy.legalAcceptanceError;
-    setSignupErrors(nextErrors);
-
-    if (Object.keys(nextErrors).length > 0) {
+    if (!targetEmail.includes("@")) {
+      setEmailError(sharedCopy.invalidEmailError);
       return;
     }
 
-    startTransition(async () => {
-      const { error } = await supabase.auth.signUp({
-        email: signupEmail,
-        password: signupPassword,
-        options: {
-          emailRedirectTo: getAuthCallbackUrl(window.location.origin),
-          data: { full_name: signupName },
-        },
-      });
-
-      if (error) {
-        showNotice(sharedCopy.createAccountError, "error");
-        return;
-      }
-
-      await supabase.auth.signOut();
-      router.replace(`/verify?email=${encodeURIComponent(signupEmail)}`);
-    });
-  }
-
-  function handleSignUpProvider(provider: "google" | "github") {
-    if (!acceptedLegal) {
-      setSignupErrors((current) => ({
-        ...current,
-        legal: sharedCopy.legalAcceptanceError,
-      }));
-      return;
-    }
-
-    handleProvider(provider);
-  }
-
-  function handleEmailLogin(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    clearFormFeedback();
-
-    const nextErrors: Record<string, string> = {};
-    if (!loginEmail.includes("@")) nextErrors.email = sharedCopy.invalidEmailError;
-    if (!loginPassword) nextErrors.password = sharedCopy.missingPasswordError;
-    setLoginErrors(nextErrors);
-
-    if (Object.keys(nextErrors).length > 0) {
-      return;
-    }
-
-    startTransition(async () => {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: loginEmail,
-        password: loginPassword,
-      });
-
-      if (error) {
-        const errorCode = getSupabaseAuthErrorCode(error);
-        showNotice(getAuthErrorMessage(errorCode) ?? "Incorrect email or password. Try again.", "error");
-        return;
-      }
-
-      router.replace("/logged-in");
-    });
-  }
-
-  function handleMagicLinkRequest() {
-    clearFormFeedback();
-
-    if (!loginEmail.includes("@")) {
-      setLoginErrors((current) => ({ ...current, email: sharedCopy.invalidEmailError }));
-      return;
-    }
+    setEmailError("");
 
     startTransition(async () => {
       const { error } = await supabase.auth.signInWithOtp({
-        email: loginEmail,
+        email: targetEmail,
         options: {
-          emailRedirectTo: getAuthCallbackUrl(window.location.origin, "/account"),
-          shouldCreateUser: false,
+          emailRedirectTo: getAuthCallbackUrl(window.location.origin),
         },
       });
 
@@ -588,64 +426,24 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
         return;
       }
 
+      setSentTo(targetEmail);
+      setView("email-sent");
       showNotice(sharedCopy.magicLinkSuccess, "success");
     });
   }
 
-  function handleForgotSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function handleTemporaryTestingAccess() {
     clearFormFeedback();
 
-    if (!forgotEmail.includes("@")) {
-      setForgotError(sharedCopy.invalidEmailError);
-      return;
-    }
-
     startTransition(async () => {
-      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-        redirectTo: getAuthCallbackUrl(window.location.origin, "/reset-password"),
-      });
-
-      if (error) {
-        showNotice(sharedCopy.resetRequestError, "error");
-        return;
+      try {
+        await startTemporaryAuthSession();
+        router.replace("/logged-in");
+      } catch {
+        showNotice(sharedCopy.temporaryAccessError, "error");
       }
-
-      setSentTo(forgotEmail);
-      setForgotError("");
-      setView("forgot-sent");
     });
   }
-
-  function handleForgotResend() {
-    clearFormFeedback();
-
-    if (!sentTo.includes("@")) {
-      setView("forgot");
-      return;
-    }
-
-    startTransition(async () => {
-      const { error } = await supabase.auth.resetPasswordForEmail(sentTo, {
-        redirectTo: getAuthCallbackUrl(window.location.origin, "/reset-password"),
-      });
-
-      if (error) {
-        showNotice(sharedCopy.resetRequestError, "error");
-        return;
-      }
-
-      showNotice(sharedCopy.resetRequestResent, "success");
-    });
-  }
-
-  const passwordStrength = useMemo(() => {
-    if (!signupPassword) return 0;
-    if (signupPassword.length < 6) return 1;
-    if (signupPassword.length < 8) return 2;
-    if (/[A-Z]/.test(signupPassword) && /[0-9]/.test(signupPassword)) return 4;
-    return 3;
-  }, [signupPassword]);
 
   return (
     <OverlayShell viewLabel={OVERLAY_LABELS[view]} onClose={closeOverlay}>
@@ -673,6 +471,10 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
             >
               <Sparkles size={20} style={{ color: RED }} />
             </div>
+
+            <p style={{ margin: 0, marginBottom: 8, fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: TEXT_DIM_2 }}>
+              {routeCopy.eyebrow}
+            </p>
             <h2
               style={{
                 fontFamily: "DM Serif Display, serif",
@@ -684,216 +486,24 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 marginBottom: 8,
               }}
             >
-              Start with Metis
+              {routeCopy.title}
             </h2>
-            <p
-              style={{
-                fontFamily: "Inter, sans-serif",
-                fontSize: 14,
-                color: TEXT_DIM,
-                lineHeight: 1.6,
-                margin: 0,
-                marginBottom: 28,
-              }}
-            >
-              Create your free account and move into your first setup without leaving the page.
+            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_DIM, lineHeight: 1.65, margin: 0, marginBottom: 24 }}>
+              {routeCopy.intro}
             </p>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: 10,
-                padding: "14px 16px",
-                marginBottom: 18,
-                borderRadius: 16,
-                background: "rgba(255,255,255,0.04)",
-                border: `1px solid ${BORDER}`,
-              }}
-            >
-              <div
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 10,
-                  background: "rgba(220,94,94,0.12)",
-                  border: "1px solid rgba(220,94,94,0.24)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                }}
-              >
-                <ArrowRight size={14} style={{ color: RED }} />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <span
-                  style={{
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: TEXT_DIM,
-                  }}
-                >
-                  {sharedCopy.stageTitle}
-                </span>
-                <p
-                  style={{
-                    margin: 0,
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: 13,
-                    lineHeight: 1.6,
-                    color: TEXT_DIM,
-                  }}
-                >
-                  {sharedCopy.stageBody}
-                </p>
-              </div>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
-              {isTemporaryGoogleEnabled ? (
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleTemporaryTestingAccess}
-                  disabled={isPending || oauthLoading !== null}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
-                    padding: "12px 16px",
-                    borderRadius: 12,
-                    background: "rgba(220,94,94,0.08)",
-                    border: "1px dashed rgba(220,94,94,0.38)",
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: "#ffb8b8",
-                    cursor: isPending || oauthLoading !== null ? "not-allowed" : "pointer",
-                    opacity: isPending || oauthLoading !== null ? 0.65 : 1,
-                  }}
-                >
-                  <CheckCheck size={14} />
-                  Testing login
-                </motion.button>
-              ) : null}
-              <motion.button
-                type="button"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleProvider("google")}
-                disabled={oauthLoading !== null}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 10,
-                  padding: "14px",
-                  borderRadius: 14,
-                  background: "rgba(255,255,255,0.97)",
-                  border: "1px solid rgba(0,0,0,0.08)",
-                  fontFamily: "Inter, sans-serif",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: "#1a1a1a",
-                  cursor: oauthLoading !== null ? "not-allowed" : "pointer",
-                  opacity: oauthLoading === "github" ? 0.5 : 1,
-                }}
-              >
-                {oauthLoading === "google" ? <Spinner light /> : <GoogleIcon />}
-                Continue with Google
-              </motion.button>
-              <motion.button
-                type="button"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleProvider("github")}
-                disabled={oauthLoading !== null}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 10,
-                  padding: "14px",
-                  borderRadius: 14,
-                  background: "rgba(255,255,255,0.08)",
-                  border: `1px solid ${BORDER}`,
-                  fontFamily: "Inter, sans-serif",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: TEXT,
-                  cursor: oauthLoading !== null ? "not-allowed" : "pointer",
-                  opacity: oauthLoading === "google" ? 0.5 : 1,
-                }}
-              >
-                {oauthLoading === "github" ? <Spinner /> : <Github size={16} />}
-                Continue with GitHub
-              </motion.button>
-            </div>
-            <OrDivider />
-            <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
-              <motion.button
-                type="button"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setView("signup")}
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
-                  padding: "14px",
-                  borderRadius: 14,
-                  background: "rgba(255,255,255,0.06)",
-                  border: `1px solid ${BORDER}`,
-                  fontFamily: "Inter, sans-serif",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: TEXT,
-                  cursor: "pointer",
-                }}
-              >
-                <Mail size={15} />
-                Sign up with email
-              </motion.button>
-              <motion.button
-                type="button"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setView("login")}
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
-                  padding: "14px",
-                  borderRadius: 14,
-                  background: "rgba(255,255,255,0.06)",
-                  border: `1px solid ${BORDER}`,
-                  fontFamily: "Inter, sans-serif",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: TEXT_DIM,
-                  cursor: "pointer",
-                }}
-              >
-                Log in
-              </motion.button>
-            </div>
+
             {feedback ? (
               <div
                 style={{
-                  marginTop: 16,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
                   padding: "11px 14px",
                   borderRadius: 10,
                   background: feedback.tone === "error" ? "rgba(239,68,68,0.1)" : "rgba(34,197,94,0.15)",
                   border:
                     feedback.tone === "error" ? "1px solid rgba(239,68,68,0.25)" : "1px solid rgba(34,197,94,0.3)",
+                  marginBottom: 16,
                 }}
               >
                 <span
@@ -907,157 +517,22 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 </span>
               </div>
             ) : null}
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_DIM_2, marginTop: 20, lineHeight: 1.5 }}>
-              {sharedCopy.websiteBoundaryNote}
-            </p>
-          </motion.div>
-        ) : null}
 
-        {view === "signup" ? (
-          <motion.div
-            key="signup"
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -16 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <h2
-              style={{
-                fontFamily: "DM Serif Display, serif",
-                fontSize: "clamp(24px, 3vw, 34px)",
-                color: TEXT,
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                margin: 0,
-                marginBottom: 6,
-              }}
-            >
-              Create your account.
-            </h2>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_DIM, margin: 0, marginBottom: 28 }}>
-              Already have one?{" "}
-              <button
-                type="button"
-                onClick={() => setView("login")}
-                style={{ background: "none", border: "none", cursor: "pointer", color: RED, font: "inherit", fontWeight: 600, padding: 0 }}
-              >
-                Log in
-              </button>
-            </p>
-            <form onSubmit={handleEmailSignUp} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              <Field
-                label="Full name"
-                placeholder="Ada Lovelace"
-                value={signupName}
-                onChange={(value) => {
-                  setSignupName(value);
-                  setSignupErrors((current) => ({ ...current, name: "" }));
-                }}
-                icon={User}
-                error={signupErrors.name}
-                autoComplete="name"
-              />
-              <Field
-                label="Email address"
-                placeholder="ada@company.com"
-                value={signupEmail}
-                onChange={(value) => {
-                  setSignupEmail(value);
-                  setSignupErrors((current) => ({ ...current, email: "" }));
-                }}
-                icon={Mail}
-                type="email"
-                error={signupErrors.email}
-                autoComplete="email"
-              />
-              <PasswordField
-                label="Password"
-                placeholder="Min. 8 characters"
-                value={signupPassword}
-                onChange={(value) => {
-                  setSignupPassword(value);
-                  setSignupErrors((current) => ({ ...current, password: "" }));
-                }}
-                error={signupErrors.password}
-                autoComplete="new-password"
-              />
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 10,
-                  padding: "12px 14px",
-                  borderRadius: 12,
-                  background: "rgba(255,255,255,0.04)",
-                  border: `1px solid ${signupErrors.legal ? "#ef4444" : BORDER}`,
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={acceptedLegal}
-                  onChange={(event) => {
-                    setAcceptedLegal(event.target.checked);
-                    setSignupErrors((current) => ({ ...current, legal: "" }));
-                  }}
-                  style={{ marginTop: 2 }}
-                />
-                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM, lineHeight: 1.6 }}>
-                  {sharedCopy.legalAcceptanceLabel}{" "}
-                  <Link href={siteLinks.termsUrl} style={LEGAL_LINK_STYLE}>
-                    Terms of Use
-                  </Link>{" "}
-                  and{" "}
-                  <Link href={siteLinks.privacyUrl} style={LEGAL_LINK_STYLE}>
-                    Privacy Policy
-                  </Link>
-                  .
-                </span>
-              </label>
-              {signupErrors.legal ? (
-                <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: "#ef4444" }}>
-                  {signupErrors.legal}
-                </p>
-              ) : null}
-              {signupPassword ? (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
-                  <div style={{ display: "flex", gap: 4, marginTop: -4 }}>
-                    {[1, 2, 3, 4].map((index) => {
-                      const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e"];
-                      return (
-                        <div
-                          key={index}
-                          style={{
-                            flex: 1,
-                            height: 3,
-                            borderRadius: 999,
-                            background: index <= passwordStrength ? colors[Math.max(passwordStrength - 1, 0)] : "rgba(255,255,255,0.1)",
-                          }}
-                        />
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              ) : null}
-              <PrimaryButton loading={isPending} type="submit">
-                Create account <ArrowRight size={15} />
-              </PrimaryButton>
-            </form>
-            <OrDivider />
-            <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+            <div style={{ display: "flex", gap: 10, marginTop: 4, marginBottom: 14 }}>
               {["google", "github"].map((provider) => (
                 <motion.button
                   key={provider}
                   type="button"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => handleSignUpProvider(provider as "google" | "github")}
+                  onClick={() => handleProvider(provider as "google" | "github")}
                   style={{
                     flex: 1,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     gap: 8,
-                    padding: "11px",
+                    padding: "12px",
                     borderRadius: 12,
                     background: "rgba(255,255,255,0.05)",
                     border: `1px solid ${BORDER}`,
@@ -1068,10 +543,47 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                   }}
                 >
                   {provider === "google" ? <GoogleIcon size={14} /> : <Github size={14} />}
-                  {provider === "google" ? "Google" : "GitHub"}
+                  {provider === "google" ? sharedCopy.googleLabel : sharedCopy.githubLabel}
                 </motion.button>
               ))}
             </div>
+
+            <OrDivider />
+
+            <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 14 }}>
+              <Field
+                label={sharedCopy.emailLabel}
+                placeholder={sharedCopy.emailPlaceholder}
+                value={email}
+                onChange={(value) => {
+                  setEmail(value);
+                  setEmailError("");
+                  clearFormFeedback();
+                }}
+                icon={Mail}
+                error={emailError}
+                autoComplete="email"
+              />
+
+              <div
+                style={{
+                  borderRadius: 12,
+                  border: `1px solid ${BORDER}`,
+                  background: "rgba(255,255,255,0.04)",
+                  padding: "14px 16px",
+                }}
+              >
+                <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2, lineHeight: 1.6 }}>
+                  {sharedCopy.magicLinkHelper}
+                </p>
+                <div style={{ marginTop: 12 }}>
+                  <PrimaryButton loading={isPending} onClick={() => handleMagicLinkRequest()}>
+                    {sharedCopy.magicLinkLabel} <Send size={14} />
+                  </PrimaryButton>
+                </div>
+              </div>
+            </div>
+
             {isTemporaryGoogleEnabled ? (
               <motion.button
                 type="button"
@@ -1102,251 +614,28 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 {sharedCopy.temporaryAccessAction}
               </motion.button>
             ) : null}
-            <BackButton onClick={() => setView("auth")} />
-          </motion.div>
-        ) : null}
 
-        {view === "login" ? (
-          <motion.div
-            key="login"
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -16 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <h2
-              style={{
-                fontFamily: "DM Serif Display, serif",
-                fontSize: "clamp(24px, 3vw, 34px)",
-                color: TEXT,
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                margin: 0,
-                marginBottom: 6,
-              }}
-            >
-              Welcome back.
-            </h2>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_DIM, margin: 0, marginBottom: 28 }}>
-              No account yet?{" "}
-              <button
-                type="button"
-                onClick={() => setView("signup")}
-                style={{ background: "none", border: "none", cursor: "pointer", color: RED, font: "inherit", fontWeight: 600, padding: 0 }}
-              >
-                Sign up free
-              </button>
-            </p>
-            {feedback ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "11px 14px",
-                  borderRadius: 10,
-                  background: feedback.tone === "error" ? "rgba(239,68,68,0.1)" : "rgba(34,197,94,0.15)",
-                  border:
-                    feedback.tone === "error" ? "1px solid rgba(239,68,68,0.25)" : "1px solid rgba(34,197,94,0.3)",
-                  marginBottom: 16,
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: 13,
-                    color: feedback.tone === "error" ? "#f87171" : "#86efac",
-                  }}
-                >
-                  {feedback.text}
-                </span>
+            <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
+              <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2 }}>{routeCopy.footerPrompt}</p>
+              <Link href={alternateRouteHref} style={{ color: "#ffb8b8", textDecoration: "none", fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600 }}>
+                {alternateRouteLabel}
+              </Link>
+              <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_DIM_2 }}>{sharedCopy.legalBlurb}</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <Link href={siteLinks.termsUrl} style={{ color: "#dc8d72", textDecoration: "none", fontFamily: "Inter, sans-serif", fontSize: 12 }}>
+                  Terms
+                </Link>
+                <Link href={siteLinks.privacyUrl} style={{ color: "#dc8d72", textDecoration: "none", fontFamily: "Inter, sans-serif", fontSize: 12 }}>
+                  Privacy
+                </Link>
               </div>
-            ) : null}
-            <form onSubmit={handleEmailLogin} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              <Field
-                label="Email address"
-                placeholder="ada@company.com"
-                value={loginEmail}
-                onChange={(value) => {
-                  setLoginEmail(value);
-                  setLoginErrors((current) => ({ ...current, email: "" }));
-                  clearFormFeedback();
-                }}
-                icon={Mail}
-                type="email"
-                error={loginErrors.email}
-                autoComplete="email"
-              />
-              <div>
-                <PasswordField
-                  label="Password"
-                  placeholder="Your password"
-                  value={loginPassword}
-                  onChange={(value) => {
-                    setLoginPassword(value);
-                    setLoginErrors((current) => ({ ...current, password: "" }));
-                    clearFormFeedback();
-                  }}
-                  error={loginErrors.password}
-                  autoComplete="current-password"
-                />
-                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
-                  <button
-                    type="button"
-                    onClick={() => setView("forgot")}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: 12,
-                      color: TEXT_DIM_2,
-                      padding: 0,
-                    }}
-                  >
-                    Forgot password?
-                  </button>
-                </div>
-              </div>
-              <PrimaryButton loading={isPending} type="submit">
-                Log in <ArrowRight size={15} />
-              </PrimaryButton>
-            </form>
-            <div
-              style={{
-                marginTop: 14,
-                borderRadius: 12,
-                border: `1px solid ${BORDER}`,
-                background: "rgba(255,255,255,0.04)",
-                padding: "14px 16px",
-              }}
-            >
-              <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2, lineHeight: 1.6 }}>
-                {sharedCopy.magicLinkHelper}
-              </p>
-              <button
-                type="button"
-                onClick={handleMagicLinkRequest}
-                style={{
-                  marginTop: 12,
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
-                  padding: "11px 14px",
-                  borderRadius: 12,
-                  border: `1px solid ${BORDER}`,
-                  background: "rgba(255,255,255,0.05)",
-                  fontFamily: "Inter, sans-serif",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: TEXT,
-                  cursor: "pointer",
-                }}
-              >
-                <Send size={14} />
-                {sharedCopy.magicLinkLabel}
-              </button>
             </div>
-            <OrDivider />
-            <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
-              {["google", "github"].map((provider) => (
-                <motion.button
-                  key={provider}
-                  type="button"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => handleProvider(provider as "google" | "github")}
-                  style={{
-                    flex: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
-                    padding: "11px",
-                    borderRadius: 12,
-                    background: "rgba(255,255,255,0.05)",
-                    border: `1px solid ${BORDER}`,
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: 13,
-                    color: TEXT_DIM,
-                    cursor: "pointer",
-                  }}
-                >
-                  {provider === "google" ? <GoogleIcon size={14} /> : <Github size={14} />}
-                  {provider === "google" ? "Google" : "GitHub"}
-                </motion.button>
-              ))}
-            </div>
-            <BackButton onClick={() => setView("auth")} />
           </motion.div>
         ) : null}
 
-        {view === "forgot" ? (
+        {view === "email-sent" ? (
           <motion.div
-            key="forgot"
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -16 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 14,
-                background: "rgba(99,102,241,0.12)",
-                border: "1px solid rgba(99,102,241,0.3)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 24,
-              }}
-            >
-              <Mail size={20} style={{ color: "#818cf8" }} />
-            </div>
-            <h2
-              style={{
-                fontFamily: "DM Serif Display, serif",
-                fontSize: "clamp(24px, 3vw, 34px)",
-                color: TEXT,
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                margin: 0,
-                marginBottom: 8,
-              }}
-            >
-              Forgot your password?
-            </h2>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_DIM, lineHeight: 1.6, margin: 0, marginBottom: 28 }}>
-              No problem. Enter your email and we&apos;ll send a reset link — it expires in 15 minutes.
-            </p>
-            <form onSubmit={handleForgotSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              <Field
-                label="Email address"
-                placeholder="ada@company.com"
-                value={forgotEmail}
-                onChange={(value) => {
-                  setForgotEmail(value);
-                  setForgotError("");
-                }}
-                icon={Mail}
-                type="email"
-                error={forgotError}
-                autoComplete="email"
-              />
-              <PrimaryButton loading={isPending} type="submit">
-                Send reset link <Send size={14} />
-              </PrimaryButton>
-            </form>
-            <BackButton onClick={() => setView("login")} label="Back to log in" />
-          </motion.div>
-        ) : null}
-
-        {view === "forgot-sent" ? (
-          <motion.div
-            key="forgot-sent"
+            key="email-sent"
             initial={{ opacity: 0, scale: 0.96, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
@@ -1380,45 +669,21 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 marginBottom: 10,
               }}
             >
-              Check your inbox.
+              {sharedCopy.magicLinkSentTitle}
             </h2>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_DIM, lineHeight: 1.65, margin: 0, marginBottom: 28, maxWidth: 340 }}>
-              We&apos;ve sent a reset link to <span style={{ color: TEXT, fontWeight: 600 }}>{sentTo}</span>. Check your spam folder if it
-              doesn&apos;t arrive within a minute.
+            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_DIM, lineHeight: 1.65, margin: 0, marginBottom: 14, maxWidth: 340 }}>
+              {sharedCopy.magicLinkSentBody(sentTo)}
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-start", marginBottom: 24 }}>
-              <button
-                type="button"
-                onClick={handleForgotResend}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "Inter, sans-serif",
-                  fontSize: 13,
-                  color: "#ffb8b8",
-                  padding: 0,
-                }}
-              >
-                {authCopy.forgotPassword.resendLabel}
-              </button>
-              <button
-                type="button"
-                onClick={() => setView("forgot")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "Inter, sans-serif",
-                  fontSize: 13,
-                  color: TEXT_DIM_2,
-                  padding: 0,
-                }}
-              >
-                Didn&apos;t get it? Try a different email →
-              </button>
+            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2, lineHeight: 1.6, margin: 0, marginBottom: 24 }}>
+              {sharedCopy.magicLinkExpiryLabel}
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <PrimaryButton loading={isPending} onClick={() => handleMagicLinkRequest(sentTo)}>
+                {sharedCopy.magicLinkResendLabel} <Send size={14} />
+              </PrimaryButton>
+              <BackButton onClick={() => setView("auth")} label={sharedCopy.useAnotherEmailLabel} />
             </div>
-            <BackButton onClick={() => setView("login")} label="Back to log in" />
           </motion.div>
         ) : null}
       </AnimatePresence>
