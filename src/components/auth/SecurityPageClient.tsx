@@ -98,8 +98,6 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
   const [enrollment, setEnrollment] = useState<EnrollmentState | null>(null);
   const [code, setCode] = useState("");
   const [linkedProviders, setLinkedProviders] = useState<string[]>(provider ? [provider] : []);
-  const [passwordValue, setPasswordValue] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [secretCopied, setSecretCopied] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: "success" | "error"; message: string } | null>(null);
 
@@ -306,37 +304,6 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
       }
 
       setFeedback({ tone: "success", message: copy.linkMethodPending });
-    });
-  }
-
-  async function addPasswordSignIn() {
-    const trimmedPassword = passwordValue.trim();
-    const trimmedConfirm = passwordConfirm.trim();
-
-    if (trimmedPassword.length < 8) {
-      setFeedback({ tone: "error", message: copy.passwordTooShort });
-      return;
-    }
-
-    if (trimmedPassword !== trimmedConfirm) {
-      setFeedback({ tone: "error", message: copy.passwordMismatch });
-      return;
-    }
-
-    setFeedback(null);
-
-    startTransition(async () => {
-      const { error } = await supabase.auth.updateUser({ password: trimmedPassword });
-
-      if (error) {
-        setFeedback({ tone: "error", message: copy.passwordSaveError });
-        return;
-      }
-
-      setLinkedProviders((current) => (current.includes("email") ? current : [...current, "email"]));
-      setPasswordValue("");
-      setPasswordConfirm("");
-      setFeedback({ tone: "success", message: copy.passwordAddedLabel });
     });
   }
 
@@ -597,41 +564,10 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
                           </Button>
                         ))
                       ) : (
-                        <p className="text-sm text-white/55">{copy.linkedLabel}</p>
+                        <p className="text-sm text-white/55">{copy.allMethodsConnectedBody}</p>
                       )}
                     </div>
                   </div>
-
-                  {!linkedProviders.includes("email") ? (
-                    <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.passwordMethodTitle}</p>
-                      <p className="mt-2 text-sm leading-6 text-white/62">{copy.passwordMethodBody}</p>
-                      <input
-                        value={passwordValue}
-                        onChange={(event) => setPasswordValue(event.target.value)}
-                        type="password"
-                        placeholder={copy.passwordPlaceholder}
-                        autoComplete="new-password"
-                        className="mt-4 h-12 w-full rounded-2xl border border-white/12 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-white/35"
-                      />
-                      <input
-                        value={passwordConfirm}
-                        onChange={(event) => setPasswordConfirm(event.target.value)}
-                        type="password"
-                        placeholder={copy.passwordConfirmPlaceholder}
-                        autoComplete="new-password"
-                        className="mt-3 h-12 w-full rounded-2xl border border-white/12 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-white/35"
-                      />
-                      <Button
-                        type="button"
-                        className="mt-4 rounded-full bg-[#dc5e5e] px-5 text-white hover:bg-[#c24a4a]"
-                        onClick={addPasswordSignIn}
-                        disabled={isPending || isLoading}
-                      >
-                        {copy.passwordSaveLabel}
-                      </Button>
-                    </div>
-                  ) : null}
                 </>
               )}
             </div>
