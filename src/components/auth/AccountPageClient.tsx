@@ -624,50 +624,35 @@ function SecurityPanel({ provider, onOpenDetails }: { provider: string; onOpenDe
         </div>
       </Card>
 
-      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
-        <Card>
-          <SectionLabel>{copy.providerTitle}</SectionLabel>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderRadius: 12, border: `1px solid ${BD_SOFT}`, background: BG_CARD_2, padding: "12px 14px" }}>
-            <div>
-              <p style={{ margin: 0, marginBottom: 2, fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color: TXT }}>{getProviderLabel(provider)}</p>
-              <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 11, color: TXT_FAINT }}>{copy.providerBody}</p>
-            </div>
-            <div style={{ width: 38, height: 38, borderRadius: 12, background: ACCENT_DIM, border: `1px solid ${ACCENT_BD}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Lock size={16} style={{ color: ACCENT }} />
-            </div>
+      <Card>
+        <SectionLabel>{copy.providerTitle}</SectionLabel>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderRadius: 12, border: `1px solid ${BD_SOFT}`, background: BG_CARD_2, padding: "12px 14px", marginBottom: 12 }}>
+          <div>
+            <p style={{ margin: 0, marginBottom: 2, fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color: TXT }}>{getProviderLabel(provider)}</p>
+            <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 11, color: TXT_FAINT }}>{copy.providerBody}</p>
           </div>
-        </Card>
-
-        <Card>
-          <SectionLabel>{copy.twoFactorTitle}</SectionLabel>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
-            <div>
-              <p style={{ margin: 0, marginBottom: 4, fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color: TXT }}>{copy.twoFactorStatus}</p>
-              <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: TXT_DIM, lineHeight: 1.6 }}>{copy.twoFactorBody}</p>
-            </div>
-            <div style={{ width: 38, height: 38, borderRadius: 12, background: ACCENT_DIM, border: `1px solid ${ACCENT_BD}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Smartphone size={16} style={{ color: ACCENT }} />
-            </div>
+          <div style={{ width: 38, height: 38, borderRadius: 12, background: ACCENT_DIM, border: `1px solid ${ACCENT_BD}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Lock size={16} style={{ color: ACCENT }} />
           </div>
-          <button
-            type="button"
-            onClick={onOpenDetails}
-            style={{
-              borderRadius: 11,
-              border: "none",
-              background: ACCENT,
-              padding: "11px 14px",
-              color: "white",
-              fontFamily: "Inter, sans-serif",
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: "pointer",
-            }}
-          >
-            {copy.twoFactorCta}
-          </button>
-        </Card>
-      </div>
+        </div>
+        <button
+          type="button"
+          onClick={onOpenDetails}
+          style={{
+            borderRadius: 11,
+            border: "none",
+            background: ACCENT,
+            padding: "11px 14px",
+            color: "white",
+            fontFamily: "Inter, sans-serif",
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
+        >
+          Review security settings
+        </button>
+      </Card>
 
       <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
         {[copy.activeSessionsTitle, copy.auditLogTitle].map((title) => (
@@ -686,7 +671,6 @@ function SecurityPanel({ provider, onOpenDetails }: { provider: string; onOpenDe
 
 function PricingPanel({ user }: { user: DashboardUser }) {
   const copy = dashboardCopy.pricing;
-  const [annual, setAnnual] = useState(false);
   const plans = copy.plans.map((plan) => ({
     ...plan,
     current: user.plan === plan.id,
@@ -694,27 +678,6 @@ function PricingPanel({ user }: { user: DashboardUser }) {
 
   return (
     <PanelFrame title={copy.title} body={copy.body}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: annual ? TXT_DIM : TXT }}>{copy.monthlyLabel}</span>
-        <button
-          type="button"
-          onClick={() => setAnnual((value) => !value)}
-          style={{
-            width: 42,
-            height: 24,
-            borderRadius: 999,
-            border: "none",
-            background: annual ? ACCENT : "rgba(255,255,255,0.12)",
-            cursor: "pointer",
-            position: "relative",
-          }}
-        >
-          <div style={{ position: "absolute", top: 3, left: annual ? 21 : 3, width: 18, height: 18, borderRadius: "50%", background: "white", transition: "left 0.2s" }} />
-        </button>
-        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: annual ? TXT : TXT_DIM }}>{copy.annualLabel}</span>
-        {annual ? <Badge>{copy.annualSavingsLabel}</Badge> : null}
-      </div>
-
       <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
         {plans.map((plan) => (
           <motion.div
@@ -745,12 +708,14 @@ function PricingPanel({ user }: { user: DashboardUser }) {
                   </Badge>
                 ) : null}
               </div>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
-                <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 36, letterSpacing: "-0.03em", color: TXT }}>
-                  {annual && plan.id !== "free" ? `$${Math.round(Number(plan.price.replace("$", "")) * 0.83)}` : plan.price}
-                </span>
-                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TXT_DIM }}>{plan.period}</span>
-              </div>
+              {plan.price ? (
+                <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
+                  <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 36, letterSpacing: "-0.03em", color: TXT }}>
+                    {plan.price}
+                  </span>
+                  <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TXT_DIM }}>{plan.period}</span>
+                </div>
+              ) : null}
               <p style={{ margin: "8px 0 0", fontFamily: "Inter, sans-serif", fontSize: 12, color: TXT_DIM, lineHeight: 1.6 }}>{plan.desc}</p>
             </div>
 
