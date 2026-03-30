@@ -6,6 +6,7 @@ from urllib.request import Request, urlopen
 from fastapi import Depends, FastAPI, Header, HTTPException, Request as FastAPIRequest, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, ConfigDict
 
 from api.app.config import ApiEnv, get_env
 
@@ -21,7 +22,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[str(env.frontend_url)],
     allow_credentials=False,
-    allow_methods=["GET"],
+    allow_methods=["GET", "POST"],
     allow_headers=["Authorization", "Content-Type"],
     max_age=600,
 )
@@ -106,6 +107,91 @@ def fetch_authenticated_user(token: str, config: ApiEnv) -> dict[str, object]:
         ) from exc
 
 
+class UsageEventPayload(BaseModel):
+    type: str
+    occurredAt: int
+    route: str | None = None
+
+    model_config = ConfigDict(extra="forbid")
+
+
+class ScanSummaryPayload(BaseModel):
+    route: str
+    score: float | None = None
+    issueCount: int
+    confidence: str | None = None
+
+    model_config = ConfigDict(extra="forbid")
+
+
+class PremiumReportRequestPayload(BaseModel):
+    route: str
+    requestedAt: int
+    source: str
+
+    model_config = ConfigDict(extra="forbid")
+
+
+def _meta_bool(meta: dict[str, object], *keys: str) -> bool:
+    for key in keys:
+        value = meta.get(key)
+        if isinstance(value, bool):
+            return value
+    return False
+
+
+def derive_account_state(user: dict[str, object]) -> dict[str, object]:
+    app_meta = user.get("app_metadata")
+    user_meta = user.get("user_metadata")
+
+    app_meta = app_meta if isinstance(app_meta, dict) else {}
+    user_meta = user_meta if isinstance(user_meta, dict) else {}
+
+    plan = next(
+        (
+            value
+            for value in (
+                app_meta.get("plan"),
+                app_meta.get("tier"),
+                user_meta.get("plan"),
+                user_meta.get("tier"),
+            )
+            if isinstance(value, str)
+        ),
+        "free",
+    )
+
+    if plan not in {"free", "plus_beta", "paid"}:
+        plan = "free"
+
+    # A valid signed-in user still defaults to free unless backend metadata says
+    # otherwise. Authenticated does not imply beta or paid access.
+    plus_beta_enabled = _meta_bool(app_meta, "plus_beta_enabled", "plusBetaEnabled") or _meta_bool(
+        user_meta,
+        "plus_beta_enabled",
+        "plusBetaEnabled",
+    ) or plan == "plus_beta"
+    api_beta_enabled = _meta_bool(app_meta, "api_beta_enabled", "apiBetaEnabled") or _meta_bool(
+        user_meta,
+        "api_beta_enabled",
+        "apiBetaEnabled",
+    )
+    allow_plus_ui = _meta_bool(app_meta, "allow_plus_ui", "allowPlusUi") or plus_beta_enabled
+    allow_report_email = _meta_bool(app_meta, "allow_report_email", "allowReportEmail") or _meta_bool(
+        user_meta,
+        "allow_report_email",
+        "allowReportEmail",
+    )
+
+    return {
+        "plan": plan,
+        "plus_beta_enabled": plus_beta_enabled,
+        "api_beta_enabled": api_beta_enabled,
+        "allow_plus_ui": allow_plus_ui,
+        "allow_report_email": allow_report_email,
+    }
+
+
 @app.get("/healthz")
 def healthz() -> dict[str, str]:
     return {"status": "ok"}
@@ -128,3 +214,34 @@ def auth_me(token: str = Depends(get_bearer_token)) -> dict[str, object]:
             "aud": user.get("aud"),
         }
     }
+
+
+@app.post("/v1/extension/validate")
+def extension_validate(token: str = Depends(get_bearer_token)) -> dict[str, object]:
+    user = fetch_authenticated_user(token, get_env())
+    account = derive_account_state(user)
+
+    return {
+        "account": account,
+    }
+
+
+@app.post("/api/events")
+def api_events(payload: UsageEventPayload, token: str = Depends(get_bearer_token)) -> dict[str, object]:
+    fetch_authenticated_user(token, get_env())
+    return {"accepted": True, "kind": "event", "type": payload.type}
+
+
+@app.post("/api/scan-summary")
+def api_scan_summary(payload: ScanSummaryPayload, token: str = Depends(get_bearer_token)) -> dict[str, object]:
+    fetch_authenticated_user(token, get_env())
+    return {"accepted": True, "kind": "scan_summary", "route": payload.route}
+
+
+@app.post("/api/premium-report-request")
+def api_premium_report_request(
+    payload: PremiumReportRequestPayload,
+    token: str = Depends(get_bearer_token),
+) -> dict[str, object]:
+    fetch_authenticated_user(token, get_env())
+    return {"accepted": True, "kind": "premium_report_request", "route": payload.route}
