@@ -185,10 +185,10 @@ export const authCopy = {
     backToSiteLabel: "Back to site",
     sectionOrder: [
       { id: "account", label: "Account", subtitle: "Identity, verification, and connected access" },
-      { id: "api", label: "API Beta", subtitle: "Staged API access, beta keys, and rollout status" },
       { id: "security", label: "Security", subtitle: "Sign-in method, 2FA preview, and staged account protection" },
       { id: "pricing", label: "Plan & Pricing", subtitle: "Free access and Plus Beta enrollment" },
       { id: "settings", label: "Settings", subtitle: "Extension settings entry point and in-product controls" },
+      { id: "api", label: "API Beta", subtitle: "Staged API access, beta keys, and rollout status" },
     ],
     account: {
       title: "Account overview",
