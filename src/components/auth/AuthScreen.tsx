@@ -566,6 +566,32 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
     });
   }
 
+  function handleMagicLinkRequest() {
+    clearFormFeedback();
+
+    if (!loginEmail.includes("@")) {
+      setLoginErrors((current) => ({ ...current, email: sharedCopy.invalidEmailError }));
+      return;
+    }
+
+    startTransition(async () => {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: loginEmail,
+        options: {
+          emailRedirectTo: getAuthCallbackUrl(window.location.origin, "/account"),
+          shouldCreateUser: false,
+        },
+      });
+
+      if (error) {
+        showNotice(sharedCopy.magicLinkError, "error");
+        return;
+      }
+
+      showNotice(sharedCopy.magicLinkSuccess, "success");
+    });
+  }
+
   function handleForgotSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     clearFormFeedback();
@@ -588,6 +614,28 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
       setSentTo(forgotEmail);
       setForgotError("");
       setView("forgot-sent");
+    });
+  }
+
+  function handleForgotResend() {
+    clearFormFeedback();
+
+    if (!sentTo.includes("@")) {
+      setView("forgot");
+      return;
+    }
+
+    startTransition(async () => {
+      const { error } = await supabase.auth.resetPasswordForEmail(sentTo, {
+        redirectTo: getAuthCallbackUrl(window.location.origin, "/reset-password"),
+      });
+
+      if (error) {
+        showNotice(sharedCopy.resetRequestError, "error");
+        return;
+      }
+
+      showNotice(sharedCopy.resetRequestResent, "success");
     });
   }
 
@@ -1164,6 +1212,43 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
                 Log in <ArrowRight size={15} />
               </PrimaryButton>
             </form>
+            <div
+              style={{
+                marginTop: 14,
+                borderRadius: 12,
+                border: `1px solid ${BORDER}`,
+                background: "rgba(255,255,255,0.04)",
+                padding: "14px 16px",
+              }}
+            >
+              <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2, lineHeight: 1.6 }}>
+                {sharedCopy.magicLinkHelper}
+              </p>
+              <button
+                type="button"
+                onClick={handleMagicLinkRequest}
+                style={{
+                  marginTop: 12,
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  padding: "11px 14px",
+                  borderRadius: 12,
+                  border: `1px solid ${BORDER}`,
+                  background: "rgba(255,255,255,0.05)",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: TEXT,
+                  cursor: "pointer",
+                }}
+              >
+                <Send size={14} />
+                {sharedCopy.magicLinkLabel}
+              </button>
+            </div>
             <OrDivider />
             <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
               {["google", "github"].map((provider) => (
@@ -1301,22 +1386,38 @@ export function AuthScreen({ initialView, initialError = null, initialMessage = 
               We&apos;ve sent a reset link to <span style={{ color: TEXT, fontWeight: 600 }}>{sentTo}</span>. Check your spam folder if it
               doesn&apos;t arrive within a minute.
             </p>
-            <button
-              type="button"
-              onClick={() => setView("forgot")}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontFamily: "Inter, sans-serif",
-                fontSize: 13,
-                color: TEXT_DIM_2,
-                padding: 0,
-                marginBottom: 24,
-              }}
-            >
-              Didn&apos;t get it? Try a different email →
-            </button>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-start", marginBottom: 24 }}>
+              <button
+                type="button"
+                onClick={handleForgotResend}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: 13,
+                  color: "#ffb8b8",
+                  padding: 0,
+                }}
+              >
+                {authCopy.forgotPassword.resendLabel}
+              </button>
+              <button
+                type="button"
+                onClick={() => setView("forgot")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: 13,
+                  color: TEXT_DIM_2,
+                  padding: 0,
+                }}
+              >
+                Didn&apos;t get it? Try a different email →
+              </button>
+            </div>
             <BackButton onClick={() => setView("login")} label="Back to log in" />
           </motion.div>
         ) : null}
