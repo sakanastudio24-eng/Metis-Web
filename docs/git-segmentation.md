@@ -36,3 +36,11 @@ Metis Web changes fast. If sections are bundled together, one bad section forces
 ## Reporting rule
 
 When work is done, report the section commits clearly so the next person knows which checkpoint to return to.
+
+## Recent audit notes
+
+The last 30 commits are mostly sectioned correctly, especially the passwordless auth migration where copy, flow, route retirement, security, and docs were split into separate checkpoints.
+
+The clearest avoidable churn was two separate README refresh commits. A repeat docs-only topic like that should be folded into one checkpoint unless the second pass is a clearly different docs section.
+
+Auth copy and auth refactor commits can sit close together, but they should still keep a simple boundary. Copy commits should stay in content and docs. Refactor commits should stay in components and helpers unless the code cannot land without a matching string change.
