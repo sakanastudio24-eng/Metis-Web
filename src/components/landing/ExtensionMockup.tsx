@@ -102,7 +102,15 @@ const SEVERITY_ICONS = {
   low: Info,
 };
 
-export function ExtensionMockup({ state }: { state: MockupState }) {
+export function ExtensionMockup({
+  state,
+  reportLabel,
+  onOpenReport,
+}: {
+  state: MockupState;
+  reportLabel?: string;
+  onOpenReport?: () => void;
+}) {
   const copy = frontFacingCopy.mockup;
 
   return (
@@ -411,7 +419,9 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
 
       {/* CTA Footer */}
       <div style={{ padding: "12px 16px 16px", borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: 8 }}>
-        <div
+        <button
+          type="button"
+          onClick={onOpenReport}
           style={{
             display: "flex",
             alignItems: "center",
@@ -421,14 +431,16 @@ export function ExtensionMockup({ state }: { state: MockupState }) {
             borderRadius: 10,
             background: METIS_RED,
             cursor: "pointer",
+            width: "100%",
+            border: "none",
           }}
         >
           <FileText size={11} style={{ color: "white" }} />
           <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: "white" }}>
-            Open Full Report
+            {reportLabel ?? copy.reportCta}
           </span>
           <ChevronRight size={11} style={{ color: "white" }} />
-        </div>
+        </button>
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 10, justifyContent: "center" }}>
           <div
             style={{

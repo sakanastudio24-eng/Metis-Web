@@ -63,7 +63,8 @@ const FOOTER_LINK_ICONS = {
   externalLink: ExternalLink,
   github: Github,
 } as const;
-const CHROME_WAITLIST_URL = siteLinks.waitlistUrl;
+const DEFAULT_SIGN_UP_URL = siteLinks.waitlistUrl;
+const DEFAULT_ACCOUNT_URL = siteLinks.accountUrl;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SECTION KEYS
@@ -71,6 +72,10 @@ const CHROME_WAITLIST_URL = siteLinks.waitlistUrl;
 // Add new sections here first, then extend SECTION_STATES and NAV_SECTIONS.
 // ─────────────────────────────────────────────────────────────────────────────
 type SectionKey = "hero" | "product" | "problem" | "fixes" | "solution";
+type LandingViewer = {
+  email: string | null;
+  hasAccountAccess: boolean;
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MOCKUP STATES
@@ -98,11 +103,13 @@ const NAV_SECTIONS: readonly { key: SectionKey; label: string }[] = frontFacingC
  * - "Try free" CTA always brand-red for visual consistency
  */
 function StickyNav({
-  active, onNav, isHero,
+  active, onNav, isHero, onPrimaryCta, primaryCtaLabel,
 }: {
   active: SectionKey;
   onNav: (id: string) => void;
   isHero: boolean;
+  onPrimaryCta: () => void;
+  primaryCtaLabel: string;
 }) {
   const [scrolled, setScrolled] = useState(false);
 
@@ -231,7 +238,7 @@ function StickyNav({
           className="metis-nav-cta"
           whileHover={{ scale: 1.05, boxShadow: "0 4px 18px rgba(220,94,94,0.4)" }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => window.location.assign(CHROME_WAITLIST_URL)}
+          onClick={onPrimaryCta}
           style={{
             background: RED,
             border: "none",
@@ -242,7 +249,7 @@ function StickyNav({
             boxShadow: "0 2px 10px rgba(220,94,94,0.28)",
           }}
         >
-          {frontFacingCopy.nav.primaryCta}
+          {primaryCtaLabel}
           <ArrowRight size={12} />
         </motion.button>
       </div>
@@ -255,7 +262,15 @@ function StickyNav({
 // Full-width, centred. Sits outside the two-col layout.
 // Contains: wordmark → quote → CTAs → stats → scroll nudge
 // ─────────────────────────────────────────────────────────────────────────────
-function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
+function HeroSection({
+  sectionRef,
+  onPrimaryCta,
+  primaryCtaLabel,
+}: {
+  sectionRef: React.RefObject<HTMLElement | null>;
+  onPrimaryCta: () => void;
+  primaryCtaLabel: string;
+}) {
   const copy = frontFacingCopy.hero;
 
   return (
@@ -323,7 +338,7 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
         <motion.button
           whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(220,94,94,0.25)" }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => window.location.assign(CHROME_WAITLIST_URL)}
+          onClick={onPrimaryCta}
           style={{
             background: RED, color: CREAM, border: "none",
             borderRadius: 999, padding: "14px 28px",
@@ -331,7 +346,7 @@ function HeroSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement |
             cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
           }}
         >
-          {copy.ctas.primary}
+          {primaryCtaLabel}
           <ArrowRight size={15} />
         </motion.button>
         <motion.button
@@ -655,7 +670,15 @@ function FixesSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement 
 // SOLUTION SECTION
 // The happy-path payoff: checklist → result card → CTA button.
 // ─────────────────────────────────────────────────────────────────────────────
-function SolutionSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
+function SolutionSection({
+  sectionRef,
+  onPrimaryCta,
+  primaryCtaLabel,
+}: {
+  sectionRef: React.RefObject<HTMLElement | null>;
+  onPrimaryCta: () => void;
+  primaryCtaLabel: string;
+}) {
   const copy = frontFacingCopy.solution;
 
   return (
@@ -752,10 +775,10 @@ function SolutionSection({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
           <motion.button
             whileHover={{ scale: 1.04, boxShadow: "0 8px 36px rgba(0,0,0,0.25)" }}
             whileTap={{ scale: 0.97 }}
-            onClick={() => window.location.assign(CHROME_WAITLIST_URL)}
+            onClick={onPrimaryCta}
             style={{ background: TEXT_W, color: RED, border: "none", borderRadius: 999, padding: "16px 32px", fontFamily: "Inter, sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
           >
-            {copy.primaryCta}
+            {primaryCtaLabel}
             <ArrowRight size={16} />
           </motion.button>
           {copy.secondaryNote ? (
@@ -972,7 +995,7 @@ function BigFooter() {
  *   Left  → prose sections (flex: 1, min-width: 0)
  *   Right → sticky ExtensionMockup (xl only, width: 380, top: 80)
  */
-export function LandingPage() {
+export function LandingPage({ viewer }: { viewer?: LandingViewer }) {
   // Which section is closest to the viewport midpoint
   const [activeSection, setActiveSection] = useState<SectionKey>("hero");
 
@@ -1038,6 +1061,19 @@ export function LandingPage() {
     sectionRefs[id as SectionKey]?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [sectionRefs]);
 
+  const hasAccountAccess = Boolean(viewer?.hasAccountAccess);
+  const primaryCtaHref = hasAccountAccess ? DEFAULT_ACCOUNT_URL : DEFAULT_SIGN_UP_URL;
+  const navPrimaryCtaLabel = hasAccountAccess ? frontFacingCopy.nav.returningCta : frontFacingCopy.nav.primaryCta;
+  const heroPrimaryCtaLabel = hasAccountAccess ? frontFacingCopy.hero.ctas.returningPrimary : frontFacingCopy.hero.ctas.primary;
+  const solutionPrimaryCtaLabel = hasAccountAccess
+    ? frontFacingCopy.solution.returningPrimaryCta
+    : frontFacingCopy.solution.primaryCta;
+  const mockupPrimaryCtaLabel = hasAccountAccess ? frontFacingCopy.mockup.returningReportCta : frontFacingCopy.mockup.reportCta;
+
+  const routePrimaryCta = useCallback(() => {
+    window.location.assign(primaryCtaHref);
+  }, [primaryCtaHref]);
+
   // Derive hero state for background + nav colour logic
   const isHero       = activeSection === "hero";
   const currentState = SECTION_STATES[activeSection];
@@ -1054,10 +1090,16 @@ export function LandingPage() {
       }}
     >
       {/* Floating pill nav — always fixed, centred */}
-      <StickyNav active={activeSection} onNav={scrollToSection} isHero={isHero} />
+      <StickyNav
+        active={activeSection}
+        onNav={scrollToSection}
+        isHero={isHero}
+        onPrimaryCta={routePrimaryCta}
+        primaryCtaLabel={navPrimaryCtaLabel}
+      />
 
       {/* ── HERO — full-width, outside the two-col layout ── */}
-      <HeroSection sectionRef={sectionRefs.hero} />
+      <HeroSection sectionRef={sectionRefs.hero} onPrimaryCta={routePrimaryCta} primaryCtaLabel={heroPrimaryCtaLabel} />
 
       {/* ── TWO-COL LAYOUT — sections 2 → 5 ── */}
       <div
@@ -1073,7 +1115,11 @@ export function LandingPage() {
           <ProductSection      sectionRef={sectionRefs.product} h2Ref={productH2Ref} />
           <ProblemSection      sectionRef={sectionRefs.problem} />
           <FixesSection        sectionRef={sectionRefs.fixes}   />
-          <SolutionSection     sectionRef={sectionRefs.solution} />
+          <SolutionSection
+            sectionRef={sectionRefs.solution}
+            onPrimaryCta={routePrimaryCta}
+            primaryCtaLabel={solutionPrimaryCtaLabel}
+          />
         </div>
 
         {/* Right column — sticky extension mockup (xl screens only)
@@ -1098,7 +1144,11 @@ export function LandingPage() {
               exit={{ opacity: 0, y: -8, scale: 0.97 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
-              <ExtensionMockup state={currentState} />
+              <ExtensionMockup
+                state={currentState}
+                reportLabel={mockupPrimaryCtaLabel}
+                onOpenReport={routePrimaryCta}
+              />
             </motion.div>
           </AnimatePresence>
         </div>

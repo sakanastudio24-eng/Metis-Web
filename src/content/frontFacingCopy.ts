@@ -11,6 +11,7 @@ export const siteLinks = {
   wardStudioUrl: "https://zward.studio",
   repoUrl: "https://github.com/sakanastudio24-eng/Metis-Web",
   waitlistUrl: "/sign-up",
+  accountUrl: "/account",
   privacyUrl: "/privacy",
   termsUrl: "/terms",
 } as const;
@@ -30,6 +31,7 @@ export const frontFacingCopy = {
       { key: "solution", label: "Solution" },
     ],
     primaryCta: "Try free",
+    returningCta: "Open Metis Dash",
   },
   mockup: {
     title: "Metis Scan",
@@ -45,6 +47,8 @@ export const frontFacingCopy = {
       withIssues: (count: number) => `${count} Issues · By Severity`,
       empty: "No Issues Detected",
     },
+    reportCta: "Open Full Report",
+    returningReportCta: "Open Metis Dash",
     monthlyWasteLabel: (min: number, max: number) => `~$${min}–$${max}/month est. waste`,
     monthlyProjectionValue: (min: number) => `~$${(min * 10).toLocaleString()}/month`,
   },
@@ -52,6 +56,7 @@ export const frontFacingCopy = {
     quote: ["Every session has a price.", "Most teams never see the bill."],
     ctas: {
       primary: "Start for free",
+      returningPrimary: "Open Metis Dash",
       secondary: "Watch a scan",
     },
     stats: [
@@ -158,6 +163,7 @@ export const frontFacingCopy = {
     ],
     resultCaption: "Minimal Risk",
     primaryCta: "Get early access",
+    returningPrimaryCta: "Open Metis Dash",
     secondaryNote: "",
   },
   footer: {
