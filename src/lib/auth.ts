@@ -53,7 +53,13 @@ export function isLocalMagicLinkCallbackEnabled(value: string | null | undefined
 export function getMagicLinkCallbackUrl(nextPath?: string, source?: MetisAuthSource | null, localOverride = false): string {
   // Magic links default to the real site so cross-device sign-in can finish on
   // a phone or another laptop. Localhost stays opt-in for same-browser testing.
-  return getAuthCallbackUrl(localOverride ? "http://localhost:3000" : siteConfig.url, nextPath, source);
+  const url = new URL(getAuthCallbackUrl(localOverride ? "http://localhost:3000" : siteConfig.url, nextPath, source));
+
+  if (localOverride) {
+    url.searchParams.set("magic_link", "local");
+  }
+
+  return url.toString();
 }
 
 export function isSafeAuthNextPath(nextPath: string | null | undefined): nextPath is string {
