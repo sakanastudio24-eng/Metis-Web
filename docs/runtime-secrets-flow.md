@@ -55,6 +55,18 @@ https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback
 
 If you keep a callback archive value in runtime secrets, `SUPPA_CALLBACK_URL` should match that exact Supabase callback URL.
 
+## Magic link launch contract
+
+Metis launch uses Supabase default email sending for passwordless auth.
+
+The current assumptions are:
+
+- `Authentication -> Email Templates -> Magic Link` uses `{{ .ConfirmationURL }}`
+- `Authentication -> URL Configuration` contains the exact local and production callback URLs
+- custom SMTP is optional and intentionally deferred
+
+See `docs/magic-link-launch.md` for the exact template, subject line, and dashboard checklist.
+
 ## What happens today
 
 `.env.example` documents the contract. The Next app validates the public values it needs. The FastAPI layer validates the server contract. Missing values should fail clearly instead of half working.

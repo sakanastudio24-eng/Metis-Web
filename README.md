@@ -28,6 +28,7 @@ Use the extension when the job is scanning a page, reading the report, adjusting
 - [docs/repo-alignment.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/repo-alignment.md)
 - [docs/production-roadmap.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/production-roadmap.md)
 - [docs/api-beta-plan.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/api-beta-plan.md)
+- [docs/magic-link-launch.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/magic-link-launch.md)
 - [docs/communication-contracts/README.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/communication-contracts/README.md)
 - [docs/communication-contracts/communication-build-track.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/communication-contracts/communication-build-track.md)
 - [docs/communication-contracts/auth-contract.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/communication-contracts/auth-contract.md)

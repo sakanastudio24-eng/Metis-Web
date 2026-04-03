@@ -84,6 +84,8 @@ Use a hamburger section menu on mobile dashboard views instead of forcing the de
 
 `docs/api-beta-plan.md`
 
+`docs/magic-link-launch.md`
+
 `docs/communication-contracts/README.md`
 
 `docs/communication-contracts/communication-build-track.md`
