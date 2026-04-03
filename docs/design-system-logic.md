@@ -35,7 +35,7 @@ These surfaces should feel related, but each one should preserve its own density
 
 - website account state is real and should look real
 - staged Plus Beta and API Beta sections should look intentional without overstating entitlement that is not live yet
-- temporary auth or review-only tooling must never inherit polished public-product framing
+- review-only tooling must never inherit polished public-product framing
 
 ## Production pass checklist
 

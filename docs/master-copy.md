@@ -198,10 +198,6 @@ Email label: `Work email`
 
 Security support line: `Protected access for metis.zward.studio`
 
-Temporary review body: `Local-only review access. It never reaches backend auth and should be removed before release.`
-
-Temporary review CTA: `Use temporary Google test account`
-
 ### Passwordless entry
 
 Header: `Start with Metis`
@@ -265,10 +261,6 @@ Inline label: `Next step`
 CTA: `Install extension. It's free.`
 
 CTA: `Open account settings`
-
-Temporary account label: `Temporary test account`
-
-Temporary account body: `This local-only session is for reviewing onboarding and account flows. Remove it before shipping.`
 
 Question: `What are you building?`
 

@@ -4,7 +4,7 @@ Metis Web is prepared for runtime secret injection, but the final wiring step is
 
 ## Why this stays staged
 
-Secrets are one of the easiest places to create long term mess. A rushed setup usually leads to leaked local values, env names that drift between services, or temporary auth work that never gets cleaned up. This repo avoids that by locking the contract first and leaving the real injection step for a deliberate pass.
+Secrets are one of the easiest places to create long term mess. A rushed setup usually leads to leaked local values or env names that drift between services. This repo avoids that by locking the contract first and leaving the real injection step for a deliberate pass.
 
 ## Current env contract
 

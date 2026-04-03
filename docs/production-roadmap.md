@@ -2,7 +2,7 @@
 
 This document is the website-side path to production. It assumes `Metis-Web` owns auth, onboarding, account, legal, beta posture, provider flows, email delivery, and public product messaging.
 
-The remaining work is now a short release list instead of a vague cleanup bucket: provider QA, temporary auth removal, final hardening, extension-side contract adoption, then launch prep.
+The remaining work is now a short release list instead of a vague cleanup bucket: provider QA, final hardening, packaged extension verification, then launch prep.
 
 ## Launch goal
 
@@ -17,13 +17,13 @@ Recent cleanup reduced drift in auth and copy:
 - more live UI text was pulled back into central copy files
 - front-facing copy is less stiff
 - docs were tightened across the repo
+- temporary auth review paths were removed
 - `pnpm lint` and `pnpm typecheck` passed
 
 The open items are now:
 
-- removing the local temporary auth bypass before release
 - finishing real Google and GitHub provider testing
-- extension-side adoption of the shipped auth bridge and backend validation contract
+- packaged extension verification of the shipped auth bridge and backend validation contract
 - final mobile polish on account and security
 - real entitlement wiring if Plus Beta or API Beta becomes live
 - a final production pass on SEO, OG assets, and deployment config
@@ -34,20 +34,18 @@ The open items are now:
 
 - magic link flow
 - provider flow testing
-- remove temporary auth bypass
 
 ### Scope
 
 - verify magic link sign-in end to end
 - verify provider auth launch, cancel, callback, failure, and retry states for Google and GitHub
-- remove the local temporary auth bypass before release and keep only the real Supabase flows
 - confirm sign-up, sign-in, onboarding, account, and security flows all reflect the real provider/account state
 
 ### Exit criteria
 
 - every auth path has a tested happy path and failure path
 - provider copy matches real behavior
-- temporary auth is no longer part of the release path
+- auth surface matches the real Supabase-backed release path only
 
 ## Phase 2: Runtime, API, and deployment hardening
 
@@ -92,7 +90,7 @@ The open items are now:
 - lock landing, auth, onboarding, account, and security to one visual system using `docs/design-system-logic.md`
 - tighten the account and security polish on mobile once the auth flow is final
 - do a full copy pass across landing, auth, onboarding, account, security, pricing, legal, and beta messaging
-- do a final security pass across auth copy, redirects, provider flows, backend headers, error handling, and temporary auth fencing
+- do a final security pass across auth copy, redirects, provider flows, backend headers, and error handling
 - do a final production pass on SEO metadata, OG assets, and deployment config before launch
 
 ### Exit criteria
@@ -100,7 +98,6 @@ The open items are now:
 - public pages are production-indexable where intended
 - private pages stay out of indexing
 - copy, legal text, and account behavior all agree
-- temporary auth remains fenced to development only
 - the website visual system holds together across public and private surfaces
 
 ## Cross-repo dependencies on `Metis`
