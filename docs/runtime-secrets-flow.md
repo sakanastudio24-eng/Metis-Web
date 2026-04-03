@@ -63,6 +63,8 @@ The current assumptions are:
 
 - `Authentication -> Email Templates -> Magic Link` uses `{{ .ConfirmationURL }}`
 - `Authentication -> URL Configuration` contains the exact local and production callback URLs
+- the website defaults magic-link emails to `https://metis.zward.studio/auth/callback`
+- localhost callback is only used through the explicit `?magic_link=local` testing override
 - custom SMTP is optional and intentionally deferred
 
 See `docs/magic-link-launch.md` for the exact template, subject line, and dashboard checklist.

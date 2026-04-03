@@ -65,12 +65,21 @@ Metis already uses this client call:
 await supabase.auth.signInWithOtp({
   email,
   options: {
-    emailRedirectTo: "http://localhost:3000/auth/callback",
+    emailRedirectTo: "https://metis.zward.studio/auth/callback",
   },
 })
 ```
 
-For production, the redirect target should be the production callback URL.
+This is now the default even during localhost testing so cross-device sign-in can finish on a phone or another laptop.
+
+If you need strict same-browser localhost testing, use the explicit engineering override:
+
+```txt
+/sign-in?magic_link=local
+/sign-up?magic_link=local
+```
+
+That opt-in path sends the email to `http://localhost:3000/auth/callback` instead.
 
 The current product behavior stays:
 
@@ -82,11 +91,11 @@ The current product behavior stays:
 
 ## Launch QA checklist
 
-- send a magic link from the local auth UI
+- send a magic link from localhost and open it on a phone
 - confirm Supabase sends the email
 - click the newest magic link once
 - verify `/auth/callback` exchanges the session and completes sign-in
+- verify normal website auth lands on `/logged-in`
 - click the same link twice and confirm the retry error is clear
 - resend and verify the newest email is the one that works
 - confirm Google and GitHub still use the same callback route without regression
-
