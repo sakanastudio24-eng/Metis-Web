@@ -24,7 +24,7 @@ export const authCopy = {
     magicLinkHelper: "Use a passwordless email link if you do not want to use Google or GitHub on this device.",
     magicLinkSuccess: "Magic link sent. Check your inbox and continue from the email.",
     magicLinkSentTitle: "Check your email",
-    magicLinkSentBody: (email: string) => `We sent a secure sign-in link to ${email}. Open it on this device to continue into Metis.`,
+    magicLinkSentBody: (email: string) => `We sent a secure sign-in link to ${email}. Open the newest email on this device to continue into Metis.`,
     magicLinkExpiryLabel: "This link expires in about 10 minutes.",
     magicLinkResendLabel: "Resend link",
     useAnotherEmailLabel: "Use another email",

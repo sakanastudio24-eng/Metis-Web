@@ -188,7 +188,15 @@ Magic link success: `Magic link sent. Check your inbox and continue from the ema
 
 Magic link sent header: `Check your email`
 
-Magic link sent body: `We sent a secure sign-in link to ${email}. Open it on this device to continue into Metis.`
+Magic link sent body: `We sent a secure sign-in link to ${email}. Open the newest email on this device to continue into Metis.`
+
+Magic link subject: `Sign in to Metis`
+
+Magic link email intro: `Click the button below to sign in securely.`
+
+Magic link email button: `Sign in to Metis`
+
+Magic link email fallback: `If the button doesn’t work, copy and paste this link into your browser:`
 
 Magic link expiry label: `This link expires in about 10 minutes.`
 
