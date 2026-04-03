@@ -2,7 +2,7 @@
 
 This folder is the communication source of truth for Metis.
 
-The website-side auth bridge, backend validation endpoint, and first upload routes now live in `Metis-Web` against this contract family. The extension still needs to adopt the same locked message shapes, queue behavior, and access-state rules in `Metis`.
+The website-side auth bridge, backend validation endpoint, and first upload routes now live in `Metis-Web` against this contract family. The extension-side bridge, storage, ACK flow, and validated access-state wiring now exist in `Metis` as well.
 
 Use it when work crosses:
 
@@ -38,4 +38,22 @@ If a communication change affects more than one lane, update all touched contrac
 - [x] `/auth/success` posts the authenticated handoff payload and waits for ACK
 - [x] backend account validation exists at `POST /v1/extension/validate`
 - [x] first upload routes exist for events, scan summary, and premium report request
-- [ ] extension-side listener, storage, queueing, and gated UI adoption still need to land in `Metis`
+- [x] extension-side listener, storage, ACK, and gated UI adoption are implemented in `Metis`
+- [x] website-to-extension auth messaging is locked to `https://metis.zward.studio` and `http://localhost:3000`
+- [ ] full production bridge verification still needs the packaged extension and live site together
+
+## Current stage
+
+The shared communication system is currently in `Step 5 / Milestone E`.
+
+What is already done:
+
+- local extension messaging is in place
+- the auth bridge is implemented
+- backend validation and first upload routes exist
+- extension access-state gating is wired
+
+What is left before the communication stack is production-finished:
+
+- live end-to-end verification with the packaged extension
+- final retry, rate-limit, and edge-case hardening

@@ -1,5 +1,6 @@
 export const METIS_EXTENSION_SOURCE = "extension";
 export const METIS_AUTH_SUCCESS_PATH = "/auth/success";
+// Exact-match allowlist only. No wildcard hosts, no sibling subdomains.
 // Only the first-party website origins should be allowed to originate the
 // bridge payload that the extension accepts.
 export const METIS_ALLOWED_BRIDGE_ORIGINS = [

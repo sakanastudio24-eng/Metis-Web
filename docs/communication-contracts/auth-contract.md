@@ -56,10 +56,18 @@ Flow:
 
 ## Allowed origins and route
 
-Only accept messages from:
+Only accept messages from this exact allowlist:
 
 - `https://metis.zward.studio`
 - `http://localhost:3000`
+
+Rules:
+
+- exact string match only
+- no wildcard origins
+- no preview domains
+- no sibling subdomains
+- localhost is development-only
 
 Only accept auth bridge messages when the page location is:
 
@@ -240,5 +248,7 @@ Backend responsibilities:
 - [x] `/sign-in?source=extension` and `/sign-up?source=extension` preserve extension intent
 - [x] `/auth/callback` routes extension-aware auth into `/auth/success`
 - [x] `/auth/success` posts `METIS_AUTH_SUCCESS`, waits for `METIS_AUTH_SUCCESS_ACK`, and shows fallback UI
+- [x] bridge origin is locked to the exact allowlist: `https://metis.zward.studio` and `http://localhost:3000`
 - [x] bridge route is private and kept out of indexing
-- [ ] extension-side listener, storage, ACK, and connected UI wiring still need to land in `Metis`
+- [x] extension-side listener, storage, ACK, and connected UI wiring are implemented in `Metis`
+- [ ] production bridge still needs live end-to-end verification against the packaged extension

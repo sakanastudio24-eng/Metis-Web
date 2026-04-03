@@ -2,7 +2,7 @@
 
 This document defines the four communication lanes and the order Metis should build them.
 
-The contract lock, website auth bridge, backend validation endpoint, and first upload routes now exist in `Metis-Web`. The remaining work is extension-side adoption, queueing, and access-state gating against the same contracts.
+The contract lock, website auth bridge, backend validation endpoint, and first upload routes now exist in `Metis-Web`. The extension-side bridge, storage, ACK flow, and access-state gating now exist in `Metis`. The remaining work is live verification and hardening, not first-pass adoption.
 
 ## Communication lanes
 
@@ -190,8 +190,13 @@ Expected result:
 
 ## Current completion status
 
-- [ ] Step 1 extension internal messaging first
+- [x] Step 1 extension internal messaging first
 - [x] Step 2 communication contract lock
 - [x] Step 3 auth bridge
 - [x] Step 4 backend validation and API communication
-- [ ] Step 5 gated features
+- [x] Step 5 gated features
+
+Current stage:
+
+- `Step 5 / Milestone E`
+- result: the shared communication stack is implemented and has moved into hardening and production verification

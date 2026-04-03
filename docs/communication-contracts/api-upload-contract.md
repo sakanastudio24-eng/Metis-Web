@@ -94,3 +94,11 @@ Every upload payload should have a clear answer to:
 Why does Metis need this?
 
 If that answer is weak, do not send it.
+
+## Done across the contract set
+
+- [x] `POST /api/events` exists in `Metis-Web`
+- [x] `POST /api/scan-summary` exists in `Metis-Web`
+- [x] `POST /api/premium-report-request` exists in `Metis-Web`
+- [x] payload families are locked in the shared contract types
+- [ ] queue retries, merge behavior, and packaged-extension verification still need final live validation in `Metis`

@@ -45,3 +45,10 @@ Connected account state adds:
 - access to account-linked requests
 
 It does not turn the extension into a website-dependent product.
+
+## Done across the contract set
+
+- [x] validated account state is returned by `POST /v1/extension/validate`
+- [x] the shared tier model is locked to `free`, `plus_beta`, and `paid`
+- [x] website and extension contract docs both treat signed-in and entitlement state as separate concerns
+- [ ] final live entitlement wiring for Plus Beta and paid behavior still needs production verification

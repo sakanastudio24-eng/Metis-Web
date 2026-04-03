@@ -79,3 +79,10 @@ Preferred extension-side code ownership:
 Extension-internal communication must be solid before website or backend lanes expand.
 
 If local scan, summary rendering, and panel coordination are unstable, do not paper over that with auth or backend features.
+
+## Done in Metis
+
+- [x] runtime messaging exists across background, content, popup, and side panel
+- [x] the extension-side auth bridge listener, storage, and ACK flow are implemented
+- [x] access-state updates can flow back into extension UI state
+- [ ] packaged-extension verification and edge-case hardening still need final release QA

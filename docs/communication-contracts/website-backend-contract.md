@@ -62,4 +62,5 @@ Those should be added through this contract, not ad hoc route-by-route drift.
 - [x] website-side auth callback and extension bridge flow are implemented
 - [x] backend validation exists at `POST /v1/extension/validate`
 - [x] first authenticated upload routes exist for events and summary traffic
-- [ ] extension-side adoption of validation and upload contracts still needs to land in `Metis`
+- [x] extension-side adoption of validation and upload contracts is implemented in `Metis`
+- [ ] packaged extension verification and release hardening still need final QA
