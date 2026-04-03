@@ -57,7 +57,7 @@ If you keep a callback archive value in runtime secrets, `SUPPA_CALLBACK_URL` sh
 
 ## Magic link launch contract
 
-Metis launch uses Supabase default email sending for passwordless auth.
+Metis launch uses Supabase passwordless auth with custom SMTP through Resend.
 
 The current assumptions are:
 
@@ -65,7 +65,8 @@ The current assumptions are:
 - `Authentication -> URL Configuration` contains the exact local and production callback URLs
 - the website defaults magic-link emails to `https://metis.zward.studio/auth/callback`
 - localhost callback is only used through the explicit `?magic_link=local` testing override
-- custom SMTP is optional and intentionally deferred
+- Resend SMTP handles delivery only
+- Supabase still owns token generation, link generation, and template rendering
 
 See `docs/magic-link-launch.md` for the exact template, subject line, and dashboard checklist.
 

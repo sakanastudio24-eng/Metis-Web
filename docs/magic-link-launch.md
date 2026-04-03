@@ -2,15 +2,15 @@
 
 This is the launch setup for passwordless email sign-in in Metis.
 
-Metis uses Supabase for the auth logic, the email template, and the sign-in link. The website keeps one callback route at `/auth/callback`, and the app exchanges the session there after the user clicks the link in their inbox.
+Metis uses Supabase for the auth logic, the email template, and the sign-in link. Resend only handles SMTP delivery once Supabase is configured to use it. The website keeps one callback route at `/auth/callback`, and the app exchanges the session there after the user clicks the link in their inbox.
 
 ## Launch defaults
 
 - use Supabase passwordless email auth
 - keep Google and GitHub unchanged
 - keep `/auth/callback` as the only callback route
-- use the Supabase default sender for launch
-- do not add custom SMTP or Resend yet
+- use Supabase auth with custom SMTP through Resend
+- keep Resend as the delivery layer only
 - use `{{ .ConfirmationURL }}` in the Magic Link template
 
 ## Supabase dashboard setup
@@ -29,26 +29,16 @@ In `Authentication -> Email Templates -> Magic Link`, set:
 - subject to `Sign in to Metis`
 - body to the branded HTML template below
 
-Leave SMTP unset for now so launch uses Supabase's default sender. Custom SMTP can be added later if branded deliverability becomes necessary.
+In `Authentication -> SMTP Settings`, configure your verified Resend sending domain and SMTP credentials. Keep Supabase in charge of generating the link and rendering the template. Resend should only deliver the message.
 
 ## Paste-ready Magic Link template
 
 ```html
 <h2>Sign in to Metis</h2>
-
-<p>Click the button below to sign in securely.</p>
-
-<p>
-  <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:12px 18px;border-radius:8px;text-decoration:none;">
-    Sign in to Metis
-  </a>
-</p>
-
-<p>This sign-in link expires soon.</p>
-
+<p>Click below to sign in securely.</p>
+<p><a href="{{ .ConfirmationURL }}">Sign in to Metis</a></p>
+<p>This link expires soon.</p>
 <p>If you didn’t request this email, you can safely ignore it.</p>
-
-<p>If the button doesn’t work, copy and paste this link into your browser:</p>
 <p>{{ .ConfirmationURL }}</p>
 ```
 
@@ -56,6 +46,7 @@ Important rule:
 
 - keep `{{ .ConfirmationURL }}`
 - do not swap this to `{{ .RedirectTo }}` unless Metis moves to a custom token-hash confirm flow later
+- keep the email branded but basic so it stays reliable across inboxes
 
 ## App-side auth behavior
 
@@ -85,16 +76,21 @@ The current product behavior stays:
 
 - auth entry on the website
 - `signInWithOtp()` for email magic link
-- `/auth/callback` for callback exchange
+- `/auth/callback` as a tiny loading screen that exchanges the session and redirects onward
 - `/logged-in` as the short onboarding handoff
 - `/account` as the canonical signed-in home
+
+The callback screen should only say:
+
+- `Signing you in...`
+- `Redirecting...`
 
 ## Launch QA checklist
 
 - send a magic link from localhost and open it on a phone
 - confirm Supabase sends the email
 - click the newest magic link once
-- verify `/auth/callback` exchanges the session and completes sign-in
+- verify `/auth/callback` shows the short signing-in handoff and completes sign-in
 - verify normal website auth lands on `/logged-in`
 - click the same link twice and confirm the retry error is clear
 - resend and verify the newest email is the one that works
