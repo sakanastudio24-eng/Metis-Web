@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   ArrowRight,
   CheckCircle2,
+  AlertTriangle,
   Github,
   Lock,
   Mail,
@@ -254,6 +255,33 @@ export function SecurityPageClient({ email, provider }: SecurityPageClientProps)
                 {copy.backLabel}
                 <ArrowRight className="h-4 w-4" />
               </Link>
+            </div>
+
+            <div
+              id="remove-account"
+              className="rounded-[30px] border border-[#dc5e5e]/20 bg-[#dc5e5e]/8 p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#dc5e5e] text-white shadow-[0_14px_30px_rgba(220,94,94,0.32)]">
+                  <AlertTriangle className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#ffb8b8]">{copy.removeAccountTitle}</p>
+                  <h2 className="text-xl font-semibold text-white">{copy.removeAccountTitle}</h2>
+                </div>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-white/78">{copy.removeAccountBody}</p>
+              <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
+                <p className="text-sm leading-6 text-white/62">{copy.removeAccountNote}</p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-5 rounded-full border-[#dc5e5e]/25 bg-[#dc5e5e]/10 text-[#ffb8b8] hover:bg-[#dc5e5e]/14 hover:text-white"
+                disabled
+              >
+                {copy.removeAccountCta}
+              </Button>
             </div>
           </aside>
         </div>
