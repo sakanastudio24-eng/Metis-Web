@@ -3,6 +3,7 @@ import {
   type MetisAuthSource,
   isExtensionAuthSource,
 } from "@/lib/contracts/communication";
+import { siteConfig } from "@/lib/site";
 
 // Callback completion is deliberately narrow so auth cannot bounce users
 // through arbitrary internal paths.
@@ -43,6 +44,16 @@ export function getAuthCallbackUrl(origin?: string, nextPath?: string, source?: 
   }
 
   return url.toString();
+}
+
+export function isLocalMagicLinkCallbackEnabled(value: string | null | undefined): boolean {
+  return value === "local";
+}
+
+export function getMagicLinkCallbackUrl(nextPath?: string, source?: MetisAuthSource | null, localOverride = false): string {
+  // Magic links default to the real site so cross-device sign-in can finish on
+  // a phone or another laptop. Localhost stays opt-in for same-browser testing.
+  return getAuthCallbackUrl(localOverride ? "http://localhost:3000" : siteConfig.url, nextPath, source);
 }
 
 export function isSafeAuthNextPath(nextPath: string | null | undefined): nextPath is string {

@@ -10,13 +10,14 @@ import { toast } from "sonner";
 
 import { authCopy } from "@/content/authCopy";
 import { siteLinks } from "@/content/frontFacingCopy";
-import { getAuthCallbackUrl, getAuthErrorMessage } from "@/lib/auth";
+import { getAuthCallbackUrl, getAuthErrorMessage, getMagicLinkCallbackUrl } from "@/lib/auth";
 import { type MetisAuthSource, METIS_EXTENSION_SOURCE } from "@/lib/contracts/communication";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type AuthScreenProps = {
   initialView: "signup" | "login";
   source?: MetisAuthSource | null;
+  useLocalMagicLinkCallback?: boolean;
   initialError?: string | null;
   initialMessage?: string | null;
 };
@@ -327,6 +328,7 @@ const OAUTH_PROVIDERS = [
 export function AuthScreen({
   initialView,
   source = null,
+  useLocalMagicLinkCallback = false,
   initialError = null,
   initialMessage = null,
 }: AuthScreenProps) {
@@ -427,9 +429,9 @@ export function AuthScreen({
       const { error } = await supabase.auth.signInWithOtp({
         email: targetEmail,
         options: {
-          // Supabase only honors emailRedirectTo when the exact callback URL is
-          // allowed in Auth URL Configuration.
-          emailRedirectTo: getAuthCallbackUrl(window.location.origin, callbackNextPath, source),
+          // Magic links default to the deployed site callback so the newest
+          // email can be opened on another device. Localhost stays opt-in.
+          emailRedirectTo: getMagicLinkCallbackUrl(callbackNextPath, source, useLocalMagicLinkCallback),
         },
       });
 

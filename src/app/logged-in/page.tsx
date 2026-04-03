@@ -11,15 +11,22 @@ export const metadata = createPrivateMetadata({
   description: "Complete your first secure Metis setup steps.",
 });
 
-export default async function LoggedInPage() {
+type LoggedInPageProps = {
+  searchParams?: Promise<{
+    auth?: string;
+  }>;
+};
+
+export default async function LoggedInPage({ searchParams }: LoggedInPageProps) {
   noStore();
+  const params = searchParams ? await searchParams : undefined;
   const user = await requireAuthenticatedUser();
 
   return (
     <>
       <LandingPage />
       <AuthOverlay>
-        <LoggedInState email={user.email} />
+        <LoggedInState email={user.email} showAuthConfirmation={params?.auth === "confirmed"} />
       </AuthOverlay>
     </>
   );

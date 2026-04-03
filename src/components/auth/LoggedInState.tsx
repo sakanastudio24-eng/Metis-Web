@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowRight, Check, CheckCircle2, Chrome, Sparkles, X } from "lucide-react";
+import { ArrowRight, Check, CheckCircle2, Chrome, LoaderCircle, Sparkles, X } from "lucide-react";
 
 import { authCopy } from "@/content/authCopy";
 
 type LoggedInStateProps = {
   email: string | null;
+  showAuthConfirmation?: boolean;
 };
 
 const RED = "#dc5e5e";
@@ -26,18 +27,33 @@ const READY_ITEMS = [
   { key: "First scan prepared", icon: Sparkles },
 ] as const;
 
-export function LoggedInState({ email }: LoggedInStateProps) {
+export function LoggedInState({ email, showAuthConfirmation = false }: LoggedInStateProps) {
   const router = useRouter();
   const copy = authCopy.loggedIn;
   const questions = copy.questions;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(showAuthConfirmation);
 
   const currentQuestion = questions[currentIndex];
   const hasSelection = Boolean(answers[currentQuestion.id]);
   const isLastQuestion = currentIndex === questions.length - 1;
   const signedInLine = email ? copy.readyForEmail(email) : null;
+
+  useEffect(() => {
+    if (!showAuthConfirmation) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setShowConfirmation(false);
+    }, 1100);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [showAuthConfirmation]);
 
   function closeOverlay() {
     router.replace("/account");
@@ -131,7 +147,49 @@ export function LoggedInState({ email }: LoggedInStateProps) {
         </div>
 
         <AnimatePresence mode="wait">
-          {done ? (
+          {showConfirmation ? (
+            <motion.div
+              key="confirming"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 18,
+                  background: "rgba(220,94,94,0.14)",
+                  border: "1px solid rgba(220,94,94,0.28)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 24,
+                }}
+              >
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 0.85, repeat: Infinity, ease: "linear" }}>
+                  <LoaderCircle size={24} style={{ color: RED }} />
+                </motion.div>
+              </div>
+              <h2
+                style={{
+                  fontFamily: "DM Serif Display, serif",
+                  fontSize: "clamp(26px, 3.5vw, 40px)",
+                  color: TEXT,
+                  lineHeight: 1.1,
+                  letterSpacing: "-0.025em",
+                  margin: 0,
+                  marginBottom: 10,
+                }}
+              >
+                {copy.confirmingTitle}
+              </h2>
+              <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_DIM, lineHeight: 1.6, margin: 0 }}>
+                {copy.confirmingBody}
+              </p>
+            </motion.div>
+          ) : done ? (
             <motion.div
               key="done"
               initial={{ opacity: 0, scale: 0.96, y: 16 }}

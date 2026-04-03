@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
   const redirectBase = requestUrl.origin;
   const nextPath = requestUrl.searchParams.get("next");
   const source = getAuthSource(requestUrl.searchParams.get("source"));
+  const localMagicLink = requestUrl.origin === "http://localhost:3000";
   // Extension auth keeps its own completion path, but normal web auth keeps
   // the usual post-auth destinations when the source marker is absent.
   const redirectPath = isSafeAuthNextPath(nextPath) ? nextPath : getDefaultAuthCompletionPath(source);
@@ -20,6 +21,9 @@ export async function GET(request: NextRequest) {
     const failureUrl = new URL("/sign-in", redirectBase);
     if (source) {
       failureUrl.searchParams.set("source", source);
+    }
+    if (localMagicLink) {
+      failureUrl.searchParams.set("magic_link", "local");
     }
     failureUrl.searchParams.set("error", error === "access_denied" ? "oauth_cancelled" : "callback_failed");
 
@@ -35,6 +39,9 @@ export async function GET(request: NextRequest) {
     if (source) {
       failureUrl.searchParams.set("source", source);
     }
+    if (localMagicLink) {
+      failureUrl.searchParams.set("magic_link", "local");
+    }
     failureUrl.searchParams.set("error", "callback_failed");
     return NextResponse.redirect(failureUrl);
   }
@@ -47,9 +54,18 @@ export async function GET(request: NextRequest) {
     if (source) {
       failureUrl.searchParams.set("source", source);
     }
+    if (localMagicLink) {
+      failureUrl.searchParams.set("magic_link", "local");
+    }
     failureUrl.searchParams.set("error", "callback_failed");
     return NextResponse.redirect(failureUrl);
   }
 
-  return NextResponse.redirect(new URL(redirectPath, redirectBase));
+  const successUrl = new URL(redirectPath, redirectBase);
+
+  if (!source && redirectPath === "/logged-in") {
+    successUrl.searchParams.set("auth", "confirmed");
+  }
+
+  return NextResponse.redirect(successUrl);
 }

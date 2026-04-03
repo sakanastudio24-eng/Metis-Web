@@ -1,3 +1,4 @@
+import { isLocalMagicLinkCallbackEnabled } from "@/lib/auth";
 import { getAuthSource } from "@/lib/contracts/communication";
 import { HomeWithAuthOverlay } from "@/components/auth/HomeWithAuthOverlay";
 import { redirectIfAuthenticated } from "@/lib/auth-server";
@@ -11,6 +12,7 @@ export const metadata = createPrivateMetadata({
 type SignInPageProps = {
   searchParams?: Promise<{
     error?: string;
+    magic_link?: string;
     message?: string;
     source?: string;
   }>;
@@ -25,6 +27,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     <HomeWithAuthOverlay
       initialView="login"
       source={source}
+      useLocalMagicLinkCallback={isLocalMagicLinkCallbackEnabled(params?.magic_link)}
       initialError={params?.error ?? null}
       initialMessage={params?.message ?? null}
     />
