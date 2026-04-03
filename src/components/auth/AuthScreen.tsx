@@ -427,6 +427,8 @@ export function AuthScreen({
       const { error } = await supabase.auth.signInWithOtp({
         email: targetEmail,
         options: {
+          // Supabase only honors emailRedirectTo when the exact callback URL is
+          // allowed in Auth URL Configuration.
           emailRedirectTo: getAuthCallbackUrl(window.location.origin, callbackNextPath, source),
         },
       });
