@@ -206,6 +206,12 @@ Email label: `Work email`
 
 Security support line: `Protected access for metis.zward.studio`
 
+### Callback handoff
+
+Header: `Signing you in...`
+
+Body: `Redirecting...`
+
 ### Passwordless entry
 
 Header: `Start with Metis`
@@ -249,10 +255,6 @@ Header: `Tell Metis what matters first`
 Body: `This stays short and points your first dashboard toward the signals you care about most.`
 
 Signed in line: ``Signed in as ${email}``
-
-Confirmation header: `Confirming your sign-in...`
-
-Confirmation body: `Redirecting to setup...`
 
 Next destination line: `Your account settings and beta access live on the website account pages after setup.`
 

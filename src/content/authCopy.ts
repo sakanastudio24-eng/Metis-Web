@@ -36,6 +36,10 @@ export const authCopy = {
     legalBlurb: "Protected access for metis.zward.studio",
     invalidEmailError: "Enter a valid email address.",
   },
+  callback: {
+    title: "Signing you in...",
+    body: "Redirecting...",
+  },
   bridge: {
     eyebrow: "Extension bridge",
     title: "Handing auth back to Metis",
@@ -55,8 +59,6 @@ export const authCopy = {
   loggedIn: {
     eyebrow: "Setup",
     title: "Tell Metis what matters first",
-    confirmingTitle: "Confirming your sign-in...",
-    confirmingBody: "Redirecting to setup...",
     readyForYou: "Answer three quick questions so Metis can shape the first pass around your product.",
     readyForEmail: (email: string) => `Signed in as ${email}`,
     panelBody: "This stays short and points your first dashboard toward the signals you care about most.",
