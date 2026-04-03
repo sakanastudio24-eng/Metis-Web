@@ -40,16 +40,13 @@ import {
   X,
 } from "lucide-react";
 
-import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
 import { authCopy } from "@/content/authCopy";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
-import { clearTemporaryAuthSession } from "@/lib/temp-auth-client";
 
 type AccountPageClientProps = {
   email: string | null;
   provider: string;
   emailConfirmed: boolean;
-  isTemporary?: boolean;
 };
 
 type DashboardUser = {
@@ -137,8 +134,6 @@ function getProviderLabel(provider: string) {
       return "Google";
     case "github":
       return "GitHub";
-    case "google-test":
-      return "Google test account";
     default:
       return "Email";
   }
@@ -411,7 +406,7 @@ function AccountPanel({
             {[
               { icon: Mail, label: "Email", value: user.email, state: copy.primaryLabel, linked: true },
               { icon: Globe, label: "GitHub", value: user.provider === "github" ? "Connected" : "Available", state: user.provider === "github" ? copy.connectedLabel : copy.availableLabel, linked: user.provider === "github" },
-              { icon: Globe, label: "Google", value: user.provider === "google" || user.provider === "google-test" ? "Connected" : "Available", state: user.provider === "google" || user.provider === "google-test" ? copy.connectedLabel : copy.availableLabel, linked: user.provider === "google" || user.provider === "google-test" },
+              { icon: Globe, label: "Google", value: user.provider === "google" ? "Connected" : "Available", state: user.provider === "google" ? copy.connectedLabel : copy.availableLabel, linked: user.provider === "google" },
             ].map((item) => (
               <div
                 key={item.label}
@@ -811,11 +806,9 @@ export function AccountPageClient({
   email,
   provider,
   emailConfirmed,
-  isTemporary = false,
 }: AccountPageClientProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
-  const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
   const [active, setActive] = useState<NavId>("account");
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
@@ -825,12 +818,12 @@ export function AccountPageClient({
     const baseName = email ? titleCase(email.split("@")[0] ?? "Metis User") : "Metis User";
 
     return {
-      name: isTemporary ? "Testing Account" : baseName,
+      name: baseName,
       email: email ?? "user@example.com",
       plan: "free",
       provider,
     };
-  }, [email, isTemporary, provider]);
+  }, [email, provider]);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 980px)");
@@ -861,17 +854,9 @@ export function AccountPageClient({
 
   function handleSignOut() {
     startTransition(async () => {
-      if (isTemporary) {
-        await clearTemporaryAuthSession();
-      } else {
-        await supabase.auth.signOut();
-      }
+      await supabase.auth.signOut();
       router.replace("/sign-in");
     });
-  }
-
-  if (isResettingTemporarySession) {
-    return null;
   }
 
   const activeSection = NAV_ACTIVE.find((section) => section.id === active && section.id !== "api") ?? NAV_ACTIVE[0];
@@ -1110,24 +1095,6 @@ export function AccountPageClient({
             {active === "pricing" ? <PricingPanel key="pricing" user={user} /> : null}
             {active === "settings" ? <SettingsPanel key="settings" /> : null}
           </AnimatePresence>
-
-          {isTemporary ? (
-            <div
-              style={{
-                marginTop: 20,
-                borderRadius: 12,
-                border: `1px solid ${DANGER_BD}`,
-                background: DANGER_DIM,
-                padding: "12px 14px",
-                color: "#ffb8b8",
-                fontFamily: "Inter, sans-serif",
-                fontSize: 12,
-                lineHeight: 1.6,
-              }}
-            >
-              {dashboardCopy.temporaryAccountBody}
-            </div>
-          ) : null}
 
           {!emailConfirmed ? (
             <div

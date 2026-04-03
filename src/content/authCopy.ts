@@ -35,9 +35,6 @@ export const authCopy = {
     magicLinkExpired: "Link expired or already used. Send a new link to keep going.",
     legalBlurb: "Protected access for metis.zward.studio",
     invalidEmailError: "Enter a valid email address.",
-    temporaryAccessBody: "Local-only review access. It never reaches backend auth and should be removed before release.",
-    temporaryAccessAction: "Use temporary Google test account",
-    temporaryAccessError: "The temporary test account could not be started.",
   },
   bridge: {
     eyebrow: "Extension bridge",
@@ -71,8 +68,6 @@ export const authCopy = {
     nextStepLabel: "Next step",
     installExtensionLabel: "Install extension. It's free.",
     openAccountLabel: "Open account settings",
-    temporaryAccountLabel: "Temporary test account",
-    temporaryAccountBody: "This local-only session is only for reviewing onboarding and account flows. It never reaches backend auth and should be removed before launch.",
     readyItems: ["Account created", "Preferences saved", "Chrome extension ready to install", "First scan prepared"],
     questions: [
       {
@@ -135,8 +130,6 @@ export const authCopy = {
     appSettingsLinkLabel: "Extension settings",
     appSettingsLinkState: "Managed in extension",
     signOutLabel: "Sign out",
-    temporaryAccountLabel: "Temporary local account",
-    temporaryAccountBody: "This session exists only for local auth review and does not grant backend API access.",
   },
   dashboard: {
     brandLabel: "Metis Dash",
@@ -246,7 +239,6 @@ export const authCopy = {
       appSettingsBody: "The extension remains the single place for scan controls, refresh preferences, and saved-history actions.",
       appSettingsState: "Managed in extension",
     },
-    temporaryAccountBody: "Temporary local account. This dashboard is for review only and does not grant backend API access.",
     unverifiedBody: "Email verification is still pending. This preview stays visible, but the full production auth path requires a confirmed address.",
   },
   security: {
@@ -288,7 +280,5 @@ export const authCopy = {
     linkMethodPending: "Provider linking continues in the auth callback after the provider finishes.",
     sessionNote: "Protected routes stay private and are excluded from public indexing.",
     backLabel: "Back to account",
-    temporaryAccountLabel: "Temporary security preview",
-    temporaryAccountBody: "This local-only account can review the security UI, but it does not represent a real provider-backed session.",
   },
 } as const;

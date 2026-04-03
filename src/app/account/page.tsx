@@ -18,7 +18,6 @@ export default async function AccountPage() {
       email={user.email}
       provider={user.provider}
       emailConfirmed={user.emailConfirmed}
-      isTemporary={user.isTemporary}
     />
   );
 }

@@ -8,11 +8,9 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, CheckCircle2, Chrome, Sparkles, X } from "lucide-react";
 
 import { authCopy } from "@/content/authCopy";
-import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
 
 type LoggedInStateProps = {
   email: string | null;
-  isTemporary?: boolean;
 };
 
 const RED = "#dc5e5e";
@@ -28,9 +26,8 @@ const READY_ITEMS = [
   { key: "First scan prepared", icon: Sparkles },
 ] as const;
 
-export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps) {
+export function LoggedInState({ email }: LoggedInStateProps) {
   const router = useRouter();
-  const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
   const copy = authCopy.loggedIn;
   const questions = copy.questions;
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -55,10 +52,6 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
     }
 
     setCurrentIndex((value) => value + 1);
-  }
-
-  if (isResettingTemporarySession) {
-    return null;
   }
 
   return (
@@ -248,11 +241,6 @@ export function LoggedInState({ email, isTemporary = false }: LoggedInStateProps
                   {copy.nextDestinationLabel}
                 </p>
               </motion.div>
-              {isTemporary ? (
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "#ffb8b8", margin: "0 0 16px", opacity: 0.8 }}>
-                  {copy.temporaryAccountBody}
-                </p>
-              ) : null}
               <motion.div
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}

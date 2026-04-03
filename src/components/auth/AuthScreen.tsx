@@ -13,7 +13,6 @@ import { siteLinks } from "@/content/frontFacingCopy";
 import { getAuthCallbackUrl, getAuthErrorMessage } from "@/lib/auth";
 import { type MetisAuthSource, METIS_EXTENSION_SOURCE } from "@/lib/contracts/communication";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
-import { startTemporaryAuthSession } from "@/lib/temp-auth-client";
 
 type AuthScreenProps = {
   initialView: "signup" | "login";
@@ -335,11 +334,6 @@ export function AuthScreen({
   const supabase = createSupabaseBrowserClient();
   const sharedCopy = authCopy.shared;
   const routeCopy = initialView === "signup" ? authCopy.signUp : authCopy.signIn;
-  // Temporary review access stays opt-in, local-only, and frontend-only.
-  const isTemporaryGoogleEnabled =
-    source !== METIS_EXTENSION_SOURCE &&
-    process.env.NODE_ENV === "development" &&
-    process.env.NEXT_PUBLIC_ENABLE_TEMP_AUTH === "true";
   const [view, setView] = useState<ViewState>("auth");
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [oauthLoading, setOauthLoading] = useState<"google" | "github" | null>(null);
@@ -445,19 +439,6 @@ export function AuthScreen({
       setSentTo(targetEmail);
       setView("email-sent");
       showNotice(sharedCopy.magicLinkSuccess, "success");
-    });
-  }
-
-  function handleTemporaryTestingAccess() {
-    clearFormFeedback();
-
-    startTransition(async () => {
-      try {
-        await startTemporaryAuthSession();
-        router.replace("/logged-in");
-      } catch {
-        showNotice(sharedCopy.temporaryAccessError, "error");
-      }
     });
   }
 
@@ -599,48 +580,6 @@ export function AuthScreen({
                 </div>
               </div>
             </div>
-
-            {isTemporaryGoogleEnabled ? (
-              <div
-                style={{
-                  marginTop: 18,
-                  borderRadius: 14,
-                  border: "1px dashed rgba(220,94,94,0.38)",
-                  background: "rgba(220,94,94,0.08)",
-                  padding: "12px 14px",
-                }}
-              >
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleTemporaryTestingAccess}
-                  disabled={isPending || oauthLoading !== null}
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
-                    padding: "4px 0",
-                    border: "none",
-                    background: "transparent",
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: "#ffb8b8",
-                    cursor: isPending || oauthLoading !== null ? "not-allowed" : "pointer",
-                    opacity: isPending || oauthLoading !== null ? 0.65 : 1,
-                  }}
-                >
-                  <CheckCheck size={14} />
-                  {sharedCopy.temporaryAccessAction}
-                </motion.button>
-                <p style={{ margin: "8px 0 0", fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_DIM_2, lineHeight: 1.6 }}>
-                  {sharedCopy.temporaryAccessBody}
-                </p>
-              </div>
-            ) : null}
 
             <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
               <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2 }}>{routeCopy.footerPrompt}</p>

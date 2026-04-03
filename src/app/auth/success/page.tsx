@@ -14,7 +14,7 @@ export default async function AuthSuccessPage() {
   noStore();
   const user = await getAuthenticatedUserOrNull();
 
-  if (!user || user.isTemporary) {
+  if (!user) {
     redirect("/sign-in?source=extension");
   }
 

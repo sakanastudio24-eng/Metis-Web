@@ -16,7 +16,7 @@ export default async function HomePage() {
     <LandingPage
       viewer={{
         email: viewer?.email ?? null,
-        hasAccountAccess: Boolean(viewer && !viewer.isTemporary),
+        hasAccountAccess: Boolean(viewer),
       }}
     />
   );
