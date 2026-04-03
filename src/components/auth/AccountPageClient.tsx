@@ -47,7 +47,6 @@ type AccountPageClientProps = {
   email: string | null;
   provider: string;
   emailConfirmed: boolean;
-  username: string;
 };
 
 type DashboardUser = {
@@ -766,7 +765,7 @@ function PricingPanel({ user }: { user: DashboardUser }) {
   );
 }
 
-function SettingsPanel({ username }: { username: string }) {
+function SettingsPanel() {
   const copy = dashboardCopy.settings;
   const router = useRouter();
 
@@ -805,7 +804,7 @@ function SettingsPanel({ username }: { username: string }) {
         <SectionLabel>{copy.removeAccountTitle}</SectionLabel>
         <button
           type="button"
-          onClick={() => router.push(`/account/delete?username=${encodeURIComponent(username)}`)}
+          onClick={() => router.push("/account/security?intent=delete-account")}
           style={{
             width: "100%",
             display: "flex",
@@ -838,7 +837,6 @@ export function AccountPageClient({
   email,
   provider,
   emailConfirmed,
-  username,
 }: AccountPageClientProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -1126,7 +1124,7 @@ export function AccountPageClient({
                 withheld from the main dashboard flow until the beta launch pass. */}
             {active === "security" ? <SecurityPanel key="security" provider={provider} onOpenDetails={() => router.push("/account/security")} /> : null}
             {active === "pricing" ? <PricingPanel key="pricing" user={user} /> : null}
-            {active === "settings" ? <SettingsPanel key="settings" username={username} /> : null}
+            {active === "settings" ? <SettingsPanel key="settings" /> : null}
           </AnimatePresence>
 
           {!emailConfirmed ? (

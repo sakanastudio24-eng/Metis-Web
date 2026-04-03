@@ -11,7 +11,6 @@ import { siteConfig } from "@/lib/site";
 const ALLOWED_AUTH_REDIRECTS = new Set([
   "/logged-in",
   "/account",
-  "/account/delete",
   "/account/security",
   METIS_AUTH_SUCCESS_PATH,
 ]);

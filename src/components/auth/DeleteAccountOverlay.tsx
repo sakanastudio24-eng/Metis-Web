@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
@@ -13,13 +12,14 @@ import { deriveAccountUsername, getMagicLinkCallbackUrl } from "@/lib/auth";
 import { siteConfig } from "@/lib/site";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
-type DeleteAccountClientProps = {
+type DeleteAccountOverlayProps = {
   email: string | null;
   username: string;
   authConfirmed: boolean;
+  onClose: () => void;
 };
 
-export function DeleteAccountClient({ email, username, authConfirmed }: DeleteAccountClientProps) {
+export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }: DeleteAccountOverlayProps) {
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const copy = authCopy.deleteAccount;
@@ -45,10 +45,13 @@ export function DeleteAccountClient({ email, username, authConfirmed }: DeleteAc
     setFeedback(null);
 
     startTransition(async () => {
+      const redirectUrl = new URL(getMagicLinkCallbackUrl("/account/security"));
+      redirectUrl.searchParams.set("intent", "delete-account");
+
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: getMagicLinkCallbackUrl("/account/delete"),
+          emailRedirectTo: redirectUrl.toString(),
         },
       });
 
@@ -103,19 +106,26 @@ export function DeleteAccountClient({ email, username, authConfirmed }: DeleteAc
   }
 
   return (
-    <main className="auth-shell flex items-center justify-center">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-        <div className="space-y-3 px-1 text-white">
+    <>
+      <button
+        type="button"
+        aria-label="Close delete account overlay"
+        className="fixed inset-0 z-40 bg-[rgba(2,4,8,0.72)] backdrop-blur-[10px]"
+        onClick={onClose}
+      />
+      <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8">
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+          <div className="space-y-3 px-1 text-white">
           <span className="inline-flex items-center gap-2 rounded-full border border-[#dc5e5e]/20 bg-[#dc5e5e]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#ffb8b8]">
             <AlertTriangle className="h-3.5 w-3.5" />
             {copy.eyebrow}
           </span>
           <h1 className="font-serif text-5xl leading-none tracking-[-0.05em] sm:text-6xl">{copy.title}</h1>
           <p className="max-w-2xl text-sm leading-7 text-white/70">{copy.subtitle}</p>
-        </div>
+          </div>
 
-        <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-          <section className="space-y-4 rounded-[30px] border border-[#dc5e5e]/20 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur sm:p-8">
+          <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+            <section className="space-y-4 rounded-[30px] border border-[#dc5e5e]/20 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur sm:p-8">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#ffb8b8]">This will</p>
             <div className="mt-4 grid gap-3">
               {copy.checklist.map((item) => (
@@ -145,9 +155,9 @@ export function DeleteAccountClient({ email, username, authConfirmed }: DeleteAc
               />
               <p className="text-sm leading-6 text-white/55">{copy.confirmHint}</p>
             </div>
-          </section>
+            </section>
 
-          <aside className="space-y-4 rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur sm:p-8">
+            <aside className="space-y-4 rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur sm:p-8">
             <div className="rounded-[22px] border border-white/10 bg-white/5 p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#dc5e5e]/10 text-[#ffb8b8]">
@@ -194,14 +204,13 @@ export function DeleteAccountClient({ email, username, authConfirmed }: DeleteAc
               </Button>
             )}
 
-            <Link href="/account/security" className="inline-flex w-full">
-              <Button type="button" variant="ghost" className="w-full rounded-full text-white/70 hover:text-white">
+              <Button type="button" variant="ghost" className="w-full rounded-full text-white/70 hover:text-white" onClick={onClose}>
                 {copy.cancelLabel}
               </Button>
-            </Link>
-          </aside>
+            </aside>
+          </div>
         </div>
       </div>
-    </main>
+    </>
   );
 }
