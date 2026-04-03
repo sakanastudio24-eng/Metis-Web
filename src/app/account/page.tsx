@@ -18,6 +18,7 @@ export default async function AccountPage() {
       email={user.email}
       provider={user.provider}
       emailConfirmed={user.emailConfirmed}
+      username={user.username}
     />
   );
 }

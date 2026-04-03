@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 
 import { authCopy } from "@/content/authCopy";
-import { getDefaultAuthCompletionPath, isSafeAuthNextPath } from "@/lib/auth";
+import { getDefaultAuthCompletionPath, isDeletedUser, isSafeAuthNextPath } from "@/lib/auth";
 import { getAuthSource } from "@/lib/contracts/communication";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
@@ -88,7 +88,20 @@ export function AuthCallbackScreen({
         return;
       }
 
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (isDeletedUser(user)) {
+        await supabase.auth.signOut();
+        router.replace("/account-deleted");
+        return;
+      }
+
       const success = new URL(redirectPath, window.location.origin);
+      if (!parsedSource && redirectPath === "/account/delete") {
+        success.searchParams.set("auth", "confirmed");
+      }
       router.replace(`${success.pathname}${success.search}`);
     }
 

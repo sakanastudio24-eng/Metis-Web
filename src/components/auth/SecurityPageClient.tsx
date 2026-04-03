@@ -21,6 +21,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 type SecurityPageClientProps = {
   email: string | null;
   provider: string;
+  username: string;
 };
 
 type LinkableProvider = "google" | "github";
@@ -36,7 +37,7 @@ function getProviderLabel(provider: string) {
   }
 }
 
-export function SecurityPageClient({ email, provider }: SecurityPageClientProps) {
+export function SecurityPageClient({ email, provider, username }: SecurityPageClientProps) {
   const copy = authCopy.security;
   const supabase = createSupabaseBrowserClient();
   const [isPending, startTransition] = useTransition();
@@ -274,14 +275,15 @@ export function SecurityPageClient({ email, provider }: SecurityPageClientProps)
               <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
                 <p className="text-sm leading-6 text-white/62">{copy.removeAccountNote}</p>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                className="mt-5 rounded-full border-[#dc5e5e]/25 bg-[#dc5e5e]/10 text-[#ffb8b8] hover:bg-[#dc5e5e]/14 hover:text-white"
-                disabled
-              >
-                {copy.removeAccountCta}
-              </Button>
+              <Link href={`/account/delete?username=${encodeURIComponent(username)}`} className="inline-flex">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-5 rounded-full border-[#dc5e5e]/25 bg-[#dc5e5e]/10 text-[#ffb8b8] hover:bg-[#dc5e5e]/14 hover:text-white"
+                >
+                  {copy.removeAccountCta}
+                </Button>
+              </Link>
             </div>
           </aside>
         </div>

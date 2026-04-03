@@ -2,13 +2,16 @@ import { redirect } from "next/navigation";
 
 import type { User } from "@supabase/supabase-js";
 
+import { deriveAccountUsername, getDeletedAtFromUser } from "@/lib/auth";
 import { METIS_AUTH_SUCCESS_PATH, type MetisAuthSource, isExtensionAuthSource } from "@/lib/contracts/communication";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type AuthenticatedUserDetails = {
+  deletedAt: string | null;
   email: string | null;
   provider: string;
   emailConfirmed: boolean;
+  username: string;
   user: User;
 };
 
@@ -20,9 +23,11 @@ export async function getAuthenticatedUserOrNull(): Promise<AuthenticatedUserDet
 
   if (user) {
     return {
+      deletedAt: getDeletedAtFromUser(user),
       email: user.email ?? null,
       provider: typeof user.app_metadata?.provider === "string" ? user.app_metadata.provider : "email",
       emailConfirmed: Boolean(user.email_confirmed_at),
+      username: deriveAccountUsername(user.email ?? null),
       user,
     };
   }
@@ -37,6 +42,10 @@ export async function requireAuthenticatedUser(): Promise<AuthenticatedUserDetai
     redirect("/sign-in");
   }
 
+  if (user.deletedAt) {
+    redirect("/account-deleted");
+  }
+
   return user;
 }
 
@@ -44,6 +53,10 @@ export async function redirectIfAuthenticated(source?: MetisAuthSource | null) {
   const user = await getAuthenticatedUserOrNull();
 
   if (user) {
+    if (user.deletedAt) {
+      redirect("/account-deleted");
+    }
+
     redirect(isExtensionAuthSource(source) ? METIS_AUTH_SUCCESS_PATH : "/account");
   }
 }

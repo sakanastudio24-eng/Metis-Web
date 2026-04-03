@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 import { authCopy } from "@/content/authCopy";
 import { siteLinks } from "@/content/frontFacingCopy";
-import { getAuthCallbackUrl, getAuthErrorMessage, getMagicLinkCallbackUrl } from "@/lib/auth";
+import { getAuthCallbackUrl, getAuthErrorMessage, getMagicLinkCallbackUrl, isDeletedUser } from "@/lib/auth";
 import { type MetisAuthSource, METIS_EXTENSION_SOURCE } from "@/lib/contracts/communication";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
@@ -366,6 +366,12 @@ export function AuthScreen({
 
     void (async () => {
       const { data } = await supabase.auth.getUser();
+
+      if (!cancelled && isDeletedUser(data.user)) {
+        await supabase.auth.signOut();
+        router.replace("/account-deleted");
+        return;
+      }
 
       if (!cancelled && data.user) {
         router.replace("/account");

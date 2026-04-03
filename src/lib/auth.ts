@@ -3,6 +3,7 @@ import {
   type MetisAuthSource,
   isExtensionAuthSource,
 } from "@/lib/contracts/communication";
+import type { User } from "@supabase/supabase-js";
 import { siteConfig } from "@/lib/site";
 
 // Callback completion is deliberately narrow so auth cannot bounce users
@@ -10,6 +11,7 @@ import { siteConfig } from "@/lib/site";
 const ALLOWED_AUTH_REDIRECTS = new Set([
   "/logged-in",
   "/account",
+  "/account/delete",
   "/account/security",
   METIS_AUTH_SUCCESS_PATH,
 ]);
@@ -60,6 +62,19 @@ export function getMagicLinkCallbackUrl(nextPath?: string, source?: MetisAuthSou
   }
 
   return url.toString();
+}
+
+export function deriveAccountUsername(email: string | null | undefined): string {
+  return (email?.split("@")[0] ?? "").trim().toLowerCase();
+}
+
+export function getDeletedAtFromUser(user: Pick<User, "user_metadata"> | null | undefined): string | null {
+  const deletedAt = user?.user_metadata?.deleted_at;
+  return typeof deletedAt === "string" && deletedAt.length > 0 ? deletedAt : null;
+}
+
+export function isDeletedUser(user: Pick<User, "user_metadata"> | null | undefined): boolean {
+  return Boolean(getDeletedAtFromUser(user));
 }
 
 export function isSafeAuthNextPath(nextPath: string | null | undefined): nextPath is string {

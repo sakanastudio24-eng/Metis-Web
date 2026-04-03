@@ -18,5 +18,9 @@ export default async function AuthSuccessPage() {
     redirect("/sign-in?source=extension");
   }
 
+  if (user.deletedAt) {
+    redirect("/account-deleted");
+  }
+
   return <AuthSuccessBridge email={user.email} />;
 }
