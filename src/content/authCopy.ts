@@ -24,7 +24,7 @@ export const authCopy = {
     magicLinkHelper: "Use a passwordless email link if you do not want to use Google or GitHub on this device.",
     magicLinkSuccess: "Magic link sent. Check your inbox and continue from the email.",
     magicLinkSentTitle: "Check your email",
-    magicLinkSentBody: (email: string) => `We sent a secure sign-in link to ${email}. Open the newest email on this device to continue into Metis.`,
+    magicLinkSentBody: (email: string) => `We sent a secure sign-in link to ${email}. Open the newest email on any device to continue into Metis.`,
     magicLinkExpiryLabel: "This link expires in about 10 minutes.",
     magicLinkResendLabel: "Resend link",
     useAnotherEmailLabel: "Use another email",
@@ -55,6 +55,8 @@ export const authCopy = {
   loggedIn: {
     eyebrow: "Setup",
     title: "Tell Metis what matters first",
+    confirmingTitle: "Confirming your sign-in...",
+    confirmingBody: "Redirecting to setup...",
     readyForYou: "Answer three quick questions so Metis can shape the first pass around your product.",
     readyForEmail: (email: string) => `Signed in as ${email}`,
     panelBody: "This stays short and points your first dashboard toward the signals you care about most.",

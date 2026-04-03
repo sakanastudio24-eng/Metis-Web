@@ -188,7 +188,7 @@ Magic link success: `Magic link sent. Check your inbox and continue from the ema
 
 Magic link sent header: `Check your email`
 
-Magic link sent body: `We sent a secure sign-in link to ${email}. Open the newest email on this device to continue into Metis.`
+Magic link sent body: `We sent a secure sign-in link to ${email}. Open the newest email on any device to continue into Metis.`
 
 Magic link subject: `Sign in to Metis`
 
@@ -249,6 +249,10 @@ Header: `Tell Metis what matters first`
 Body: `This stays short and points your first dashboard toward the signals you care about most.`
 
 Signed in line: ``Signed in as ${email}``
+
+Confirmation header: `Confirming your sign-in...`
+
+Confirmation body: `Redirecting to setup...`
 
 Next destination line: `Your account settings and beta access live on the website account pages after setup.`
 
