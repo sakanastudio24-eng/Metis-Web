@@ -30,6 +30,7 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
 
   const normalizedUsername = deriveAccountUsername(username || email);
   const matchesConfirmation = typedDelete === "DELETE" && typedUsername.trim().toLowerCase() === normalizedUsername;
+  const apiEnabled = Boolean(siteConfig.apiBaseUrl);
 
   function setError(message: string) {
     setFeedback(message);
@@ -37,6 +38,11 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
   }
 
   function startDeleteReauth() {
+    if (!apiEnabled) {
+      setError(copy.unavailableBody);
+      return;
+    }
+
     if (!email || !matchesConfirmation) {
       setError(copy.mismatchError);
       return;
@@ -69,6 +75,11 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
   }
 
   function deleteAccount() {
+    if (!apiEnabled || !siteConfig.apiBaseUrl) {
+      setError(copy.unavailableBody);
+      return;
+    }
+
     if (!matchesConfirmation) {
       setError(copy.mismatchError);
       return;
@@ -174,6 +185,13 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
               </div>
             </div>
 
+            {!apiEnabled ? (
+              <div className="rounded-[22px] border border-white/10 bg-white/5 p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">{copy.unavailableTitle}</p>
+                <p className="mt-2 text-sm leading-6 text-white/62">{copy.unavailableBody}</p>
+              </div>
+            ) : null}
+
             {feedback ? (
               <div className="rounded-[22px] border border-[#dc5e5e]/25 bg-[#dc5e5e]/10 px-4 py-3 text-sm text-[#ffb8b8]">{feedback}</div>
             ) : null}
@@ -189,7 +207,7 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
                 type="button"
                 variant="outline"
                 className="w-full rounded-full border-[#dc5e5e]/25 bg-[#dc5e5e]/10 text-[#ffb8b8] hover:bg-[#dc5e5e]/14 hover:text-white"
-                disabled={isPending || !matchesConfirmation || !email}
+                disabled={isPending || !matchesConfirmation || !email || !apiEnabled}
                 onClick={startDeleteReauth}
               >
                 {isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
@@ -200,7 +218,7 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
                 type="button"
                 variant="destructive"
                 className="w-full rounded-full"
-                disabled={isPending || !matchesConfirmation}
+                disabled={isPending || !matchesConfirmation || !apiEnabled}
                 onClick={deleteAccount}
               >
                 {isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}

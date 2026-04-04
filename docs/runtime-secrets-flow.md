@@ -16,6 +16,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 NEXT_PUBLIC_API_BASE_URL
 ```
 
+`NEXT_PUBLIC_API_BASE_URL` is optional when you are deploying the website without the backend lane. When it is unset, backend-backed actions such as account deletion stay staged off in the website UI instead of breaking the build.
+
 API
 
 ```txt

@@ -322,6 +322,8 @@ export const authCopy = {
     reauthReady: "Re-auth confirmed. You can remove this account now.",
     finalCta: "Delete account",
     cancelLabel: "Back to account",
+    unavailableTitle: "Delete flow unavailable",
+    unavailableBody: "Account deletion is staged off until the Metis backend is enabled for this environment.",
     mismatchError: "Type the exact username and DELETE before continuing.",
     deleteError: "The account could not be deleted right now.",
     deleteSuccess: "Account deleted. Signing you out now.",

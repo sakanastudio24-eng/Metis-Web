@@ -19,6 +19,7 @@ export const siteConfig = {
   ],
   wardStudioUrl: "https://zward.studio",
   apiBaseUrl: env.NEXT_PUBLIC_API_BASE_URL,
+  apiEnabled: Boolean(env.NEXT_PUBLIC_API_BASE_URL),
   repoUrl: "https://github.com/sakanastudio24-eng/Metis-Web",
   extensionRepoDocsUrl: "https://github.com/sakanastudio24-eng/Metis",
 };
