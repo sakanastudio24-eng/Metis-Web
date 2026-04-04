@@ -9,25 +9,14 @@ export const metadata = createPrivateMetadata({
   description: "Review current protection and linked sign-in methods for Metis.",
 });
 
-type SecurityPageProps = {
-  searchParams?: Promise<{
-    auth?: string;
-    intent?: string;
-  }>;
-};
-
-export default async function SecurityPage({ searchParams }: SecurityPageProps) {
+export default async function SecurityPage() {
   noStore();
-  const params = searchParams ? await searchParams : undefined;
   const user = await requireAuthenticatedUser();
 
   return (
     <SecurityPageClient
       email={user.email}
       provider={user.provider}
-      username={user.username}
-      authConfirmed={params?.auth === "confirmed"}
-      initialDeleteOpen={params?.intent === "delete-account"}
     />
   );
 }

@@ -40,6 +40,7 @@ import {
   X,
 } from "lucide-react";
 
+import { DeleteAccountOverlay } from "@/components/auth/DeleteAccountOverlay";
 import { authCopy } from "@/content/authCopy";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
@@ -47,6 +48,10 @@ type AccountPageClientProps = {
   email: string | null;
   provider: string;
   emailConfirmed: boolean;
+  username: string;
+  initialSection: NavId;
+  initialDeleteOpen: boolean;
+  authConfirmed: boolean;
 };
 
 type DashboardUser = {
@@ -765,9 +770,8 @@ function PricingPanel({ user }: { user: DashboardUser }) {
   );
 }
 
-function SettingsPanel() {
+function SettingsPanel({ onOpenDelete }: { onOpenDelete: () => void }) {
   const copy = dashboardCopy.settings;
-  const router = useRouter();
 
   return (
     <PanelFrame title={copy.title} body={copy.body}>
@@ -804,7 +808,7 @@ function SettingsPanel() {
         <SectionLabel>{copy.removeAccountTitle}</SectionLabel>
         <button
           type="button"
-          onClick={() => router.push("/account/security?intent=delete-account")}
+          onClick={onOpenDelete}
           style={{
             width: "100%",
             display: "flex",
@@ -837,12 +841,17 @@ export function AccountPageClient({
   email,
   provider,
   emailConfirmed,
+  username,
+  initialSection,
+  initialDeleteOpen,
+  authConfirmed,
 }: AccountPageClientProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
-  const [active, setActive] = useState<NavId>("account");
+  const [active, setActive] = useState<NavId>(initialSection);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(initialDeleteOpen);
   const [isPending, startTransition] = useTransition();
 
   const user = useMemo<DashboardUser>(() => {
@@ -881,6 +890,9 @@ export function AccountPageClient({
 
     setActive(id);
     setIsMobileNavOpen(false);
+    if (deleteOpen) {
+      setDeleteOpen(false);
+    }
   }
 
   function handleSignOut() {
@@ -888,6 +900,16 @@ export function AccountPageClient({
       await supabase.auth.signOut();
       router.replace("/sign-in");
     });
+  }
+
+  function openDeleteOverlay() {
+    setActive("settings");
+    setDeleteOpen(true);
+  }
+
+  function closeDeleteOverlay() {
+    setDeleteOpen(false);
+    router.replace("/account?section=settings");
   }
 
   const activeSection = NAV_ACTIVE.find((section) => section.id === active && section.id !== "api") ?? NAV_ACTIVE[0];
@@ -1124,7 +1146,7 @@ export function AccountPageClient({
                 withheld from the main dashboard flow until the beta launch pass. */}
             {active === "security" ? <SecurityPanel key="security" provider={provider} onOpenDetails={() => router.push("/account/security")} /> : null}
             {active === "pricing" ? <PricingPanel key="pricing" user={user} /> : null}
-            {active === "settings" ? <SettingsPanel key="settings" /> : null}
+            {active === "settings" ? <SettingsPanel key="settings" onOpenDelete={openDeleteOverlay} /> : null}
           </AnimatePresence>
 
           {!emailConfirmed ? (
@@ -1148,6 +1170,15 @@ export function AccountPageClient({
           {isPending ? <div style={{ marginTop: 12, fontFamily: "Inter, sans-serif", fontSize: 12, color: TXT_FAINT }}>Updating session…</div> : null}
         </div>
       </main>
+
+      {deleteOpen ? (
+        <DeleteAccountOverlay
+          email={email}
+          username={username}
+          authConfirmed={authConfirmed}
+          onClose={closeDeleteOverlay}
+        />
+      ) : null}
     </motion.div>
   );
 }

@@ -16,6 +16,7 @@ type AuthCallbackPageProps = {
     intent?: string;
     magic_link?: string;
     next?: string;
+    section?: string;
     source?: string;
   }>;
 };
@@ -31,6 +32,7 @@ export default async function AuthCallbackPage({ searchParams }: AuthCallbackPag
       errorDescription={params?.error_description ?? null}
       intent={params?.intent ?? null}
       nextPath={params?.next ?? null}
+      section={params?.section ?? null}
       source={params?.source ?? null}
       magicLinkMode={params?.magic_link ?? null}
     />

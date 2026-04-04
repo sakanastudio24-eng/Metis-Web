@@ -15,6 +15,7 @@ type AuthCallbackScreenProps = {
   error: string | null;
   errorDescription: string | null;
   intent: string | null;
+  section: string | null;
   nextPath: string | null;
   source: string | null;
   magicLinkMode: string | null;
@@ -25,6 +26,7 @@ export function AuthCallbackScreen({
   error,
   errorDescription,
   intent,
+  section,
   nextPath,
   source,
   magicLinkMode,
@@ -101,15 +103,18 @@ export function AuthCallbackScreen({
       }
 
       const success = new URL(redirectPath, window.location.origin);
-      if (!parsedSource && redirectPath === "/account/security" && intent === "delete-account") {
+      if (!parsedSource && redirectPath === "/account" && intent === "delete-account") {
         success.searchParams.set("auth", "confirmed");
         success.searchParams.set("intent", "delete-account");
+        if (section) {
+          success.searchParams.set("section", section);
+        }
       }
       router.replace(`${success.pathname}${success.search}`);
     }
 
     void completeCallback();
-  }, [code, error, errorDescription, intent, magicLinkMode, nextPath, router, source, supabase]);
+  }, [code, error, errorDescription, intent, magicLinkMode, nextPath, router, section, source, supabase]);
 
   return (
     <div className="auth-shell flex min-h-screen items-center justify-center px-4 py-10">

@@ -9,8 +9,21 @@ export const metadata = createPrivateMetadata({
   description: "Review your Metis Dash account, API beta status, security posture, and plan access.",
 });
 
-export default async function AccountPage() {
+type AccountPageProps = {
+  searchParams?: Promise<{
+    auth?: string;
+    intent?: string;
+    section?: string;
+  }>;
+};
+
+function getInitialSection(value: string | undefined): "account" | "security" | "pricing" | "settings" {
+  return value === "security" || value === "pricing" || value === "settings" ? value : "account";
+}
+
+export default async function AccountPage({ searchParams }: AccountPageProps) {
   noStore();
+  const params = searchParams ? await searchParams : undefined;
   const user = await requireAuthenticatedUser();
 
   return (
@@ -18,6 +31,10 @@ export default async function AccountPage() {
       email={user.email}
       provider={user.provider}
       emailConfirmed={user.emailConfirmed}
+      username={user.username}
+      initialSection={getInitialSection(params?.section)}
+      initialDeleteOpen={params?.intent === "delete-account"}
+      authConfirmed={params?.auth === "confirmed"}
     />
   );
 }

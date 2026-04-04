@@ -46,7 +46,10 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
 
     startTransition(async () => {
       const redirectUrl = new URL(getMagicLinkCallbackUrl("/account/security"));
+      redirectUrl.pathname = "/auth/callback";
+      redirectUrl.searchParams.set("next", "/account");
       redirectUrl.searchParams.set("intent", "delete-account");
+      redirectUrl.searchParams.set("section", "settings");
 
       const { error } = await supabase.auth.signInWithOtp({
         email,

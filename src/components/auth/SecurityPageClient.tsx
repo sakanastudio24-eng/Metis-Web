@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 
 import {
@@ -15,7 +14,6 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { DeleteAccountOverlay } from "@/components/auth/DeleteAccountOverlay";
 import { authCopy } from "@/content/authCopy";
 import { getAuthCallbackUrl } from "@/lib/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -23,9 +21,6 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 type SecurityPageClientProps = {
   email: string | null;
   provider: string;
-  username: string;
-  authConfirmed: boolean;
-  initialDeleteOpen: boolean;
 };
 
 type LinkableProvider = "google" | "github";
@@ -44,18 +39,13 @@ function getProviderLabel(provider: string) {
 export function SecurityPageClient({
   email,
   provider,
-  username,
-  authConfirmed,
-  initialDeleteOpen,
 }: SecurityPageClientProps) {
-  const router = useRouter();
   const copy = authCopy.security;
   const supabase = createSupabaseBrowserClient();
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(true);
   const [linkedProviders, setLinkedProviders] = useState<string[]>(provider ? [provider] : []);
   const [feedback, setFeedback] = useState<{ tone: "success" | "error"; message: string } | null>(null);
-  const [deleteOpen, setDeleteOpen] = useState(initialDeleteOpen);
 
   useEffect(() => {
     let cancelled = false;
@@ -118,16 +108,6 @@ export function SecurityPageClient({
 
       setFeedback({ tone: "success", message: copy.linkMethodPending });
     });
-  }
-
-  function openDeleteOverlay() {
-    setDeleteOpen(true);
-    router.replace("/account/security?intent=delete-account");
-  }
-
-  function closeDeleteOverlay() {
-    setDeleteOpen(false);
-    router.replace("/account/security");
   }
 
   return (
@@ -297,28 +277,20 @@ export function SecurityPageClient({
               <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
                 <p className="text-sm leading-6 text-white/62">{copy.removeAccountNote}</p>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                className="mt-5 rounded-full border-[#dc5e5e]/25 bg-[#dc5e5e]/10 text-[#ffb8b8] hover:bg-[#dc5e5e]/14 hover:text-white"
-                onClick={openDeleteOverlay}
-              >
-                {copy.removeAccountCta}
-              </Button>
+              <Link href="/account?section=settings&intent=delete-account" className="inline-flex">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-5 rounded-full border-[#dc5e5e]/25 bg-[#dc5e5e]/10 text-[#ffb8b8] hover:bg-[#dc5e5e]/14 hover:text-white"
+                >
+                  {copy.removeAccountCta}
+                </Button>
+              </Link>
             </div>
           </aside>
         </div>
 
         {isLoading ? <p className="px-1 text-sm text-white/55">{copy.loadingLabel}</p> : null}
-
-        {deleteOpen ? (
-          <DeleteAccountOverlay
-            email={email}
-            username={username}
-            authConfirmed={authConfirmed}
-            onClose={closeDeleteOverlay}
-          />
-        ) : null}
       </div>
     </main>
   );
