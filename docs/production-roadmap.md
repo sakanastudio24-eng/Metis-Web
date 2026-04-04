@@ -2,7 +2,7 @@
 
 This document is the website-side path to production. It assumes `Metis-Web` owns auth, onboarding, account, legal, beta posture, provider flows, email delivery, and public product messaging.
 
-The remaining work is now a short release list instead of a vague cleanup bucket: provider QA, final hardening, packaged extension verification, then launch prep.
+The remaining work is now a short release list instead of a vague cleanup bucket: provider QA, packaged extension verification, final hardening, then launch prep.
 
 ## Launch goal
 
@@ -25,6 +25,7 @@ The open items are now:
 
 - finishing real Google and GitHub provider testing
 - packaged extension verification of the shipped auth bridge and backend validation contract
+- one last full pass on callback URLs, provider dashboards, and deployed runtime settings together
 - final mobile polish on account and security
 - real entitlement wiring if Plus Beta or API Beta becomes live
 - a final production pass on SEO, OG assets, and deployment config
