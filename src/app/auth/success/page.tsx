@@ -1,13 +1,12 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { AuthSuccessBridge } from "@/components/auth/AuthSuccessBridge";
 import { getAuthenticatedUserOrNull } from "@/lib/auth-server";
 import { createPrivateMetadata } from "@/lib/seo";
 
 export const metadata = createPrivateMetadata({
-  title: "Extension handoff",
-  description: "Hand authenticated Metis access back to the extension.",
+  title: "Connecting",
+  description: "Connect your website session to the Metis extension.",
 });
 
 export default async function AuthSuccessPage() {
@@ -22,5 +21,5 @@ export default async function AuthSuccessPage() {
     redirect("/account-deleted");
   }
 
-  return <AuthSuccessBridge email={user.email} />;
+  redirect("/account/settings?source=extension");
 }

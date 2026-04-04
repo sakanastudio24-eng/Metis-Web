@@ -59,6 +59,6 @@ export async function redirectIfAuthenticated(source?: MetisAuthSource | null) {
       redirect("/account-deleted");
     }
 
-    redirect(isExtensionAuthSource(source) ? METIS_AUTH_SUCCESS_PATH : "/account");
+    redirect(isExtensionAuthSource(source) ? `${METIS_AUTH_SUCCESS_PATH}?source=${source}` : "/account");
   }
 }

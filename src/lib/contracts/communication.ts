@@ -1,5 +1,5 @@
 export const METIS_EXTENSION_SOURCE = "extension";
-export const METIS_AUTH_SUCCESS_PATH = "/auth/success";
+export const METIS_AUTH_SUCCESS_PATH = "/account/settings";
 // Exact-match allowlist only. No wildcard hosts, no sibling subdomains.
 // Only the first-party website origins should be allowed to originate the
 // bridge payload that the extension accepts.
@@ -22,6 +22,19 @@ export type MetisValidatedAccountState = {
   apiBetaEnabled: boolean;
   allowPlusUi: boolean;
   allowReportEmail: boolean;
+};
+
+export type BridgeAccountState = {
+  email: string | null;
+  username: string | null;
+  scansUsed: number;
+  tier: MetisPlan;
+  isBeta: boolean;
+};
+
+export type ExtensionValidateResponse = {
+  account: MetisValidatedAccountState;
+  bridgeAccount: BridgeAccountState;
 };
 
 export type MetisAuthSuccessMessage = {

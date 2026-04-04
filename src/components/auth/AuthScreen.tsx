@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { authCopy } from "@/content/authCopy";
 import { siteLinks } from "@/content/frontFacingCopy";
 import { getAuthCallbackUrl, getAuthErrorMessage, getMagicLinkCallbackUrl, isDeletedUser } from "@/lib/auth";
-import { type MetisAuthSource, METIS_EXTENSION_SOURCE } from "@/lib/contracts/communication";
+import { METIS_AUTH_SUCCESS_PATH, type MetisAuthSource, METIS_EXTENSION_SOURCE } from "@/lib/contracts/communication";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type AuthScreenProps = {
@@ -343,7 +343,7 @@ export function AuthScreen({
   const [emailError, setEmailError] = useState("");
   const [sentTo, setSentTo] = useState("");
   const [isPending, startTransition] = useTransition();
-  const callbackNextPath = source === METIS_EXTENSION_SOURCE ? "/auth/success" : undefined;
+  const callbackNextPath = source === METIS_EXTENSION_SOURCE ? METIS_AUTH_SUCCESS_PATH : undefined;
   const alternateRouteHref =
     source === METIS_EXTENSION_SOURCE ? `${routeCopy.alternateHref}?source=${METIS_EXTENSION_SOURCE}` : routeCopy.alternateHref;
   const intro = source === METIS_EXTENSION_SOURCE ? routeCopy.extensionIntro : routeCopy.intro;

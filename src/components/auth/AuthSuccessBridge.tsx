@@ -125,46 +125,44 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
           : copy.body;
 
   return (
-    <div className="auth-shell flex min-h-screen items-center justify-center px-4 py-10">
-      <div className="w-full max-w-xl rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-8 text-white shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur">
-        <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
-          {status === "acknowledged" ? <CheckCircle2 className="h-3.5 w-3.5" /> : <ExternalLink className="h-3.5 w-3.5" />}
-          {copy.eyebrow}
-        </span>
-        <h1 className="mt-5 font-serif text-5xl leading-none tracking-[-0.05em] sm:text-6xl">{title}</h1>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70">{body}</p>
-        {email ? <p className="mt-4 text-sm text-white/45">{email}</p> : null}
+    <div className="w-full rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-8 text-white shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur">
+      <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
+        {status === "acknowledged" ? <CheckCircle2 className="h-3.5 w-3.5" /> : <ExternalLink className="h-3.5 w-3.5" />}
+        {copy.eyebrow}
+      </span>
+      <h1 className="mt-5 font-serif text-5xl leading-none tracking-[-0.05em] sm:text-6xl">{title}</h1>
+      <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70">{body}</p>
+      {email ? <p className="mt-4 text-sm text-white/45">{email}</p> : null}
 
-        {status === "posting" ? (
-          <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-white/12 bg-white/6 px-4 py-2 text-sm text-white/75">
-            <LoaderCircle className="h-4 w-4 animate-spin" />
-            {copy.waitingLabel}
-          </div>
-        ) : null}
-
-        <div className="mt-8 flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => window.close()}
-            className="inline-flex items-center gap-2 rounded-full bg-[#dc5e5e] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#c85151]"
-          >
-            {copy.closeLabel}
-          </button>
-          <Link
-            href="/sign-in?source=extension"
-            className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-5 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/8 hover:text-white"
-          >
-            {copy.retryLabel}
-          </Link>
+      {status === "posting" ? (
+        <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-white/12 bg-white/6 px-4 py-2 text-sm text-white/75">
+          <LoaderCircle className="h-4 w-4 animate-spin" />
+          {copy.waitingLabel}
         </div>
+      ) : null}
 
-        {status === "fallback" ? (
-          <div className="mt-6 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4 text-sm leading-6 text-white/72">
-            <p className="font-semibold text-white">{copy.fallbackTitle}</p>
-            <p className="mt-2">{copy.fallbackBody}</p>
-          </div>
-        ) : null}
+      <div className="mt-8 flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={() => window.close()}
+          className="inline-flex items-center gap-2 rounded-full bg-[#dc5e5e] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#c85151]"
+        >
+          {copy.closeLabel}
+        </button>
+        <Link
+          href="/sign-in?source=extension"
+          className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-5 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/8 hover:text-white"
+        >
+          {copy.retryLabel}
+        </Link>
       </div>
+
+      {status === "fallback" ? (
+        <div className="mt-6 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4 text-sm leading-6 text-white/72">
+          <p className="font-semibold text-white">{copy.fallbackTitle}</p>
+          <p className="mt-2">{copy.fallbackBody}</p>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -34,9 +34,9 @@ If sign-up is used instead, the same query rule applies:
 ## Callback flow
 
 - website auth completes through `/auth/callback`
-- extension-aware auth resolves into `/auth/success`
-- `/auth/success` is a bridge-only completion page
-- `/auth/success` must not become a general redirect surface
+- extension-aware auth resolves into `/account/settings?source=extension`
+- `/account/settings` is the bridge-capable dashboard route for extension-started auth
+- `/auth/success` is compatibility-only and should redirect into `/account/settings?source=extension`
 
 ## Bridge method
 
@@ -71,7 +71,7 @@ Rules:
 
 Only accept auth bridge messages when the page location is:
 
-- `/auth/success`
+- `/account/settings`
 
 Ignore all other origins and paths.
 
@@ -246,8 +246,8 @@ Backend responsibilities:
 ## Done in Metis-Web
 
 - [x] `/sign-in?source=extension` and `/sign-up?source=extension` preserve extension intent
-- [x] `/auth/callback` routes extension-aware auth into `/auth/success`
-- [x] `/auth/success` posts `METIS_AUTH_SUCCESS`, waits for `METIS_AUTH_SUCCESS_ACK`, and shows fallback UI
+- [x] `/auth/callback` routes extension-aware auth into `/account/settings?source=extension`
+- [x] `/account/settings?source=extension` posts `METIS_AUTH_SUCCESS`, waits for `METIS_AUTH_SUCCESS_ACK`, and shows fallback UI
 - [x] bridge origin is locked to the exact allowlist: `https://metis.zward.studio` and `http://localhost:3000`
 - [x] bridge route is private and kept out of indexing
 - [x] extension-side listener, storage, ACK, and connected UI wiring are implemented in `Metis`

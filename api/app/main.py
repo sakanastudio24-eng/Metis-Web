@@ -1,6 +1,7 @@
 import json
 from datetime import UTC, datetime, timedelta
 from json import JSONDecodeError
+from urllib.parse import quote
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -108,6 +109,45 @@ def fetch_authenticated_user(token: str, config: ApiEnv) -> dict[str, object]:
         ) from exc
 
 
+def fetch_supabase_rest_rows(
+    config: ApiEnv,
+    table: str,
+    filters: dict[str, str],
+    select: str = "*",
+) -> list[dict[str, object]]:
+    query_parts = [f"select={quote(select, safe='*,()')}"]
+
+    for field, value in filters.items():
+        query_parts.append(f"{quote(field, safe='_')}=eq.{quote(value, safe='-')}")
+
+    request = Request(
+        f"{str(config.supabase_url).rstrip('/')}/rest/v1/{table}?{'&'.join(query_parts)}",
+        headers={
+            "Authorization": f"Bearer {config.supabase_service_role_key}",
+            "apikey": config.supabase_service_role_key,
+            "Accept": "application/json",
+        },
+    )
+
+    try:
+        with urlopen(request, timeout=5) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except (HTTPError, URLError, JSONDecodeError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Supabase data lookup failed upstream.",
+        ) from exc
+
+    if not isinstance(payload, list):
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Supabase data lookup failed upstream.",
+        )
+
+    rows = [row for row in payload if isinstance(row, dict)]
+    return rows
+
+
 class UsageEventPayload(BaseModel):
     type: str
     occurredAt: int
@@ -138,14 +178,6 @@ class DeleteAccountPayload(BaseModel):
     username: str
 
     model_config = ConfigDict(extra="forbid")
-
-
-def _meta_bool(meta: dict[str, object], *keys: str) -> bool:
-    for key in keys:
-        value = meta.get(key)
-        if isinstance(value, bool):
-            return value
-    return False
 
 
 def derive_username(email: str | None) -> str:
@@ -225,48 +257,34 @@ def admin_update_user_metadata(user: dict[str, object], config: ApiEnv, updates:
         ) from exc
 
 
-def derive_account_state(user: dict[str, object]) -> dict[str, object]:
-    app_meta = user.get("app_metadata")
-    user_meta = user.get("user_metadata")
-
-    app_meta = app_meta if isinstance(app_meta, dict) else {}
-    user_meta = user_meta if isinstance(user_meta, dict) else {}
-
-    plan = next(
-        (
-            value
-            for value in (
-                app_meta.get("plan"),
-                app_meta.get("tier"),
-                user_meta.get("plan"),
-                user_meta.get("tier"),
-            )
-            if isinstance(value, str)
-        ),
-        "free",
+def fetch_profile_row(user_id: str, config: ApiEnv) -> dict[str, object] | None:
+    rows = fetch_supabase_rest_rows(
+        config,
+        "profiles",
+        {"id": user_id},
+        "id,email,username,tier,is_beta,onboarding_complete",
     )
+    return rows[0] if rows else None
 
-    if plan not in {"free", "plus_beta", "paid"}:
-        plan = "free"
 
-    # A valid signed-in user still defaults to free unless backend metadata says
-    # otherwise. Authenticated does not imply beta or paid access.
-    plus_beta_enabled = _meta_bool(app_meta, "plus_beta_enabled", "plusBetaEnabled") or _meta_bool(
-        user_meta,
-        "plus_beta_enabled",
-        "plusBetaEnabled",
-    ) or plan == "plus_beta"
-    api_beta_enabled = _meta_bool(app_meta, "api_beta_enabled", "apiBetaEnabled") or _meta_bool(
-        user_meta,
-        "api_beta_enabled",
-        "apiBetaEnabled",
+def fetch_usage_counter_row(user_id: str, config: ApiEnv) -> dict[str, object] | None:
+    rows = fetch_supabase_rest_rows(
+        config,
+        "usage_counters",
+        {"user_id": user_id},
+        "user_id,scans_used,period_start,period_end",
     )
-    allow_plus_ui = _meta_bool(app_meta, "allow_plus_ui", "allowPlusUi") or plus_beta_enabled
-    allow_report_email = _meta_bool(app_meta, "allow_report_email", "allowReportEmail") or _meta_bool(
-        user_meta,
-        "allow_report_email",
-        "allowReportEmail",
-    )
+    return rows[0] if rows else None
+
+
+def derive_account_state(profile: dict[str, object] | None) -> dict[str, object]:
+    plan_value = profile.get("tier") if isinstance(profile, dict) else None
+    plan = plan_value if isinstance(plan_value, str) and plan_value in {"free", "plus_beta", "paid"} else "free"
+    is_beta = profile.get("is_beta") is True if isinstance(profile, dict) else False
+    plus_beta_enabled = plan in {"plus_beta", "paid"} or is_beta
+    api_beta_enabled = plan in {"plus_beta", "paid"}
+    allow_plus_ui = plus_beta_enabled
+    allow_report_email = plus_beta_enabled
 
     return {
         "plan": plan,
@@ -274,6 +292,26 @@ def derive_account_state(user: dict[str, object]) -> dict[str, object]:
         "api_beta_enabled": api_beta_enabled,
         "allow_plus_ui": allow_plus_ui,
         "allow_report_email": allow_report_email,
+    }
+
+
+def build_bridge_account_state(
+    user: dict[str, object],
+    profile: dict[str, object] | None,
+    usage: dict[str, object] | None,
+) -> dict[str, object]:
+    email = user.get("email") if isinstance(user.get("email"), str) else None
+    username_value = profile.get("username") if isinstance(profile, dict) else None
+    tier_value = profile.get("tier") if isinstance(profile, dict) else None
+    scans_used_value = usage.get("scans_used") if isinstance(usage, dict) else None
+    is_beta = profile.get("is_beta") is True if isinstance(profile, dict) else False
+
+    return {
+        "email": profile.get("email") if isinstance(profile, dict) and isinstance(profile.get("email"), str) else email,
+        "username": username_value if isinstance(username_value, str) and username_value else derive_username(email),
+        "scansUsed": scans_used_value if isinstance(scans_used_value, int) else 0,
+        "tier": tier_value if isinstance(tier_value, str) and tier_value in {"free", "plus_beta", "paid"} else "free",
+        "isBeta": is_beta,
     }
 
 
@@ -304,12 +342,24 @@ def auth_me(token: str = Depends(get_bearer_token)) -> dict[str, object]:
 
 @app.post("/v1/extension/validate")
 def extension_validate(token: str = Depends(get_bearer_token)) -> dict[str, object]:
-    user = fetch_authenticated_user(token, get_env())
+    config = get_env()
+    user = fetch_authenticated_user(token, config)
     ensure_active_account(user)
-    account = derive_account_state(user)
+    user_id = user.get("id")
+
+    if not isinstance(user_id, str) or not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Supabase auth verification failed upstream.",
+        )
+
+    profile = fetch_profile_row(user_id, config)
+    usage = fetch_usage_counter_row(user_id, config)
+    account = derive_account_state(profile)
 
     return {
         "account": account,
+        "bridgeAccount": build_bridge_account_state(user, profile, usage),
     }
 
 
@@ -343,6 +393,7 @@ def account_delete(payload: DeleteAccountPayload, token: str = Depends(get_beare
     user = fetch_authenticated_user(token, config)
     ensure_active_account(user)
     ensure_recent_sign_in(user)
+    user_id = user.get("id")
 
     if payload.confirmationText != "DELETE":
         raise HTTPException(
@@ -350,7 +401,12 @@ def account_delete(payload: DeleteAccountPayload, token: str = Depends(get_beare
             detail="Confirmation text mismatch.",
         )
 
-    if payload.username.strip().lower() != derive_username(user.get("email") if isinstance(user.get("email"), str) else None):
+    profile = fetch_profile_row(user_id, config) if isinstance(user_id, str) and user_id else None
+    expected_username = profile.get("username") if isinstance(profile, dict) and isinstance(profile.get("username"), str) else derive_username(
+        user.get("email") if isinstance(user.get("email"), str) else None
+    )
+
+    if payload.username.strip().lower() != expected_username.strip().lower():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username mismatch.",
