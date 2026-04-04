@@ -12,6 +12,7 @@ import { authCopy } from "@/content/authCopy";
 import { siteLinks } from "@/content/frontFacingCopy";
 import { getAuthCallbackUrl, getAuthErrorMessage, getMagicLinkCallbackUrl, isDeletedUser } from "@/lib/auth";
 import { METIS_AUTH_SUCCESS_PATH, type MetisAuthSource, METIS_EXTENSION_SOURCE } from "@/lib/contracts/communication";
+import { siteConfig } from "@/lib/site";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type AuthScreenProps = {
@@ -410,7 +411,7 @@ export function AuthScreen({
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: getAuthCallbackUrl(window.location.origin, callbackNextPath, source),
+          redirectTo: getAuthCallbackUrl(siteConfig.url, callbackNextPath, source),
         },
       });
 

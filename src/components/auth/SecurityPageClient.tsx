@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { authCopy } from "@/content/authCopy";
 import { getAuthCallbackUrl } from "@/lib/auth";
 import type { AccountDashboardSnapshot } from "@/lib/account-data";
+import { siteConfig } from "@/lib/site";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type SecurityPageClientProps = {
@@ -95,7 +96,7 @@ export function SecurityPageClient({
       const { error } = await supabase.auth.linkIdentity({
         provider: nextProvider,
         options: {
-          redirectTo: getAuthCallbackUrl(window.location.origin, "/account/security"),
+          redirectTo: getAuthCallbackUrl(siteConfig.url, "/account/security"),
         },
       });
 

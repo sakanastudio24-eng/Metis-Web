@@ -26,7 +26,7 @@ function getAuthOrigin(origin?: string): string {
     return window.location.origin;
   }
 
-  return "http://localhost:3000";
+  return siteConfig.url;
 }
 
 export function getDefaultAuthCompletionPath(source?: string | null): string {

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { CheckCircle2, ExternalLink, LoaderCircle } from "lucide-react";
 
@@ -21,10 +22,15 @@ type AuthSuccessBridgeProps = {
 };
 
 export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
+  const router = useRouter();
   const copy = authCopy.bridge;
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [status, setStatus] = useState<BridgeStatus>("posting");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const closeOverlay = useCallback(() => {
+    router.replace(METIS_AUTH_SUCCESS_PATH);
+  }, [router]);
 
   useEffect(() => {
     let timeoutId: number | undefined;
@@ -75,7 +81,7 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
         window.clearTimeout(timeoutId);
         setStatus("acknowledged");
         setTimeout(() => {
-          window.close();
+          closeOverlay();
         }, 450);
       }
 
@@ -106,7 +112,7 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
         window.clearTimeout(timeoutId);
       }
     };
-  }, [copy.invalidOriginBody, copy.invalidSessionBody, supabase]);
+  }, [closeOverlay, copy.invalidOriginBody, copy.invalidSessionBody, supabase]);
 
   const title =
     status === "acknowledged"
@@ -144,7 +150,7 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
       <div className="mt-8 flex flex-wrap gap-3">
         <button
           type="button"
-          onClick={() => window.close()}
+          onClick={closeOverlay}
           className="inline-flex items-center gap-2 rounded-full bg-[#dc5e5e] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#c85151]"
         >
           {copy.closeLabel}
