@@ -9,6 +9,7 @@ import { CheckCircle2, ExternalLink, LoaderCircle } from "lucide-react";
 import { authCopy } from "@/content/authCopy";
 import {
   METIS_AUTH_SUCCESS_PATH,
+  isMetisAuthFailureAck,
   type MetisAuthSuccessMessage,
   isAllowedBridgeOrigin,
   isMetisAuthSuccessAck,
@@ -27,6 +28,26 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [status, setStatus] = useState<BridgeStatus>("posting");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const describeFailure = useCallback(
+    (reason: string, detail?: string, endpoint?: string) => {
+      switch (reason) {
+        case "validation_endpoint_unreachable":
+          return `${copy.endpointFailureBody}${endpoint ? ` Endpoint: ${endpoint}.` : ""}${detail ? ` ${detail}` : ""}`;
+        case "validation_rejected":
+          return `${copy.validationRejectedBody}${detail ? ` ${detail}` : ""}`;
+        case "invalid_account_payload":
+          return `${copy.invalidAccountBody}${detail ? ` ${detail}` : ""}`;
+        case "storage_failed":
+          return `${copy.storageFailureBody}${detail ? ` ${detail}` : ""}`;
+        case "extension_unavailable":
+          return `${copy.extensionUnavailableBody}${detail ? ` ${detail}` : ""}`;
+        default:
+          return detail ?? copy.unknownFailureBody;
+      }
+    },
+    [copy.endpointFailureBody, copy.extensionUnavailableBody, copy.invalidAccountBody, copy.storageFailureBody, copy.unknownFailureBody, copy.validationRejectedBody]
+  );
 
   const closeOverlay = useCallback(() => {
     router.replace(METIS_AUTH_SUCCESS_PATH);
@@ -70,7 +91,7 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
       };
 
       function onMessage(event: MessageEvent) {
-        if (event.origin !== window.location.origin || !isMetisAuthSuccessAck(event.data)) {
+        if (event.origin !== window.location.origin) {
           return;
         }
 
@@ -78,11 +99,19 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
           return;
         }
 
-        window.clearTimeout(timeoutId);
-        setStatus("acknowledged");
-        setTimeout(() => {
-          closeOverlay();
-        }, 450);
+        if (isMetisAuthSuccessAck(event.data)) {
+          window.clearTimeout(timeoutId);
+          setStatus("acknowledged");
+          return;
+        }
+
+        if (isMetisAuthFailureAck(event.data)) {
+          window.clearTimeout(timeoutId);
+          setStatus("error");
+          setErrorMessage(
+            describeFailure(event.data.reason, event.data.detail, event.data.endpoint)
+          );
+        }
       }
 
       window.addEventListener("message", onMessage);
@@ -90,7 +119,8 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
 
       timeoutId = window.setTimeout(() => {
         if (!cancelled) {
-          setStatus("fallback");
+          setStatus("error");
+          setErrorMessage(copy.extensionUnavailableBody);
         }
       }, 4500);
 
@@ -112,7 +142,14 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
         window.clearTimeout(timeoutId);
       }
     };
-  }, [closeOverlay, copy.invalidOriginBody, copy.invalidSessionBody, supabase]);
+  }, [
+    closeOverlay,
+    copy.extensionUnavailableBody,
+    copy.invalidOriginBody,
+    copy.invalidSessionBody,
+    describeFailure,
+    supabase
+  ]);
 
   const title =
     status === "acknowledged"
@@ -125,7 +162,7 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
     status === "acknowledged"
       ? copy.successBody
       : status === "fallback"
-        ? copy.fallbackBody
+        ? copy.extensionUnavailableBody
         : status === "error"
           ? errorMessage ?? copy.invalidSessionBody
           : copy.body;
@@ -163,10 +200,10 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
         </Link>
       </div>
 
-      {status === "fallback" ? (
-        <div className="mt-6 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4 text-sm leading-6 text-white/72">
-          <p className="font-semibold text-white">{copy.fallbackTitle}</p>
-          <p className="mt-2">{copy.fallbackBody}</p>
+      {status === "error" ? (
+        <div className="mt-6 rounded-[22px] border border-[rgba(220,94,94,0.28)] bg-[rgba(220,94,94,0.08)] px-4 py-4 text-sm leading-6 text-white/78">
+          <p className="font-semibold text-white">{copy.failureTitle}</p>
+          <p className="mt-2">{errorMessage ?? copy.unknownFailureBody}</p>
         </div>
       ) : null}
     </div>

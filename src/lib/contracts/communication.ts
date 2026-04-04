@@ -58,6 +58,24 @@ export type MetisAuthSuccessAck = {
   ok: true;
 };
 
+export type MetisAuthFailureReason =
+  | "extension_unavailable"
+  | "validation_endpoint_unreachable"
+  | "validation_rejected"
+  | "invalid_account_payload"
+  | "storage_failed"
+  | "unknown";
+
+export type MetisAuthFailureAck = {
+  type: "METIS_AUTH_FAILURE";
+  source: "metis-extension";
+  version: 1;
+  ok: false;
+  reason: MetisAuthFailureReason;
+  detail?: string;
+  endpoint?: string;
+};
+
 export type UsageEventPayload = {
   type: string;
   occurredAt: number;
@@ -100,5 +118,20 @@ export function isMetisAuthSuccessAck(value: unknown): value is MetisAuthSuccess
     ack.source === "metis-extension" &&
     ack.version === 1 &&
     ack.ok === true
+  );
+}
+
+export function isMetisAuthFailureAck(value: unknown): value is MetisAuthFailureAck {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const ack = value as Partial<MetisAuthFailureAck>;
+  return (
+    ack.type === "METIS_AUTH_FAILURE" &&
+    ack.source === "metis-extension" &&
+    ack.version === 1 &&
+    ack.ok === false &&
+    typeof ack.reason === "string"
   );
 }

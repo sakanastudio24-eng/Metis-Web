@@ -54,14 +54,25 @@ export const authCopy = {
     waitingLabel: "Connecting to extension",
     successLabel: "Connected",
     successBody: "The extension confirmed the connection. You can keep working in settings.",
-    fallbackTitle: "If this window stays open",
-    fallbackBody: "Return to the extension and refresh the connection state. If the extension did not pick up the connection, start sign-in again from the extension.",
+    failureTitle: "Connection failed",
     closeLabel: "Close overlay",
     retryLabel: "Try sign-in again",
     invalidSessionTitle: "Session not ready",
     invalidSessionBody: "The website could not read a live authenticated session on this overlay.",
     invalidOriginTitle: "Unsupported origin",
     invalidOriginBody: "This connection overlay only runs on the approved Metis website origins.",
+    extensionUnavailableBody:
+      "The extension did not respond to the connection request. Reload the extension, then try sign-in again.",
+    endpointFailureBody:
+      "The extension could not reach the Metis account validation endpoint.",
+    validationRejectedBody:
+      "The Metis validation endpoint rejected the connection request.",
+    invalidAccountBody:
+      "The extension received an incomplete account snapshot and could not finish the connection.",
+    storageFailureBody:
+      "The extension could not save the connected account state locally.",
+    unknownFailureBody:
+      "The extension could not finish the connection."
   },
   loggedIn: {
     eyebrow: "Setup",
