@@ -44,7 +44,7 @@ The bridge uses `window.postMessage`.
 
 Flow:
 
-1. website loads `/auth/success`
+1. website loads `/account/settings?source=extension`
 2. website reads the authenticated session client-side
 3. website posts `METIS_AUTH_SUCCESS`
 4. content script validates origin, path, and payload
@@ -80,7 +80,7 @@ Ignore all other origins and paths.
 `source=extension` means:
 
 - auth should preserve extension intent through the auth flow
-- callback completion should land on `/auth/success`
+- callback completion should land on `/account/settings?source=extension`
 - normal website auth behavior should stay unchanged when the parameter is absent
 
 ## Website message payload
@@ -123,6 +123,7 @@ V1 stores minimal data only:
 - user id
 - user email when available
 - validated account flags
+- validated account snapshot for UI
 - connection timestamp
 
 V1 does not require refresh-token rotation.
@@ -144,6 +145,11 @@ Expected validated state:
 - `api_beta_enabled`
 - `allow_plus_ui`
 - `allow_report_email`
+- `bridgeAccount.email`
+- `bridgeAccount.username`
+- `bridgeAccount.scansUsed`
+- `bridgeAccount.tier`
+- `bridgeAccount.isBeta`
 
 Backend validation is the source of truth for extension-side entitlement behavior.
 
@@ -163,6 +169,13 @@ type StoredMetisWebSession = {
     apiBetaEnabled: boolean;
     allowPlusUi: boolean;
     allowReportEmail: boolean;
+  };
+  bridgeAccount: {
+    email: string | null;
+    username: string | null;
+    scansUsed: number;
+    tier: "free" | "plus_beta" | "paid";
+    isBeta: boolean;
   };
   connectedAt: number;
 };
@@ -202,7 +215,7 @@ The success page should not silently close without a verified handoff.
 Ignore and do not persist:
 
 - unknown origins
-- non-`/auth/success` pages
+- non-`/account/settings` pages
 - malformed payloads
 - missing tokens
 - failed backend validation responses

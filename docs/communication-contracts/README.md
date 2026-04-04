@@ -35,7 +35,7 @@ If a communication change affects more than one lane, update all touched contrac
 
 - [x] contract docs are tracked in git
 - [x] website auth bridge contract is implemented with `source=extension`
-- [x] `/auth/success` posts the authenticated handoff payload and waits for ACK
+- [x] `/account/settings?source=extension` posts the authenticated handoff payload and waits for ACK
 - [x] backend account validation exists at `POST /v1/extension/validate`
 - [x] first upload routes exist for events, scan summary, and premium report request
 - [x] extension-side listener, storage, ACK, and gated UI adoption are implemented in `Metis`

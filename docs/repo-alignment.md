@@ -35,7 +35,7 @@ That means the website should talk about account access, security, legal accepta
 5. Sign up requires privacy and terms acceptance.
 6. Plus Beta is managed through the website account layer.
 7. API Beta stays visible as roadmap copy, but the full panel stays staged until the beta launch pass.
-8. Extension-aware auth keeps website auth on the web and hands a narrow success payload back through `/auth/success`.
+8. Extension-aware auth keeps website auth on the web and hands a narrow success payload back through `/account/settings?source=extension`.
 9. Backend validation and upload routes follow `docs/communication-contracts` instead of one-off payloads.
 10. Account deletion is a website-owned soft-delete flow and does not run from the extension.
 
@@ -58,7 +58,7 @@ The website is in launch-prep shape rather than early exploration.
 
 - passwordless website auth is live with Google, GitHub, and magic link
 - `/auth/callback` is the shared website callback for provider auth and magic links
-- `/auth/success` is the extension-aware bridge completion route
+- `/account/settings?source=extension` is the extension-aware bridge completion route
 - `/logged-in` stays the short setup handoff and `/account` stays the long-term account home
 - account and security live on the website, and extension behavior settings stay in the extension
 - dashboard sections work in one shell on desktop and mobile

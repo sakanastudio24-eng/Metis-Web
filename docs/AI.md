@@ -11,7 +11,7 @@ Current surfaces:
 1. Public website pages for the product story and legal pages
 2. Passwordless auth overlay for sign in and sign up
 3. Shared auth callback at `/auth/callback`
-4. Extension-aware auth completion at `/auth/success`
+4. Extension-aware auth completion at `/account/settings?source=extension`
 5. Onboarding at `/logged-in`
 6. Account and security at `/account` and `/account/security`
 7. FastAPI proof endpoints for health, readiness, extension validation, uploads, and account deletion
@@ -22,7 +22,7 @@ Supabase owns identity, sessions, provider auth, magic-link delivery, and callba
 
 The website completes auth at `/auth/callback`.
 
-When auth starts from the extension, the website preserves `source=extension`, lands on `/auth/success`, posts the authenticated handoff payload, and waits for extension ACK before trying to close the page.
+When auth starts from the extension, the website preserves `source=extension`, lands on `/account/settings?source=extension`, posts the authenticated handoff payload, and waits for extension ACK before trying to close the page.
 
 FastAPI does not issue credentials. It verifies protected access where backend proof is needed and owns the narrow contract endpoints that the extension relies on.
 
