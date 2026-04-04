@@ -33,6 +33,9 @@ const TEXT = "#FFF5F0";
 const TEXT_DIM = "rgba(255,245,240,0.65)";
 const TEXT_DIM_2 = "rgba(255,245,240,0.35)";
 const BORDER = "rgba(255,255,255,0.12)";
+const FONT_SANS = "var(--font-sans), sans-serif";
+const FONT_SERIF = "var(--font-serif), serif";
+const FONT_DISPLAY = "var(--font-display), sans-serif";
 
 const READY_ITEMS = [
   { key: "Account row ready", icon: CheckCircle2 },
@@ -89,8 +92,8 @@ function FieldGroup({
         padding: "16px 16px 18px"
       }}
     >
-      <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 700, color: TEXT }}>{title}</p>
-      <p style={{ margin: "6px 0 0", fontFamily: "Inter, sans-serif", fontSize: 12, lineHeight: 1.55, color: TEXT_DIM }}>
+      <p style={{ margin: 0, fontFamily: FONT_SANS, fontSize: 13, fontWeight: 700, color: TEXT }}>{title}</p>
+      <p style={{ margin: "6px 0 0", fontFamily: FONT_SANS, fontSize: 12, lineHeight: 1.55, color: TEXT_DIM }}>
         {helper}
       </p>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
@@ -107,7 +110,7 @@ function FieldGroup({
                 background: active ? "rgba(220,94,94,0.16)" : "rgba(255,255,255,0.04)",
                 color: active ? TEXT : TEXT_DIM,
                 padding: "10px 13px",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: FONT_SANS,
                 fontSize: 12,
                 fontWeight: active ? 700 : 600,
                 cursor: "pointer"
@@ -223,9 +226,9 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
                 boxShadow: "0 2px 8px rgba(220,94,94,0.4)"
               }}
             >
-              <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 14, color: "white", lineHeight: 1 }}>M</span>
+              <span style={{ fontFamily: FONT_SERIF, fontSize: 14, color: "white", lineHeight: 1 }}>M</span>
             </div>
-            <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 16, color: TEXT, letterSpacing: "-0.02em" }}>
+            <span style={{ fontFamily: FONT_SERIF, fontSize: 16, color: TEXT, letterSpacing: "-0.02em" }}>
               Metis
             </span>
           </div>
@@ -255,7 +258,7 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
               style={{
                 margin: 0,
                 marginBottom: 10,
-                fontFamily: "Inter, sans-serif",
+                fontFamily: FONT_SANS,
                 fontSize: 11,
                 fontWeight: 700,
                 letterSpacing: "0.16em",
@@ -269,7 +272,7 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
               style={{
                 margin: 0,
                 marginBottom: 10,
-                fontFamily: "DM Serif Display, serif",
+                fontFamily: FONT_SERIF,
                 fontSize: "clamp(28px, 3.4vw, 42px)",
                 color: TEXT,
                 lineHeight: 1.08,
@@ -278,11 +281,11 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
             >
               {copy.title}
             </h2>
-            <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 14, lineHeight: 1.65, color: TEXT_DIM }}>
+            <p style={{ margin: 0, fontFamily: FONT_SANS, fontSize: 14, lineHeight: 1.65, color: TEXT_DIM }}>
               Answer the current setup questions once. Metis stores these in your website account so the extension can stay lightweight.
             </p>
             {signedInLine ? (
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_DIM_2, margin: "16px 0 0" }}>{signedInLine}</p>
+              <p style={{ fontFamily: FONT_SANS, fontSize: 12, color: TEXT_DIM_2, margin: "16px 0 0" }}>{signedInLine}</p>
             ) : null}
 
             <div style={{ display: "grid", gap: 14, marginTop: 24 }}>
@@ -345,7 +348,7 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
                   border: `1px solid ${BORDER}`,
                   background: "rgba(255,255,255,0.05)",
                   padding: "12px 14px",
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: FONT_SANS,
                   fontSize: 12,
                   color: TEXT_DIM
                 }}
@@ -369,7 +372,7 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
                   background: "linear-gradient(135deg,#fff5f0,#ffe8e8)",
                   border: "1px solid rgba(255,255,255,0.3)",
                   color: "#2b100e",
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: FONT_SANS,
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: isPending ? "progress" : "pointer"
@@ -392,7 +395,7 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
                   background: "rgba(255,255,255,0.06)",
                   border: `1px solid ${BORDER}`,
                   color: TEXT_DIM,
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: FONT_SANS,
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: isPending ? "progress" : "pointer"
@@ -412,7 +415,7 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
                 padding: "18px 18px 20px"
               }}
             >
-              <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: TEXT_DIM_2 }}>
+              <p style={{ margin: 0, fontFamily: FONT_SANS, fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: TEXT_DIM_2 }}>
                 What this changes
               </p>
               <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
@@ -443,7 +446,7 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
                     >
                       <Icon size={12} style={{ color: "#4ade80" }} />
                     </div>
-                    <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_DIM }}>{key}</span>
+                    <span style={{ fontFamily: FONT_SANS, fontSize: 13, color: TEXT_DIM }}>{key}</span>
                   </div>
                 ))}
               </div>
@@ -457,10 +460,10 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
                 padding: "18px 18px 20px"
               }}
             >
-              <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: TEXT_DIM_2 }}>
+              <p style={{ margin: 0, fontFamily: FONT_SANS, fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: TEXT_DIM_2 }}>
                 After setup
               </p>
-              <p style={{ margin: "12px 0 0", fontFamily: "Inter, sans-serif", fontSize: 13, lineHeight: 1.65, color: TEXT_DIM }}>
+              <p style={{ margin: "12px 0 0", fontFamily: FONT_SANS, fontSize: 13, lineHeight: 1.65, color: TEXT_DIM }}>
                 Your account, beta access, and security controls stay on the website. Scan controls and local history stay in the extension.
               </p>
               <Link
@@ -471,7 +474,7 @@ export function LoggedInState({ email, userId, initialAnswers }: LoggedInStatePr
                   gap: 8,
                   marginTop: 14,
                   color: "#ffb8b8",
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: FONT_SANS,
                   fontSize: 13,
                   fontWeight: 700,
                   textDecoration: "none"

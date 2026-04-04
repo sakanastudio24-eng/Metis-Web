@@ -18,6 +18,8 @@ import { frontFacingCopy } from "@/content/frontFacingCopy";
 const METIS_RED = "#dc5e5e";
 const DARK_BG = "#0c1623";
 const PANEL_BG = "#111d2b";
+const FONT_SANS = "var(--font-sans), sans-serif";
+const FONT_DISPLAY = "var(--font-display), sans-serif";
 
 export type MockupState = {
   score: number;
@@ -87,7 +89,7 @@ function MockScoreCircle({
         textAnchor="middle" dominantBaseline="central"
         fill="white"
         fontSize={size * 0.24}
-        fontFamily="Jua, sans-serif"
+        fontFamily={FONT_DISPLAY}
         fontWeight="bold"
       >
         {displayed}
@@ -122,7 +124,7 @@ export function ExtensionMockup({
         border: "1px solid rgba(255,255,255,0.07)",
         boxShadow: "0 24px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)",
         overflow: "hidden",
-        fontFamily: "Inter, sans-serif",
+        fontFamily: FONT_SANS,
       }}
     >
       {/* Header */}
@@ -149,11 +151,11 @@ export function ExtensionMockup({
               flexShrink: 0,
             }}
           >
-            <span style={{ fontFamily: "Jua, sans-serif", fontSize: 16, color: "white" }}>M</span>
+            <span style={{ fontFamily: FONT_DISPLAY, fontSize: 16, color: "white" }}>M</span>
           </div>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ fontFamily: "Jua, sans-serif", fontSize: 13, color: "white" }}>{copy.title}</span>
+              <span style={{ fontFamily: FONT_DISPLAY, fontSize: 13, color: "white" }}>{copy.title}</span>
             </div>
             <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", margin: 0, marginTop: 1 }}>
               {copy.subtitle}
@@ -184,7 +186,7 @@ export function ExtensionMockup({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  style={{ fontFamily: "Jua, sans-serif", fontSize: 26, color: "white", lineHeight: 1 }}
+                  style={{ fontFamily: FONT_DISPLAY, fontSize: 26, color: "white", lineHeight: 1 }}
                 >
                   {state.score}
                 </motion.span>
@@ -302,7 +304,7 @@ export function ExtensionMockup({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              style={{ fontFamily: "Jua, sans-serif", fontSize: 13, color: "white" }}
+              style={{ fontFamily: FONT_DISPLAY, fontSize: 13, color: "white" }}
             >
               {state.sessionCost}
             </motion.span>
@@ -326,7 +328,7 @@ export function ExtensionMockup({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              style={{ fontFamily: "Jua, sans-serif", fontSize: 10, color: "#a5b4fc" }}
+              style={{ fontFamily: FONT_DISPLAY, fontSize: 10, color: "#a5b4fc" }}
             >
               {copy.monthlyProjectionValue(state.costMin)}
             </motion.span>
@@ -436,7 +438,7 @@ export function ExtensionMockup({
           }}
         >
           <FileText size={11} style={{ color: "white" }} />
-          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: "white" }}>
+          <span style={{ fontFamily: FONT_SANS, fontSize: 12, fontWeight: 700, color: "white" }}>
             {reportLabel ?? copy.reportCta}
           </span>
           <ChevronRight size={11} style={{ color: "white" }} />

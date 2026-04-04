@@ -22,6 +22,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowRight,
@@ -37,7 +38,9 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { frontFacingCopy, landingAnalysis, mockupStates, siteLinks } from "@/content/frontFacingCopy";
-import { ExtensionMockup, MockupState } from "./ExtensionMockup";
+import type { MockupState } from "./ExtensionMockup";
+import { isDeletedUser } from "@/lib/auth";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -65,6 +68,25 @@ const FOOTER_LINK_ICONS = {
 } as const;
 const DEFAULT_SIGN_UP_URL = siteLinks.waitlistUrl;
 const DEFAULT_ACCOUNT_URL = siteLinks.accountUrl;
+const FONT_SANS = "var(--font-sans), sans-serif";
+const FONT_SERIF = "var(--font-serif), serif";
+const FONT_DISPLAY = "var(--font-display), sans-serif";
+
+const ExtensionMockup = dynamic(() => import("./ExtensionMockup").then((mod) => mod.ExtensionMockup), {
+  ssr: false,
+  loading: () => (
+    <div
+      style={{
+        width: 380,
+        minHeight: 560,
+        borderRadius: 16,
+        border: "1px solid rgba(255,255,255,0.07)",
+        background: "rgba(17,29,43,0.72)",
+        boxShadow: "0 24px 80px rgba(0,0,0,0.42)",
+      }}
+    />
+  ),
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SECTION KEYS
@@ -72,10 +94,6 @@ const DEFAULT_ACCOUNT_URL = siteLinks.accountUrl;
 // Add new sections here first, then extend SECTION_STATES and NAV_SECTIONS.
 // ─────────────────────────────────────────────────────────────────────────────
 type SectionKey = "hero" | "product" | "problem" | "fixes" | "solution";
-type LandingViewer = {
-  email: string | null;
-  hasAccountAccess: boolean;
-};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MOCKUP STATES
@@ -184,9 +202,9 @@ function StickyNav({
             flexShrink: 0,
             boxShadow: "0 2px 8px rgba(220,94,94,0.35)",
           }}>
-            <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 13, color: "white", lineHeight: 1 }}>M</span>
+            <span style={{ fontFamily: FONT_SERIF, fontSize: 13, color: "white", lineHeight: 1 }}>M</span>
           </div>
-          <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 16, color: textMain, letterSpacing: "-0.02em", lineHeight: 1 }}>
+          <span style={{ fontFamily: FONT_SERIF, fontSize: 16, color: textMain, letterSpacing: "-0.02em", lineHeight: 1 }}>
             {frontFacingCopy.brand.name}
           </span>
         </button>
@@ -206,7 +224,7 @@ function StickyNav({
               background: "none",
               border: "none", cursor: "pointer",
               padding: "6px 13px", borderRadius: 999,
-              fontFamily: "Inter, sans-serif", fontSize: 13,
+              fontFamily: FONT_SANS, fontSize: 13,
               fontWeight: active === key ? 600 : 400,
               color: active === key ? textMain : textDim,
               transition: "color 0.2s",
@@ -243,7 +261,7 @@ function StickyNav({
             background: RED,
             border: "none",
             borderRadius: 999, padding: "7px 16px",
-            fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 700,
+            fontFamily: FONT_SANS, fontSize: 13, fontWeight: 700,
             color: "white",
             cursor: "pointer", display: "flex", alignItems: "center", gap: 5,
             boxShadow: "0 2px 10px rgba(220,94,94,0.28)",
@@ -294,7 +312,7 @@ function HeroSection({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          fontFamily: "DM Serif Display, serif",
+          fontFamily: FONT_SERIF,
           fontSize: "clamp(72px, 12vw, 128px)",
           color: RED,
           lineHeight: 1,
@@ -312,7 +330,7 @@ function HeroSection({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          fontFamily: "DM Serif Display, serif",
+          fontFamily: FONT_SERIF,
           fontStyle: "italic",
           fontSize: "clamp(18px, 2.2vw, 26px)",
           color: TEXT_R_DIM,
@@ -342,7 +360,7 @@ function HeroSection({
           style={{
             background: RED, color: CREAM, border: "none",
             borderRadius: 999, padding: "14px 28px",
-            fontFamily: "Inter, sans-serif", fontSize: 15, fontWeight: 700,
+            fontFamily: FONT_SANS, fontSize: 15, fontWeight: 700,
             cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
           }}
         >
@@ -356,7 +374,7 @@ function HeroSection({
             background: "rgba(220,94,94,0.08)", color: TEXT_R,
             border: "1px solid rgba(220,94,94,0.22)",
             borderRadius: 999, padding: "14px 28px",
-            fontFamily: "Inter, sans-serif", fontSize: 15, fontWeight: 500,
+            fontFamily: FONT_SANS, fontSize: 15, fontWeight: 500,
             cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
           }}
           onClick={() => document.getElementById("product")?.scrollIntoView({ behavior: "smooth", block: "start" })}
@@ -376,8 +394,8 @@ function HeroSection({
       >
         {copy.stats.map(({ value, label }) => (
           <div key={label} style={{ textAlign: "center" }}>
-            <div style={{ fontFamily: "Jua, sans-serif", fontSize: 26, color: RED, lineHeight: 1 }}>{value}</div>
-            <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_R_DIM, marginTop: 4 }}>{label}</div>
+            <div style={{ fontFamily: FONT_DISPLAY, fontSize: 26, color: RED, lineHeight: 1 }}>{value}</div>
+            <div style={{ fontFamily: FONT_SANS, fontSize: 12, color: TEXT_R_DIM, marginTop: 4 }}>{label}</div>
           </div>
         ))}
       </motion.div>
@@ -393,7 +411,7 @@ function HeroSection({
           animate={{ opacity: [0.35, 0.9, 0.35] }}
           transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: FONT_SANS,
             fontSize: 12,
             color: TEXT_R_DIM,
             letterSpacing: "0.12em",
@@ -431,7 +449,7 @@ function SectionTag({ children }: { children: string }) {
         marginBottom: 20,
       }}
     >
-      <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 600, color: TEXT_W_DIM, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+      <span style={{ fontFamily: FONT_SANS, fontSize: 11, fontWeight: 600, color: TEXT_W_DIM, textTransform: "uppercase", letterSpacing: "0.08em" }}>
         {children}
       </span>
     </div>
@@ -464,14 +482,14 @@ function ProductSection({
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 560 }}
+          style={{ fontFamily: FONT_SERIF, fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 560 }}
         >
           {copy.heading}
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.1 }}
-          style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.6, margin: 0, marginBottom: 56, maxWidth: 480 }}
+          style={{ fontFamily: FONT_SANS, fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.6, margin: 0, marginBottom: 56, maxWidth: 480 }}
         >
           {copy.body}
         </motion.p>
@@ -492,8 +510,8 @@ function ProductSection({
               <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(255,255,255,0.12)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
                 <Icon size={16} style={{ color: TEXT_W }} />
               </div>
-              <h3 style={{ fontFamily: "Inter, sans-serif", fontSize: 15, fontWeight: 700, color: TEXT_W, margin: 0, marginBottom: 8 }}>{title}</h3>
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_W_DIM, lineHeight: 1.6, margin: 0 }}>{desc}</p>
+              <h3 style={{ fontFamily: FONT_SANS, fontSize: 15, fontWeight: 700, color: TEXT_W, margin: 0, marginBottom: 8 }}>{title}</h3>
+              <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: TEXT_W_DIM, lineHeight: 1.6, margin: 0 }}>{desc}</p>
             </motion.div>
             );
           })}
@@ -521,14 +539,14 @@ function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 580 }}
+          style={{ fontFamily: FONT_SERIF, fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 580 }}
         >
           {copy.heading}
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.1 }}
-          style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 56, maxWidth: 520 }}
+          style={{ fontFamily: FONT_SANS, fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 56, maxWidth: 520 }}
         >
           {copy.body}
         </motion.p>
@@ -543,10 +561,10 @@ function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
               style={{ background: "rgba(0,0,0,0.15)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 14, padding: "20px 22px" }}
             >
               <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 6 }}>
-                <span style={{ fontFamily: "Jua, sans-serif", fontSize: 32, color: TEXT_W, lineHeight: 1 }}>{value}</span>
-                {unit && <span style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_W_DIM }}>{unit}</span>}
+                <span style={{ fontFamily: FONT_DISPLAY, fontSize: 32, color: TEXT_W, lineHeight: 1 }}>{value}</span>
+                {unit && <span style={{ fontFamily: FONT_SANS, fontSize: 14, color: TEXT_W_DIM }}>{unit}</span>}
               </div>
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: TEXT_W_DIM2, margin: 0, lineHeight: 1.4 }}>{label}</p>
+              <p style={{ fontFamily: FONT_SANS, fontSize: 12, color: TEXT_W_DIM2, margin: 0, lineHeight: 1.4 }}>{label}</p>
             </motion.div>
           ))}
         </div>
@@ -561,11 +579,11 @@ function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
           <div style={{ padding: "12px 16px", background: "rgba(239,68,68,0.16)", borderBottom: "1px solid rgba(239,68,68,0.24)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <AlertCircle size={13} style={{ color: "#fff5f0", flexShrink: 0 }} />
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: "#fff5f0", letterSpacing: "0.01em" }}>
+              <span style={{ fontFamily: FONT_SANS, fontSize: 12, fontWeight: 700, color: "#fff5f0", letterSpacing: "0.01em" }}>
                 5 issues detected
               </span>
             </div>
-            <span style={{ borderRadius: 999, padding: "4px 10px", background: "rgba(255,245,240,0.12)", border: "1px solid rgba(255,245,240,0.16)", color: "#fff5f0", fontFamily: "Inter, sans-serif", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            <span style={{ borderRadius: 999, padding: "4px 10px", background: "rgba(255,245,240,0.12)", border: "1px solid rgba(255,245,240,0.16)", color: "#fff5f0", fontFamily: FONT_SANS, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
               High Risk
             </span>
           </div>
@@ -577,8 +595,8 @@ function ProblemSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElemen
               style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 16px", borderBottom: i < copy.issues.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}
             >
               <div style={{ width: 6, height: 6, borderRadius: "50%", background: issue.color, flexShrink: 0 }} />
-              <span style={{ flex: 1, fontFamily: "Inter, sans-serif", fontSize: 13, color: "rgba(255,245,240,0.8)" }}>{issue.title}</span>
-              <span style={{ borderRadius: 999, padding: "2px 8px", background: issue.color + "22", color: issue.color, fontFamily: "Inter, sans-serif", fontSize: 9, fontWeight: 600 }}>
+              <span style={{ flex: 1, fontFamily: FONT_SANS, fontSize: 13, color: "rgba(255,245,240,0.8)" }}>{issue.title}</span>
+              <span style={{ borderRadius: 999, padding: "2px 8px", background: issue.color + "22", color: issue.color, fontFamily: FONT_SANS, fontSize: 9, fontWeight: 600 }}>
                 {issue.severity}
               </span>
             </motion.div>
@@ -606,14 +624,14 @@ function FixesSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement 
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 540 }}
+          style={{ fontFamily: FONT_SERIF, fontSize: "clamp(36px, 4.5vw, 56px)", color: TEXT_W, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 16, maxWidth: 540 }}
         >
           {copy.heading}
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: 0.1 }}
-          style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 52, maxWidth: 480 }}
+          style={{ fontFamily: FONT_SANS, fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 52, maxWidth: 480 }}
         >
           {copy.body}
         </motion.p>
@@ -632,16 +650,16 @@ function FixesSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement 
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   {/* Rank badge circle */}
                   <div style={{ width: 22, height: 22, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: rank === 1 ? "rgba(255,215,0,0.2)" : "rgba(255,255,255,0.08)", border: rank === 1 ? "1px solid rgba(255,215,0,0.4)" : "1px solid rgba(255,255,255,0.12)" }}>
-                    <span style={{ fontFamily: "Inter, sans-serif", fontSize: 9, fontWeight: 700, color: rank === 1 ? "#ffd700" : "rgba(255,255,255,0.4)" }}>#{rank}</span>
+                    <span style={{ fontFamily: FONT_SANS, fontSize: 9, fontWeight: 700, color: rank === 1 ? "#ffd700" : "rgba(255,255,255,0.4)" }}>#{rank}</span>
                   </div>
-                  <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color: "white" }}>{title}</span>
+                  <span style={{ fontFamily: FONT_SANS, fontSize: 13, fontWeight: 600, color: "white" }}>{title}</span>
                   {/* "Fix First" badge only on the top-ranked card */}
                   {rank === 1 && (
-                    <span style={{ borderRadius: 999, padding: "2px 8px", background: "rgba(255,215,0,0.15)", color: "#ffd700", fontFamily: "Inter, sans-serif", fontSize: 9, fontWeight: 700 }}>{copy.fixFirstLabel}</span>
+                    <span style={{ borderRadius: 999, padding: "2px 8px", background: "rgba(255,215,0,0.15)", color: "#ffd700", fontFamily: FONT_SANS, fontSize: 9, fontWeight: 700 }}>{copy.fixFirstLabel}</span>
                   )}
                 </div>
                 {/* Monthly savings estimate */}
-                <span style={{ borderRadius: 999, padding: "4px 10px", background: "rgba(34,197,94,0.15)", color: "#4ade80", fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 700 }}>
+                <span style={{ borderRadius: 999, padding: "4px 10px", background: "rgba(34,197,94,0.15)", color: "#4ade80", fontFamily: FONT_SANS, fontSize: 11, fontWeight: 700 }}>
                   {copy.saveLabel(saving)}
                 </span>
               </div>
@@ -649,13 +667,13 @@ function FixesSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement 
               {/* Card body — root cause + fix */}
               <div style={{ padding: "14px 16px 16px", background: "rgba(0,0,0,0.14)", display: "flex", flexDirection: "column", gap: 10 }}>
                 <div>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "rgba(255,245,240,0.28)", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0, marginBottom: 4 }}>{copy.rootCauseLabel}</p>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "rgba(255,245,240,0.55)", lineHeight: 1.55, margin: 0 }}>{rootCause}</p>
+                  <p style={{ fontFamily: FONT_SANS, fontSize: 10, color: "rgba(255,245,240,0.28)", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0, marginBottom: 4 }}>{copy.rootCauseLabel}</p>
+                  <p style={{ fontFamily: FONT_SANS, fontSize: 12, color: "rgba(255,245,240,0.55)", lineHeight: 1.55, margin: 0 }}>{rootCause}</p>
                 </div>
                 {/* Left-border accent on fix block matches card's severity colour */}
                 <div style={{ borderRadius: 10, padding: "10px 12px", background: "rgba(255,255,255,0.04)", borderLeft: `3px solid ${color}` }}>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color, textTransform: "uppercase", letterSpacing: "0.07em", margin: 0, marginBottom: 4 }}>{copy.fixLabel}</p>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "rgba(255,245,240,0.7)", lineHeight: 1.55, margin: 0 }}>{fix}</p>
+                  <p style={{ fontFamily: FONT_SANS, fontSize: 10, color, textTransform: "uppercase", letterSpacing: "0.07em", margin: 0, marginBottom: 4 }}>{copy.fixLabel}</p>
+                  <p style={{ fontFamily: FONT_SANS, fontSize: 12, color: "rgba(255,245,240,0.7)", lineHeight: 1.55, margin: 0 }}>{fix}</p>
                 </div>
               </div>
             </motion.div>
@@ -691,7 +709,7 @@ function SolutionSection({
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(36px, 5vw, 64px)", color: TEXT_W, lineHeight: 1.08, letterSpacing: "-0.03em", margin: 0, marginBottom: 20, maxWidth: 560 }}
+          style={{ fontFamily: FONT_SERIF, fontSize: "clamp(36px, 5vw, 64px)", color: TEXT_W, lineHeight: 1.08, letterSpacing: "-0.03em", margin: 0, marginBottom: 20, maxWidth: 560 }}
         >
           {copy.heading[0]}
           <br />
@@ -701,7 +719,7 @@ function SolutionSection({
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay: 0.1 }}
-          style={{ fontFamily: "Inter, sans-serif", fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 44, maxWidth: 460 }}
+          style={{ fontFamily: FONT_SANS, fontSize: 17, color: TEXT_W_DIM, lineHeight: 1.65, margin: 0, marginBottom: 44, maxWidth: 460 }}
         >
           {copy.body}
         </motion.p>
@@ -722,7 +740,7 @@ function SolutionSection({
               <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                 <CheckCheck size={11} style={{ color: "#4ade80" }} />
               </div>
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: TEXT_W_DIM }}>{item}</span>
+              <span style={{ fontFamily: FONT_SANS, fontSize: 14, color: TEXT_W_DIM }}>{item}</span>
             </motion.div>
           ))}
         </motion.div>
@@ -750,17 +768,17 @@ function SolutionSection({
               strokeLinecap="round" transform="rotate(-90 30 30)"
             />
             <text x={30} y={30} textAnchor="middle" dominantBaseline="central"
-              fill="white" fontSize={14} fontFamily="Jua, sans-serif">{landingAnalysis.resultScore}</text>
+              fill="white" fontSize={14} fontFamily={FONT_DISPLAY}>{landingAnalysis.resultScore}</text>
           </svg>
           {/* Labels */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontFamily: "Jua, sans-serif", fontSize: 28, color: TEXT_W, lineHeight: 1 }}>{landingAnalysis.resultScore}</span>
-              <span style={{ borderRadius: 999, padding: "4px 12px", background: "rgba(34,197,94,0.2)", color: "#22c55e", fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600 }}>
+              <span style={{ fontFamily: FONT_DISPLAY, fontSize: 28, color: TEXT_W, lineHeight: 1 }}>{landingAnalysis.resultScore}</span>
+              <span style={{ borderRadius: 999, padding: "4px 12px", background: "rgba(34,197,94,0.2)", color: "#22c55e", fontFamily: FONT_SANS, fontSize: 12, fontWeight: 600 }}>
                 {copy.resultCaption}
               </span>
             </div>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_W_DIM, margin: 0, lineHeight: 1 }}>
+            <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: TEXT_W_DIM, margin: 0, lineHeight: 1 }}>
               {landingAnalysis.resultSummary}
             </p>
           </div>
@@ -776,13 +794,13 @@ function SolutionSection({
             whileHover={{ scale: 1.04, boxShadow: "0 8px 36px rgba(0,0,0,0.25)" }}
             whileTap={{ scale: 0.97 }}
             onClick={onPrimaryCta}
-            style={{ background: TEXT_W, color: RED, border: "none", borderRadius: 999, padding: "16px 32px", fontFamily: "Inter, sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
+            style={{ background: TEXT_W, color: RED, border: "none", borderRadius: 999, padding: "16px 32px", fontFamily: FONT_SANS, fontSize: 16, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
           >
             {primaryCtaLabel}
             <ArrowRight size={16} />
           </motion.button>
           {copy.secondaryNote ? (
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: TEXT_W_DIM2 }}>
+            <span style={{ fontFamily: FONT_SANS, fontSize: 13, color: TEXT_W_DIM2 }}>
               {copy.secondaryNote}
             </span>
           ) : null}
@@ -841,15 +859,15 @@ function BigFooter() {
             {/* Beta badge */}
             <div style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 999, padding: "4px 12px", background: "rgba(220,94,94,0.15)", border: "1px solid rgba(220,94,94,0.25)", marginBottom: 24 }}>
               <motion.div style={{ width: 5, height: 5, borderRadius: "50%", background: RED }} animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.6, repeat: Infinity }} />
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 600, color: RED, textTransform: "uppercase", letterSpacing: "0.08em" }}>{copy.badge}</span>
+              <span style={{ fontFamily: FONT_SANS, fontSize: 11, fontWeight: 600, color: RED, textTransform: "uppercase", letterSpacing: "0.08em" }}>{copy.badge}</span>
             </div>
 
-            <h2 style={{ fontFamily: "DM Serif Display, serif", fontSize: "clamp(32px, 4vw, 52px)", color: CREAM, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 14 }}>
+            <h2 style={{ fontFamily: FONT_SERIF, fontSize: "clamp(32px, 4vw, 52px)", color: CREAM, lineHeight: 1.1, letterSpacing: "-0.025em", margin: 0, marginBottom: 14 }}>
               {copy.heading[0]}
               <br />
               {copy.heading[1]}
             </h2>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 16, color: "rgba(255,245,240,0.5)", lineHeight: 1.6, margin: 0, marginBottom: 36, maxWidth: 400 }}>
+            <p style={{ fontFamily: FONT_SANS, fontSize: 16, color: "rgba(255,245,240,0.5)", lineHeight: 1.6, margin: 0, marginBottom: 36, maxWidth: 400 }}>
               {copy.body}
             </p>
 
@@ -873,7 +891,7 @@ function BigFooter() {
                       required
                       style={{
                         flex: 1, background: "none", border: "none", outline: "none",
-                        fontFamily: "Inter, sans-serif", fontSize: 14,
+                        fontFamily: FONT_SANS, fontSize: 14,
                         color: CREAM, padding: "14px 0",
                       }}
                     />
@@ -885,7 +903,7 @@ function BigFooter() {
                     style={{
                       background: RED, color: CREAM, border: "none",
                       borderRadius: "0 12px 12px 0", padding: "14px 22px",
-                      fontFamily: "Inter, sans-serif", fontSize: 14, fontWeight: 700,
+                      fontFamily: FONT_SANS, fontSize: 14, fontWeight: 700,
                       cursor: "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 6,
                     }}
                   >
@@ -900,7 +918,7 @@ function BigFooter() {
                   style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 20px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 12, maxWidth: 420 }}
                 >
                   <CheckCheck size={16} style={{ color: "#4ade80" }} />
-                  <span style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: "rgba(255,245,240,0.8)" }}>
+                  <span style={{ fontFamily: FONT_SANS, fontSize: 14, color: "rgba(255,245,240,0.8)" }}>
                     {copy.successMessage}
                   </span>
                 </motion.div>
@@ -918,11 +936,11 @@ function BigFooter() {
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: RED, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 22, color: "white", lineHeight: 1 }}>M</span>
+                  <span style={{ fontFamily: FONT_SERIF, fontSize: 22, color: "white", lineHeight: 1 }}>M</span>
                 </div>
-                <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 24, color: CREAM, letterSpacing: "-0.02em" }}>{frontFacingCopy.brand.name}</span>
+                <span style={{ fontFamily: FONT_SERIF, fontSize: 24, color: CREAM, letterSpacing: "-0.02em" }}>{frontFacingCopy.brand.name}</span>
               </div>
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: "rgba(255,245,240,0.35)", margin: 0, lineHeight: 1.5 }}>
+              <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: "rgba(255,245,240,0.35)", margin: 0, lineHeight: 1.5 }}>
                 {frontFacingCopy.brand.footerTagline}
                 <br />
                 {frontFacingCopy.brand.footerSubline}
@@ -931,7 +949,7 @@ function BigFooter() {
               <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }}>
                 {copy.stackBadges.map(t => (
                   <span key={t} style={{
-                    fontFamily: "Inter, sans-serif", fontSize: 10, fontWeight: 600,
+                    fontFamily: FONT_SANS, fontSize: 10, fontWeight: 600,
                     color: "rgba(255,245,240,0.35)",
                     padding: "3px 8px", borderRadius: 999,
                     border: "1px solid rgba(255,255,255,0.1)",
@@ -952,7 +970,7 @@ function BigFooter() {
                   transition={{ duration: 0.15 }}
                   style={{
                     display: "flex", alignItems: "center", gap: 8,
-                    fontFamily: "Inter, sans-serif", fontSize: 14,
+                    fontFamily: FONT_SANS, fontSize: 14,
                     color: "rgba(255,245,240,0.45)",
                     textDecoration: "none", padding: "8px 0",
                     borderBottom: "1px solid rgba(255,255,255,0.05)",
@@ -969,7 +987,7 @@ function BigFooter() {
             </div>
 
             {/* Copyright */}
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "rgba(255,245,240,0.2)", margin: 0 }}>
+            <p style={{ fontFamily: FONT_SANS, fontSize: 11, color: "rgba(255,245,240,0.2)", margin: 0 }}>
               {frontFacingCopy.brand.footerCopyright}
             </p>
           </motion.div>
@@ -995,12 +1013,14 @@ function BigFooter() {
  *   Left  → prose sections (flex: 1, min-width: 0)
  *   Right → sticky ExtensionMockup (xl only, width: 380, top: 80)
  */
-export function LandingPage({ viewer }: { viewer?: LandingViewer }) {
+export function LandingPage() {
   // Which section is closest to the viewport midpoint
   const [activeSection, setActiveSection] = useState<SectionKey>("hero");
 
   // Whether the sticky mockup sidebar is visible yet (triggered by Product h2)
   const [mockupVisible, setMockupVisible] = useState(false);
+  const [hasAccountAccess, setHasAccountAccess] = useState(false);
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   // One ref per section — keyed by SectionKey for easy lookup in the scroll handler
   const heroRef = useRef<HTMLElement>(null);
@@ -1037,6 +1057,37 @@ export function LandingPage({ viewer }: { viewer?: LandingViewer }) {
   // ── Scroll handler: update activeSection based on which section midpoint is
   //    closest to 45% of the viewport height
   useEffect(() => {
+    let cancelled = false;
+
+    // Keep the landing route static by default. Signed-in CTA upgrades happen
+    // client-side so the marketing homepage does not block on server auth.
+    async function hydrateViewerState() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!cancelled) {
+        setHasAccountAccess(Boolean(user && !isDeletedUser(user)));
+      }
+    }
+
+    void hydrateViewerState();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!cancelled) {
+        setHasAccountAccess(Boolean(session?.user && !isDeletedUser(session.user)));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  useEffect(() => {
     const handle = () => {
       const mid = window.scrollY + window.innerHeight * 0.45;
       let closest: SectionKey = "hero";
@@ -1061,7 +1112,6 @@ export function LandingPage({ viewer }: { viewer?: LandingViewer }) {
     sectionRefs[id as SectionKey]?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [sectionRefs]);
 
-  const hasAccountAccess = Boolean(viewer?.hasAccountAccess);
   const primaryCtaHref = hasAccountAccess ? DEFAULT_ACCOUNT_URL : DEFAULT_SIGN_UP_URL;
   const navPrimaryCtaLabel = hasAccountAccess ? frontFacingCopy.nav.returningCta : frontFacingCopy.nav.primaryCta;
   const heroPrimaryCtaLabel = hasAccountAccess ? frontFacingCopy.hero.ctas.returningPrimary : frontFacingCopy.hero.ctas.primary;
