@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 
@@ -31,7 +32,6 @@ import {
   X,
 } from "lucide-react";
 
-import { DeleteAccountOverlay } from "@/components/auth/DeleteAccountOverlay";
 import { authCopy } from "@/content/authCopy";
 import type { AccountDashboardSnapshot } from "@/lib/account-data";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -76,6 +76,11 @@ const TXT = "#eceef4";
 const TXT_DIM = "rgba(236,238,244,0.58)";
 const TXT_FAINT = "rgba(236,238,244,0.3)";
 const GREEN = "#22c55e";
+
+const DeleteAccountOverlay = dynamic(
+  () => import("@/components/auth/DeleteAccountOverlay").then((mod) => mod.DeleteAccountOverlay),
+  { ssr: false },
+);
 
 const dashboardCopy = authCopy.dashboard;
 

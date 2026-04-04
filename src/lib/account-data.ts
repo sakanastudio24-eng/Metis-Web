@@ -419,8 +419,12 @@ async function ensureUsageCounterRow(supabase: ClientLike, userId: string) {
 
 export async function bootstrapAccountData(supabase: ClientLike, user: User): Promise<AccountDataSnapshot> {
   const profile = await ensureProfileRow(supabase, user);
-  const usage = await ensureUsageCounterRow(supabase, user.id);
-  const onboarding = await getOnboardingRow(supabase, user.id);
+  // Usage counters and onboarding answers are independent once the profile row
+  // exists, so fetch them in parallel to avoid extra route latency.
+  const [usage, onboarding] = await Promise.all([
+    ensureUsageCounterRow(supabase, user.id),
+    getOnboardingRow(supabase, user.id),
+  ]);
 
   return {
     profile,
