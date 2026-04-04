@@ -114,9 +114,9 @@ const NAV_SOON = [
 
 const SECTION_HREFS: Record<Exclude<NavId, "api">, string> = {
   account: "/account",
-  security: "/account/security",
-  pricing: "/account/pricing",
-  settings: "/account/settings",
+  security: "/account?section=security",
+  pricing: "/account?section=pricing",
+  settings: "/account?section=settings",
 };
 
 function titleCase(value: string) {
@@ -604,7 +604,7 @@ function ApiBetaPanel({ user }: { user: DashboardUser }) {
   );
 }
 
-function SecurityPanel({ provider, onOpenDetails }: { provider: string; onOpenDetails: () => void }) {
+function SecurityPanel({ provider }: { provider: string }) {
   const copy = dashboardCopy.security;
 
   return (
@@ -649,23 +649,20 @@ function SecurityPanel({ provider, onOpenDetails }: { provider: string; onOpenDe
             <Lock size={16} style={{ color: ACCENT }} />
           </div>
         </div>
-        <button
-          type="button"
-          onClick={onOpenDetails}
+        <div
           style={{
             borderRadius: 11,
-            border: "none",
-            background: ACCENT,
+            border: `1px solid ${BD}`,
+            background: BG_CARD_2,
             padding: "11px 14px",
-            color: "white",
+            color: TXT_DIM,
             fontFamily: "Inter, sans-serif",
             fontSize: 13,
-            fontWeight: 700,
-            cursor: "pointer",
+            lineHeight: 1.6,
           }}
         >
-          Review security settings
-        </button>
+          Security details stay inside this dashboard section.
+        </div>
       </Card>
 
       <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
@@ -881,6 +878,14 @@ export function AccountPageClient({
       provider,
     };
   }, [account.email, account.isBeta, account.periodEnd, account.periodStart, account.scansUsed, account.tier, account.username, provider]);
+
+  useEffect(() => {
+    setActive(initialSection);
+  }, [initialSection]);
+
+  useEffect(() => {
+    setDeleteOpen(initialDeleteOpen);
+  }, [initialDeleteOpen]);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 980px)");
@@ -1162,7 +1167,7 @@ export function AccountPageClient({
             {active === "account" ? <AccountPanel key="account" user={user} emailConfirmed={emailConfirmed} onSignOut={handleSignOut} /> : null}
             {/* The API Beta panel stays implemented in code, but it is intentionally
                 withheld from the main dashboard flow until the beta launch pass. */}
-            {active === "security" ? <SecurityPanel key="security" provider={provider} onOpenDetails={() => router.push("/account/security")} /> : null}
+            {active === "security" ? <SecurityPanel key="security" provider={provider} /> : null}
             {active === "pricing" ? <PricingPanel key="pricing" user={user} /> : null}
             {active === "settings" ? <SettingsPanel key="settings" onOpenDelete={openDeleteOverlay} /> : null}
           </AnimatePresence>

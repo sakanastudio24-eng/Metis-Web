@@ -8,7 +8,7 @@ import { requireAuthenticatedUser } from "@/lib/auth-server";
 import { getAuthSource } from "@/lib/contracts/communication";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-type AccountSection = "account" | "pricing" | "settings";
+type AccountSection = "account" | "security" | "pricing" | "settings";
 
 type AccountSectionPageProps = {
   section: AccountSection;

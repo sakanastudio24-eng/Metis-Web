@@ -10,10 +10,18 @@ type AccountPageProps = {
   searchParams?: Promise<{
     auth?: string;
     intent?: string;
+    section?: string;
   }>;
 };
 
 export default async function AccountPage({ searchParams }: AccountPageProps) {
   const params = searchParams ? await searchParams : undefined;
-  return <AccountSectionPage section="account" auth={params?.auth} intent={params?.intent} />;
+  const section =
+    params?.section === "security" ||
+    params?.section === "pricing" ||
+    params?.section === "settings"
+      ? params.section
+      : "account";
+
+  return <AccountSectionPage section={section} auth={params?.auth} intent={params?.intent} />;
 }
