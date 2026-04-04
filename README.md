@@ -10,6 +10,8 @@ Metis Web is the public face of the product and the account layer behind it. It 
 
 The website owns account settings, security, legal acceptance, and Plus Beta posture. The extension owns scans, reports, page-level runtime controls, and extension-only settings.
 
+The website also owns the bridge contract that hands authenticated state back to the extension. Auth still completes on the website. The extension only receives a narrow success payload and validates access state back against the backend.
+
 ## What Metis does
 
 Metis looks for the things that quietly make pages expensive to run. That can mean repeated requests, heavy assets, third party scripts, and AI usage that grows faster than teams expect. The goal is simple. Show where the cost starts, explain why it matters, and point to the fixes worth doing first.
@@ -22,11 +24,28 @@ Use the extension when the job is scanning a page, reading the report, adjusting
 
 ## Docs worth reading first
 
+- [docs/AI.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/AI.md)
 - [docs/front-facing-foundation.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/front-facing-foundation.md)
 - [docs/repo-alignment.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/repo-alignment.md)
 - [docs/production-roadmap.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/production-roadmap.md)
 - [docs/api-beta-plan.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/api-beta-plan.md)
+- [docs/magic-link-launch.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/magic-link-launch.md)
+- [docs/communication-contracts/README.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/communication-contracts/README.md)
+- [docs/communication-contracts/communication-build-track.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/communication-contracts/communication-build-track.md)
+- [docs/communication-contracts/auth-contract.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/communication-contracts/auth-contract.md)
+- [docs/communication-contracts/website-backend-contract.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/communication-contracts/website-backend-contract.md)
 - [docs/design-system-logic.md](/Users/zech/Downloads/The-Big-One/Metis-Full/Metis-Web/docs/design-system-logic.md)
+
+## Current product shape
+
+Metis Web is already running the real passwordless stack for launch.
+
+- Google and GitHub stay as the provider paths
+- email auth is magic-link only
+- `/auth/callback` completes website auth
+- `/auth/success` hands the session back to the extension when auth starts there
+- `/account` stays the long-term account home
+- account deletion is a website-owned soft-delete flow with fresh magic-link re-auth
 
 ## Who made it
 

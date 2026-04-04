@@ -188,7 +188,15 @@ Magic link success: `Magic link sent. Check your inbox and continue from the ema
 
 Magic link sent header: `Check your email`
 
-Magic link sent body: `We sent a secure sign-in link to ${email}. Open it on this device to continue into Metis.`
+Magic link sent body: `We sent a secure sign-in link to ${email}. Open the newest email on any device to continue into Metis.`
+
+Magic link subject: `Sign in to Metis`
+
+Magic link email intro: `Click the button below to sign in securely.`
+
+Magic link email button: `Sign in to Metis`
+
+Magic link email fallback: `If the button doesn’t work, copy and paste this link into your browser:`
 
 Magic link expiry label: `This link expires in about 10 minutes.`
 
@@ -198,9 +206,33 @@ Email label: `Work email`
 
 Security support line: `Protected access for metis.zward.studio`
 
-Temporary review body: `Local-only review access. It never reaches backend auth and should be removed before release.`
+### Callback handoff
 
-Temporary review CTA: `Use temporary Google test account`
+Header: `Signing you in...`
+
+Body: `Redirecting...`
+
+### Delete account overlay
+
+Eyebrow: `Danger Zone`
+
+Header: `Delete your account`
+
+Body: `This removes your website access, signs you out, and blocks this account from using Metis until it is restored later.`
+
+Checklist label: `This will`
+
+Primary confirmation label: `Type your username`
+
+Primary confirmation helper: `Use ${username} to confirm the account you want to remove.`
+
+Secondary confirmation label: `Type DELETE`
+
+Secondary confirmation helper: `This prevents accidental removal.`
+
+Re-auth card header: `Verify with a magic link`
+
+Re-auth card body: `For Metis v1, account deletion requires a fresh magic-link sign-in before the final delete action is allowed.`
 
 ### Passwordless entry
 
@@ -265,10 +297,6 @@ Inline label: `Next step`
 CTA: `Install extension. It's free.`
 
 CTA: `Open account settings`
-
-Temporary account label: `Temporary test account`
-
-Temporary account body: `This local-only session is for reviewing onboarding and account flows. Remove it before shipping.`
 
 Question: `What are you building?`
 

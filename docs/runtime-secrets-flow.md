@@ -4,7 +4,7 @@ Metis Web is prepared for runtime secret injection, but the final wiring step is
 
 ## Why this stays staged
 
-Secrets are one of the easiest places to create long term mess. A rushed setup usually leads to leaked local values, env names that drift between services, or temporary auth work that never gets cleaned up. This repo avoids that by locking the contract first and leaving the real injection step for a deliberate pass.
+Secrets are one of the easiest places to create long term mess. A rushed setup usually leads to leaked local values or env names that drift between services. This repo avoids that by locking the contract first and leaving the real injection step for a deliberate pass.
 
 ## Current env contract
 
@@ -54,6 +54,22 @@ https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback
 ```
 
 If you keep a callback archive value in runtime secrets, `SUPPA_CALLBACK_URL` should match that exact Supabase callback URL.
+
+## Magic link launch contract
+
+Metis launch uses Supabase passwordless auth with custom SMTP through Resend.
+
+The current assumptions are:
+
+- `Authentication -> Email Templates -> Magic Link` uses `{{ .ConfirmationURL }}`
+- `Authentication -> URL Configuration` contains the exact local and production callback URLs
+- the website defaults magic-link emails to `https://metis.zward.studio/auth/callback`
+- localhost callback is only used through the explicit `?magic_link=local` testing override
+- Resend SMTP handles delivery only
+- Supabase still owns token generation, link generation, and template rendering
+- the callback screen on the website stays a small loading handoff and then routes into `/logged-in`
+
+See `docs/magic-link-launch.md` for the exact template, subject line, and dashboard checklist.
 
 ## What happens today
 

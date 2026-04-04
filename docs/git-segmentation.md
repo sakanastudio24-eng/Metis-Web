@@ -43,4 +43,6 @@ The last 30 commits are mostly sectioned correctly, especially the passwordless 
 
 The clearest avoidable churn was two separate README refresh commits. A repeat docs-only topic like that should be folded into one checkpoint unless the second pass is a clearly different docs section.
 
+Another avoidable pattern was iterative UI-route churn that described a transitional state rather than the final outcome. A delete flow should not land as "page flow" and then "overlay flow" in separate nearby commits if the page version is immediately replaced. Fold those into the final checkpoint that matches the real product shape.
+
 Auth copy and auth refactor commits can sit close together, but they should still keep a simple boundary. Copy commits should stay in content and docs. Refactor commits should stay in components and helpers unless the code cannot land without a matching string change.
