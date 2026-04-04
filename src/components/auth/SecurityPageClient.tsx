@@ -16,10 +16,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { authCopy } from "@/content/authCopy";
 import { getAuthCallbackUrl } from "@/lib/auth";
+import type { AccountDashboardSnapshot } from "@/lib/account-data";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type SecurityPageClientProps = {
-  email: string | null;
+  account: AccountDashboardSnapshot;
   provider: string;
 };
 
@@ -37,7 +38,7 @@ function getProviderLabel(provider: string) {
 }
 
 export function SecurityPageClient({
-  email,
+  account,
   provider,
 }: SecurityPageClientProps) {
   const copy = authCopy.security;
@@ -179,13 +180,34 @@ export function SecurityPageClient({
               <div className="mt-3 flex items-center justify-between gap-3 rounded-[22px] border border-white/10 bg-white/5 px-4 py-3">
                 <div>
                   <p className="text-sm font-medium text-white">{getProviderLabel(provider)}</p>
-                  <p className="text-sm text-white/55">{email ?? copy.noEmailLabel}</p>
+                  <p className="text-sm text-white/55">{account.email ?? copy.noEmailLabel}</p>
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/6 text-white/70">
                   <Lock className="h-4 w-4" />
                 </div>
               </div>
               <p className="mt-3 text-sm leading-6 text-white/62">{copy.providerSectionBody}</p>
+            </div>
+
+            <div className="rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Account snapshot</p>
+              <div className="mt-4 grid gap-3">
+                <div className="rounded-[22px] border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Username</p>
+                  <p className="mt-2 text-sm font-medium text-white">{account.username}</p>
+                </div>
+                <div className="rounded-[22px] border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Tier</p>
+                  <p className="mt-2 text-sm font-medium text-white">{account.tier.replace("_", " ")}</p>
+                </div>
+                <div className="rounded-[22px] border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Scans used</p>
+                  <p className="mt-2 text-sm font-medium text-white">{account.scansUsed}</p>
+                  <p className="mt-2 text-xs text-white/55">
+                    {new Date(account.periodStart).toLocaleDateString()} to {new Date(account.periodEnd).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur">

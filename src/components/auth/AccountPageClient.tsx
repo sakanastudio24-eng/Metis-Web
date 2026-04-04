@@ -5,15 +5,6 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
 import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
@@ -42,13 +33,13 @@ import {
 
 import { DeleteAccountOverlay } from "@/components/auth/DeleteAccountOverlay";
 import { authCopy } from "@/content/authCopy";
+import type { AccountDashboardSnapshot } from "@/lib/account-data";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type AccountPageClientProps = {
-  email: string | null;
   provider: string;
   emailConfirmed: boolean;
-  username: string;
+  account: AccountDashboardSnapshot;
   initialSection: NavId;
   initialDeleteOpen: boolean;
   authConfirmed: boolean;
@@ -56,8 +47,12 @@ type AccountPageClientProps = {
 
 type DashboardUser = {
   name: string;
-  email: string;
-  plan: "free" | "plus_beta";
+  email: string | null;
+  plan: "free" | "plus_beta" | "paid";
+  isBeta: boolean;
+  scansUsed: number;
+  periodStart: string;
+  periodEnd: string;
   provider: string;
 };
 
@@ -124,16 +119,6 @@ const SECTION_HREFS: Record<Exclude<NavId, "api">, string> = {
   settings: "/account/settings",
 };
 
-const USAGE_DATA = [
-  { day: "Mon", scans: 12 },
-  { day: "Tue", scans: 19 },
-  { day: "Wed", scans: 8 },
-  { day: "Thu", scans: 26 },
-  { day: "Fri", scans: 34 },
-  { day: "Sat", scans: 18 },
-  { day: "Sun", scans: 22 },
-] as const;
-
 function titleCase(value: string) {
   return value
     .replace(/[._-]+/g, " ")
@@ -149,6 +134,28 @@ function getProviderLabel(provider: string) {
     default:
       return "Email";
   }
+}
+
+function formatTierLabel(plan: DashboardUser["plan"], isBeta: boolean) {
+  if (plan === "paid") {
+    return "Paid";
+  }
+
+  if (plan === "plus_beta" || isBeta) {
+    return "Plus Beta";
+  }
+
+  return "Free";
+}
+
+function formatUsageWindow(start: string, end: string) {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  return `${startDate.toLocaleDateString(undefined, { month: "short", day: "numeric" })} to ${endDate.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric"
+  })}`;
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -380,10 +387,10 @@ function AccountPanel({
                 </Badge>
                 <Badge>
                   <Crown size={10} />
-                  {user.plan === "plus_beta" ? copy.plusBetaLabel : copy.freePlanLabel}
+                  {formatTierLabel(user.plan, user.isBeta)}
                 </Badge>
               </div>
-              <p style={{ margin: "4px 0 0", fontFamily: "Inter, sans-serif", fontSize: 13, color: TXT_DIM }}>{user.email}</p>
+              <p style={{ margin: "4px 0 0", fontFamily: "Inter, sans-serif", fontSize: 13, color: TXT_DIM }}>{user.email ?? "No email returned"}</p>
               <p style={{ margin: "10px 0 0", fontFamily: "Inter, sans-serif", fontSize: 12, color: TXT_FAINT }}>{copy.profileStatusLabel}</p>
             </div>
           </div>
@@ -449,30 +456,30 @@ function AccountPanel({
           <SectionLabel>{copy.usageTitle}</SectionLabel>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 16 }}>
             <div>
-              <p style={{ margin: 0, fontFamily: "DM Serif Display, serif", fontSize: 28, letterSpacing: "-0.03em", color: TXT }}>{copy.usageSummary}</p>
-              <p style={{ margin: "4px 0 0", fontFamily: "Inter, sans-serif", fontSize: 12, color: TXT_DIM }}>{copy.usageDetail}</p>
+              <p style={{ margin: 0, fontFamily: "DM Serif Display, serif", fontSize: 28, letterSpacing: "-0.03em", color: TXT }}>{user.scansUsed}</p>
+              <p style={{ margin: "4px 0 0", fontFamily: "Inter, sans-serif", fontSize: 12, color: TXT_DIM }}>
+                {formatUsageWindow(user.periodStart, user.periodEnd)}
+              </p>
             </div>
-            <Badge>
+            <Badge color={TXT} background="rgba(255,255,255,0.04)" border={BD_SOFT}>
               <TrendingUp size={11} />
-              {copy.usageDelta}
+              Current account window
             </Badge>
           </div>
-          <div style={{ height: 92 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={USAGE_DATA} margin={{ top: 0, right: 0, left: -30, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="metisDashUsage" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={ACCENT} stopOpacity={0.35} />
-                    <stop offset="95%" stopColor={ACCENT} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke={BD_SOFT} vertical={false} />
-                <XAxis dataKey="day" tick={{ fontFamily: "monospace", fontSize: 9, fill: TXT_FAINT }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontFamily: "monospace", fontSize: 9, fill: TXT_FAINT }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ background: BG_CARD_2, border: `1px solid ${BD}`, borderRadius: 10, color: TXT, fontFamily: "monospace", fontSize: 11 }} />
-                <Area type="monotone" dataKey="scans" stroke={ACCENT} strokeWidth={2.2} fill="url(#metisDashUsage)" />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div
+            style={{
+              borderRadius: 12,
+              border: `1px solid ${BD_SOFT}`,
+              background: BG_CARD_2,
+              padding: "14px 16px"
+            }}
+          >
+            <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 11, color: TXT_FAINT, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Account-backed usage
+            </p>
+            <p style={{ margin: "8px 0 0", fontFamily: "Inter, sans-serif", fontSize: 13, color: TXT_DIM, lineHeight: 1.6 }}>
+              Scan counts now come from the website account record instead of placeholder dashboard copy.
+            </p>
           </div>
         </Card>
       </div>
@@ -482,7 +489,7 @@ function AccountPanel({
 
 function ApiBetaPanel({ user }: { user: DashboardUser }) {
   const copy = dashboardCopy.apiBeta;
-  const isEnabled = user.plan === "plus_beta";
+  const isEnabled = user.plan === "plus_beta" || user.plan === "paid" || user.isBeta;
   const [copied, setCopied] = useState(false);
   const [showKey, setShowKey] = useState(false);
 
@@ -680,7 +687,7 @@ function PricingPanel({ user }: { user: DashboardUser }) {
   const copy = dashboardCopy.pricing;
   const plans = copy.plans.map((plan) => ({
     ...plan,
-    current: user.plan === plan.id,
+    current: user.plan === plan.id || (user.plan === "paid" && plan.id === "plus_beta"),
   })) as PricingPlan[];
 
   return (
@@ -845,10 +852,9 @@ function SettingsPanel({ onOpenDelete }: { onOpenDelete: () => void }) {
 }
 
 export function AccountPageClient({
-  email,
   provider,
   emailConfirmed,
-  username,
+  account,
   initialSection,
   initialDeleteOpen,
   authConfirmed,
@@ -862,15 +868,19 @@ export function AccountPageClient({
   const [isPending, startTransition] = useTransition();
 
   const user = useMemo<DashboardUser>(() => {
-    const baseName = email ? titleCase(email.split("@")[0] ?? "Metis User") : "Metis User";
+    const baseName = account.username ? titleCase(account.username) : account.email ? titleCase(account.email.split("@")[0] ?? "Metis User") : "Metis User";
 
     return {
       name: baseName,
-      email: email ?? "user@example.com",
-      plan: "free",
+      email: account.email,
+      plan: account.tier,
+      isBeta: account.isBeta,
+      scansUsed: account.scansUsed,
+      periodStart: account.periodStart,
+      periodEnd: account.periodEnd,
       provider,
     };
-  }, [email, provider]);
+  }, [account.email, account.isBeta, account.periodEnd, account.periodStart, account.scansUsed, account.tier, account.username, provider]);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 980px)");
@@ -937,7 +947,7 @@ export function AccountPageClient({
           <div style={{ minWidth: 0, flex: 1 }}>
             <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, color: TXT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</p>
             <p style={{ margin: "2px 0 0", fontFamily: "Inter, sans-serif", fontSize: 10, color: TXT_FAINT }}>
-              {user.plan === "plus_beta" ? dashboardCopy.betaBadge : dashboardCopy.account.freePlanLabel}
+              {formatTierLabel(user.plan, user.isBeta)}
             </p>
           </div>
         </div>
@@ -1181,8 +1191,8 @@ export function AccountPageClient({
 
       {deleteOpen ? (
         <DeleteAccountOverlay
-          email={email}
-          username={username}
+          email={account.email}
+          username={account.username}
           authConfirmed={authConfirmed}
           onClose={closeDeleteOverlay}
         />

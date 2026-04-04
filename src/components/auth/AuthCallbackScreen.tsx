@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 
 import { authCopy } from "@/content/authCopy";
+import { bootstrapAccountData } from "@/lib/account-data";
 import { getDefaultAuthCompletionPath, isDeletedUser, isSafeAuthNextPath } from "@/lib/auth";
 import { getAuthSource } from "@/lib/contracts/communication";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -84,7 +85,14 @@ export function AuthCallbackScreen({
         return;
       }
 
+      if (user) {
+        await bootstrapAccountData(supabase, user);
+      }
+
       const success = new URL(redirectPath, window.location.origin);
+      if (parsedSource) {
+        success.searchParams.set("source", parsedSource);
+      }
       // Delete re-auth returns through the shared callback so the account
       // overlay can reopen in place instead of sending people to a second page.
       if (!parsedSource && redirectPath === "/account/settings" && intent === "delete-account") {

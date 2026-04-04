@@ -10,10 +10,18 @@ type AccountSettingsPageProps = {
   searchParams?: Promise<{
     auth?: string;
     intent?: string;
+    source?: string;
   }>;
 };
 
 export default async function AccountSettingsPage({ searchParams }: AccountSettingsPageProps) {
   const params = searchParams ? await searchParams : undefined;
-  return <AccountSectionPage section="settings" auth={params?.auth} intent={params?.intent} />;
+  return (
+    <AccountSectionPage
+      section="settings"
+      auth={params?.auth}
+      intent={params?.intent}
+      source={params?.source}
+    />
+  );
 }
