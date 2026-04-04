@@ -40,16 +40,18 @@ import {
   X,
 } from "lucide-react";
 
-import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
+import { DeleteAccountOverlay } from "@/components/auth/DeleteAccountOverlay";
 import { authCopy } from "@/content/authCopy";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
-import { clearTemporaryAuthSession } from "@/lib/temp-auth-client";
 
 type AccountPageClientProps = {
   email: string | null;
   provider: string;
   emailConfirmed: boolean;
-  isTemporary?: boolean;
+  username: string;
+  initialSection: NavId;
+  initialDeleteOpen: boolean;
+  authConfirmed: boolean;
 };
 
 type DashboardUser = {
@@ -137,8 +139,6 @@ function getProviderLabel(provider: string) {
       return "Google";
     case "github":
       return "GitHub";
-    case "google-test":
-      return "Google test account";
     default:
       return "Email";
   }
@@ -411,7 +411,7 @@ function AccountPanel({
             {[
               { icon: Mail, label: "Email", value: user.email, state: copy.primaryLabel, linked: true },
               { icon: Globe, label: "GitHub", value: user.provider === "github" ? "Connected" : "Available", state: user.provider === "github" ? copy.connectedLabel : copy.availableLabel, linked: user.provider === "github" },
-              { icon: Globe, label: "Google", value: user.provider === "google" || user.provider === "google-test" ? "Connected" : "Available", state: user.provider === "google" || user.provider === "google-test" ? copy.connectedLabel : copy.availableLabel, linked: user.provider === "google" || user.provider === "google-test" },
+              { icon: Globe, label: "Google", value: user.provider === "google" ? "Connected" : "Available", state: user.provider === "google" ? copy.connectedLabel : copy.availableLabel, linked: user.provider === "google" },
             ].map((item) => (
               <div
                 key={item.label}
@@ -770,7 +770,7 @@ function PricingPanel({ user }: { user: DashboardUser }) {
   );
 }
 
-function SettingsPanel() {
+function SettingsPanel({ onOpenDelete }: { onOpenDelete: () => void }) {
   const copy = dashboardCopy.settings;
 
   return (
@@ -803,6 +803,36 @@ function SettingsPanel() {
           </div>
         </button>
       </Card>
+
+      <Card>
+        <SectionLabel>{copy.removeAccountTitle}</SectionLabel>
+        <button
+          type="button"
+          onClick={onOpenDelete}
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+            borderRadius: 14,
+            border: `1px solid ${DANGER_BD}`,
+            background: DANGER_DIM,
+            padding: "16px 18px",
+            cursor: "pointer",
+            textAlign: "left",
+          }}
+        >
+          <div>
+            <p style={{ margin: 0, marginBottom: 4, fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color: TXT }}>{copy.removeAccountTitle}</p>
+            <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 12, color: TXT_DIM, lineHeight: 1.6 }}>{copy.removeAccountBody}</p>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <Badge color="#ffb8b8" background="rgba(220,94,94,0.08)" border={DANGER_BD}>{copy.removeAccountState}</Badge>
+            <ArrowRight size={16} style={{ color: DANGER }} />
+          </div>
+        </button>
+      </Card>
     </PanelFrame>
   );
 }
@@ -811,26 +841,29 @@ export function AccountPageClient({
   email,
   provider,
   emailConfirmed,
-  isTemporary = false,
+  username,
+  initialSection,
+  initialDeleteOpen,
+  authConfirmed,
 }: AccountPageClientProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
-  const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
-  const [active, setActive] = useState<NavId>("account");
+  const [active, setActive] = useState<NavId>(initialSection);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(initialDeleteOpen);
   const [isPending, startTransition] = useTransition();
 
   const user = useMemo<DashboardUser>(() => {
     const baseName = email ? titleCase(email.split("@")[0] ?? "Metis User") : "Metis User";
 
     return {
-      name: isTemporary ? "Testing Account" : baseName,
+      name: baseName,
       email: email ?? "user@example.com",
       plan: "free",
       provider,
     };
-  }, [email, isTemporary, provider]);
+  }, [email, provider]);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 980px)");
@@ -857,21 +890,26 @@ export function AccountPageClient({
 
     setActive(id);
     setIsMobileNavOpen(false);
+    if (deleteOpen) {
+      setDeleteOpen(false);
+    }
   }
 
   function handleSignOut() {
     startTransition(async () => {
-      if (isTemporary) {
-        await clearTemporaryAuthSession();
-      } else {
-        await supabase.auth.signOut();
-      }
+      await supabase.auth.signOut();
       router.replace("/sign-in");
     });
   }
 
-  if (isResettingTemporarySession) {
-    return null;
+  function openDeleteOverlay() {
+    setActive("settings");
+    setDeleteOpen(true);
+  }
+
+  function closeDeleteOverlay() {
+    setDeleteOpen(false);
+    router.replace("/account?section=settings");
   }
 
   const activeSection = NAV_ACTIVE.find((section) => section.id === active && section.id !== "api") ?? NAV_ACTIVE[0];
@@ -1108,26 +1146,8 @@ export function AccountPageClient({
                 withheld from the main dashboard flow until the beta launch pass. */}
             {active === "security" ? <SecurityPanel key="security" provider={provider} onOpenDetails={() => router.push("/account/security")} /> : null}
             {active === "pricing" ? <PricingPanel key="pricing" user={user} /> : null}
-            {active === "settings" ? <SettingsPanel key="settings" /> : null}
+            {active === "settings" ? <SettingsPanel key="settings" onOpenDelete={openDeleteOverlay} /> : null}
           </AnimatePresence>
-
-          {isTemporary ? (
-            <div
-              style={{
-                marginTop: 20,
-                borderRadius: 12,
-                border: `1px solid ${DANGER_BD}`,
-                background: DANGER_DIM,
-                padding: "12px 14px",
-                color: "#ffb8b8",
-                fontFamily: "Inter, sans-serif",
-                fontSize: 12,
-                lineHeight: 1.6,
-              }}
-            >
-              {dashboardCopy.temporaryAccountBody}
-            </div>
-          ) : null}
 
           {!emailConfirmed ? (
             <div
@@ -1150,6 +1170,15 @@ export function AccountPageClient({
           {isPending ? <div style={{ marginTop: 12, fontFamily: "Inter, sans-serif", fontSize: 12, color: TXT_FAINT }}>Updating session…</div> : null}
         </div>
       </main>
+
+      {deleteOpen ? (
+        <DeleteAccountOverlay
+          email={email}
+          username={username}
+          authConfirmed={authConfirmed}
+          onClose={closeDeleteOverlay}
+        />
+      ) : null}
     </motion.div>
   );
 }

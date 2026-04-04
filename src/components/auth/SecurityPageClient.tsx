@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   ArrowRight,
   CheckCircle2,
+  AlertTriangle,
   Github,
   Lock,
   Mail,
@@ -16,12 +17,10 @@ import { Button } from "@/components/ui/button";
 import { authCopy } from "@/content/authCopy";
 import { getAuthCallbackUrl } from "@/lib/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
-import { useTemporarySessionGuard } from "@/components/auth/useTemporarySessionGuard";
 
 type SecurityPageClientProps = {
   email: string | null;
   provider: string;
-  isTemporary?: boolean;
 };
 
 type LinkableProvider = "google" | "github";
@@ -32,17 +31,17 @@ function getProviderLabel(provider: string) {
       return "Google";
     case "github":
       return "GitHub";
-    case "google-test":
-      return "Google test account";
     default:
       return "Email";
   }
 }
 
-export function SecurityPageClient({ email, provider, isTemporary = false }: SecurityPageClientProps) {
+export function SecurityPageClient({
+  email,
+  provider,
+}: SecurityPageClientProps) {
   const copy = authCopy.security;
   const supabase = createSupabaseBrowserClient();
-  const isResettingTemporarySession = useTemporarySessionGuard(isTemporary);
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(true);
   const [linkedProviders, setLinkedProviders] = useState<string[]>(provider ? [provider] : []);
@@ -52,11 +51,6 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
     let cancelled = false;
 
     async function loadSecurityState() {
-      if (isTemporary) {
-        setIsLoading(false);
-        return;
-      }
-
       setIsLoading(true);
       const userResult = await supabase.auth.getUser();
 
@@ -82,7 +76,7 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
     return () => {
       cancelled = true;
     };
-  }, [isTemporary, provider, supabase.auth]);
+  }, [provider, supabase.auth]);
 
   const availableProviderLinks = useMemo(
     () =>
@@ -116,10 +110,6 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
     });
   }
 
-  if (isResettingTemporarySession) {
-    return null;
-  }
-
   return (
     <main className="auth-shell flex items-center justify-center">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-5">
@@ -130,7 +120,6 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
           </span>
           <h1 className="font-serif text-5xl leading-none tracking-[-0.05em] sm:text-6xl">{copy.title}</h1>
           <p className="max-w-2xl text-sm leading-7 text-white/70">{copy.subtitle}</p>
-          {isTemporary ? <p className="max-w-2xl text-sm leading-7 text-[#ffb8b8]">{copy.temporaryAccountBody}</p> : null}
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_0.95fr]">
@@ -190,7 +179,7 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
               <div className="mt-3 flex items-center justify-between gap-3 rounded-[22px] border border-white/10 bg-white/5 px-4 py-3">
                 <div>
                   <p className="text-sm font-medium text-white">{getProviderLabel(provider)}</p>
-                  <p className="text-sm text-white/55">{email ?? "No email available"}</p>
+                  <p className="text-sm text-white/55">{email ?? copy.noEmailLabel}</p>
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/6 text-white/70">
                   <Lock className="h-4 w-4" />
@@ -226,35 +215,27 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
                 </div>
               </div>
 
-              {isTemporary ? (
-                <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4 text-sm leading-6 text-white/62">
-                  {copy.temporaryAccountBody}
+              <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.availableMethodsLabel}</p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {availableProviderLinks.length > 0 ? (
+                    availableProviderLinks.map((link) => (
+                      <Button
+                        key={link.id}
+                        type="button"
+                        variant="outline"
+                        className="rounded-full border-white/12 bg-white/5 text-white hover:bg-white/8"
+                        onClick={() => startIdentityLink(link.id)}
+                        disabled={isPending || isLoading}
+                      >
+                        {link.label}
+                      </Button>
+                    ))
+                  ) : (
+                    <p className="text-sm text-white/55">{copy.allMethodsConnectedBody}</p>
+                  )}
                 </div>
-              ) : (
-                <>
-                  <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{copy.availableMethodsLabel}</p>
-                    <div className="mt-3 flex flex-wrap gap-3">
-                      {availableProviderLinks.length > 0 ? (
-                        availableProviderLinks.map((link) => (
-                          <Button
-                            key={link.id}
-                            type="button"
-                            variant="outline"
-                            className="rounded-full border-white/12 bg-white/5 text-white hover:bg-white/8"
-                            onClick={() => startIdentityLink(link.id)}
-                            disabled={isPending || isLoading}
-                          >
-                            {link.label}
-                          </Button>
-                        ))
-                      ) : (
-                        <p className="text-sm text-white/55">{copy.allMethodsConnectedBody}</p>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
+              </div>
             </div>
 
             <div className="rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur">
@@ -276,6 +257,34 @@ export function SecurityPageClient({ email, provider, isTemporary = false }: Sec
               <Link href="/account" className="mt-5 inline-flex items-center gap-2 font-medium text-[#ffb8b8] transition hover:text-white">
                 {copy.backLabel}
                 <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div
+              id="remove-account"
+              className="rounded-[30px] border border-[#dc5e5e]/20 bg-[#dc5e5e]/8 p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#dc5e5e] text-white shadow-[0_14px_30px_rgba(220,94,94,0.32)]">
+                  <AlertTriangle className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#ffb8b8]">{copy.removeAccountTitle}</p>
+                  <h2 className="text-xl font-semibold text-white">{copy.removeAccountTitle}</h2>
+                </div>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-white/78">{copy.removeAccountBody}</p>
+              <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
+                <p className="text-sm leading-6 text-white/62">{copy.removeAccountNote}</p>
+              </div>
+              <Link href="/account?section=settings&intent=delete-account" className="inline-flex">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-5 rounded-full border-[#dc5e5e]/25 bg-[#dc5e5e]/10 text-[#ffb8b8] hover:bg-[#dc5e5e]/14 hover:text-white"
+                >
+                  {copy.removeAccountCta}
+                </Button>
               </Link>
             </div>
           </aside>

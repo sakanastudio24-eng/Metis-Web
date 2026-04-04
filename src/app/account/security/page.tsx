@@ -13,5 +13,10 @@ export default async function SecurityPage() {
   noStore();
   const user = await requireAuthenticatedUser();
 
-  return <SecurityPageClient email={user.email} provider={user.provider} isTemporary={user.isTemporary} />;
+  return (
+    <SecurityPageClient
+      email={user.email}
+      provider={user.provider}
+    />
+  );
 }
