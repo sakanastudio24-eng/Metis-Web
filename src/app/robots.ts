@@ -17,6 +17,8 @@ export default function robots(): MetadataRoute.Robots {
           "/auth/success",
           "/logged-in",
           "/account",
+          "/account/pricing",
+          "/account/settings",
           "/account/security",
           "/auth",
         ],

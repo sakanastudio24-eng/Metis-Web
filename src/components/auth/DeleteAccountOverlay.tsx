@@ -47,11 +47,10 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
     startTransition(async () => {
       // Deletion uses a fresh magic link instead of session age heuristics so
       // the same account proves intent right before the soft-delete call.
-      const redirectUrl = new URL(getMagicLinkCallbackUrl("/account/security"));
+      const redirectUrl = new URL(getMagicLinkCallbackUrl("/account/settings"));
       redirectUrl.pathname = "/auth/callback";
-      redirectUrl.searchParams.set("next", "/account");
+      redirectUrl.searchParams.set("next", "/account/settings");
       redirectUrl.searchParams.set("intent", "delete-account");
-      redirectUrl.searchParams.set("section", "settings");
 
       const { error } = await supabase.auth.signInWithOtp({
         email,

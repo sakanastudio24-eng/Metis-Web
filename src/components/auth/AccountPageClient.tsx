@@ -117,6 +117,13 @@ const NAV_SOON = [
   { icon: Layers, label: "Deployments" },
 ];
 
+const SECTION_HREFS: Record<Exclude<NavId, "api">, string> = {
+  account: "/account",
+  security: "/account/security",
+  pricing: "/account/pricing",
+  settings: "/account/settings",
+};
+
 const USAGE_DATA = [
   { day: "Mon", scans: 12 },
   { day: "Tue", scans: 19 },
@@ -893,6 +900,7 @@ export function AccountPageClient({
     if (deleteOpen) {
       setDeleteOpen(false);
     }
+    router.push(SECTION_HREFS[id]);
   }
 
   function handleSignOut() {
@@ -909,7 +917,7 @@ export function AccountPageClient({
 
   function closeDeleteOverlay() {
     setDeleteOpen(false);
-    router.replace("/account?section=settings");
+    router.replace("/account/settings");
   }
 
   const activeSection = NAV_ACTIVE.find((section) => section.id === active && section.id !== "api") ?? NAV_ACTIVE[0];

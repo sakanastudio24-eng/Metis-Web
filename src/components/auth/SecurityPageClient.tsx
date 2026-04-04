@@ -277,7 +277,7 @@ export function SecurityPageClient({
               <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4">
                 <p className="text-sm leading-6 text-white/62">{copy.removeAccountNote}</p>
               </div>
-              <Link href="/account?section=settings&intent=delete-account" className="inline-flex">
+              <Link href="/account/settings?intent=delete-account" className="inline-flex">
                 <Button
                   type="button"
                   variant="outline"

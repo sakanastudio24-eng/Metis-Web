@@ -1,8 +1,5 @@
-import { unstable_noStore as noStore } from "next/cache";
-
-import { AccountPageClient } from "@/components/auth/AccountPageClient";
-import { requireAuthenticatedUser } from "@/lib/auth-server";
 import { createPrivateMetadata } from "@/lib/seo";
+import { AccountSectionPage } from "@/app/account/account-section-page";
 
 export const metadata = createPrivateMetadata({
   title: "Metis Dash",
@@ -13,28 +10,10 @@ type AccountPageProps = {
   searchParams?: Promise<{
     auth?: string;
     intent?: string;
-    section?: string;
   }>;
 };
 
-function getInitialSection(value: string | undefined): "account" | "security" | "pricing" | "settings" {
-  return value === "security" || value === "pricing" || value === "settings" ? value : "account";
-}
-
 export default async function AccountPage({ searchParams }: AccountPageProps) {
-  noStore();
   const params = searchParams ? await searchParams : undefined;
-  const user = await requireAuthenticatedUser();
-
-  return (
-    <AccountPageClient
-      email={user.email}
-      provider={user.provider}
-      emailConfirmed={user.emailConfirmed}
-      username={user.username}
-      initialSection={getInitialSection(params?.section)}
-      initialDeleteOpen={params?.intent === "delete-account"}
-      authConfirmed={params?.auth === "confirmed"}
-    />
-  );
+  return <AccountSectionPage section="account" auth={params?.auth} intent={params?.intent} />;
 }
