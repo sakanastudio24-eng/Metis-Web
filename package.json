@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "analyze": "next build --experimental-analyze",
+    "analyze": "ANALYZE=true next build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@next/bundle-analyzer": "^16.2.2",
     "@types/node": "latest",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
