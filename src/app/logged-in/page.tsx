@@ -19,7 +19,7 @@ export default async function LoggedInPage() {
     <>
       <LandingPage />
       <AuthOverlay>
-        <LoggedInState email={user.email} isTemporary={user.isTemporary} />
+        <LoggedInState email={user.email} />
       </AuthOverlay>
     </>
   );
