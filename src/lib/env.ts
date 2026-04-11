@@ -10,6 +10,15 @@ const webEnvSchema = z.object({
 
 export type WebEnv = z.infer<typeof webEnvSchema>;
 
+function cleanOptionalEnv(value: string | undefined) {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 function parseEnv<T>(schema: z.ZodSchema<T>, values: Record<string, string | undefined>, label: string): T {
   const result = schema.safeParse(values);
 
@@ -27,9 +36,9 @@ export function getWebEnv(): WebEnv {
     {
       NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
-      NEXT_PUBLIC_METIS_EXTENSION_ID: process.env.NEXT_PUBLIC_METIS_EXTENSION_ID,
-      NEXT_PUBLIC_METIS_EXTENSION_DEV_IDS: process.env.NEXT_PUBLIC_METIS_EXTENSION_DEV_IDS,
+      NEXT_PUBLIC_API_BASE_URL: cleanOptionalEnv(process.env.NEXT_PUBLIC_API_BASE_URL),
+      NEXT_PUBLIC_METIS_EXTENSION_ID: cleanOptionalEnv(process.env.NEXT_PUBLIC_METIS_EXTENSION_ID),
+      NEXT_PUBLIC_METIS_EXTENSION_DEV_IDS: cleanOptionalEnv(process.env.NEXT_PUBLIC_METIS_EXTENSION_DEV_IDS),
     },
     "Web env",
   );

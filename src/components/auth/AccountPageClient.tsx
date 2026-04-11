@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -11,6 +11,8 @@ import {
   Crown,
   Globe,
   Layers,
+  Link2,
+  LogOut,
   Menu,
   Settings2,
   Shield,
@@ -202,6 +204,39 @@ function NavLink({
           {dashboardCopy.navSoonLabel}
         </span>
       ) : null}
+    </button>
+  );
+}
+
+function HeaderActionButton({
+  subtle = false,
+  children,
+  onClick,
+}: {
+  subtle?: boolean;
+  children: ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        borderRadius: 999,
+        border: subtle ? `1px solid ${BD}` : `1px solid ${ACCENT_BD}`,
+        background: subtle ? BG_CARD : ACCENT_DIM,
+        padding: "10px 14px",
+        color: subtle ? TXT_DIM : TXT,
+        fontFamily: FONT_SANS,
+        fontSize: 12,
+        fontWeight: 700,
+        cursor: "pointer",
+      }}
+    >
+      {children}
     </button>
   );
 }
@@ -416,6 +451,66 @@ export function AccountPageClient({
     </>
   );
 
+  const desktopPillNav = (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: 6,
+        borderRadius: 999,
+        border: `1px solid ${BD}`,
+        background: BG_CARD,
+        overflowX: "auto",
+      }}
+    >
+      {NAV_VISIBLE.map((section) => {
+        const activeSectionPill = active === section.id && !section.soon;
+        return (
+          <button
+            key={section.id}
+            type="button"
+            onClick={section.soon ? undefined : () => handleSelectSection(section.id)}
+            disabled={section.soon}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              borderRadius: 999,
+              border: activeSectionPill ? `1px solid ${ACCENT_BD}` : "1px solid transparent",
+              background: activeSectionPill ? ACCENT_DIM : "transparent",
+              padding: "10px 14px",
+              color: activeSectionPill ? ACCENT : section.soon ? TXT_FAINT : TXT_DIM,
+              fontFamily: FONT_SANS,
+              fontSize: 12,
+              fontWeight: activeSectionPill ? 700 : 600,
+              whiteSpace: "nowrap",
+              cursor: section.soon ? "default" : "pointer",
+            }}
+          >
+            <section.icon size={14} />
+            <span>{section.label}</span>
+            {section.soon ? (
+              <span
+                style={{
+                  borderRadius: 999,
+                  background: BG_CARD_2,
+                  padding: "2px 7px",
+                  fontSize: 8,
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
+              >
+                {dashboardCopy.navSoonLabel}
+              </span>
+            ) : null}
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -423,28 +518,10 @@ export function AccountPageClient({
       transition={{ duration: 0.22 }}
       style={{
         minHeight: "100vh",
-        display: "flex",
         background: "#090b10",
         color: TXT,
-        overflow: "hidden",
       }}
     >
-      {!isMobileViewport ? (
-        <aside
-          style={{
-            width: 232,
-            flexShrink: 0,
-            borderRight: `1px solid ${BD}`,
-            background: BG_CARD,
-            padding: "0 12px 16px",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {navigationContent}
-        </aside>
-      ) : null}
-
       <AnimatePresence>
         {isMobileViewport && isMobileNavOpen ? (
           <>
@@ -513,56 +590,85 @@ export function AccountPageClient({
         ) : null}
       </AnimatePresence>
 
-      <main style={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
+      <main style={{ minWidth: 0, overflowY: "auto" }}>
         <div
           style={{
             position: "sticky",
             top: 0,
             zIndex: 10,
             display: "flex",
-            alignItems: "center",
-            gap: 16,
-            height: 62,
-            padding: isMobileViewport ? "0 18px" : "0 32px",
+            flexDirection: "column",
+            alignItems: "stretch",
+            gap: 14,
+            padding: isMobileViewport ? "18px" : "18px 32px",
             background: "#090b10ee",
             backdropFilter: "blur(14px)",
             WebkitBackdropFilter: "blur(14px)",
             borderBottom: `1px solid ${BD}`,
           }}
         >
-          {isMobileViewport ? (
-            <button
-              type="button"
-              onClick={() => setIsMobileNavOpen(true)}
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 12,
-                border: `1px solid ${BD}`,
-                background: BG_CARD,
-                color: TXT_DIM,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                flexShrink: 0,
-              }}
-            >
-              <Menu size={16} />
-            </button>
-          ) : null}
-          <div style={{ position: "absolute", left: 0, top: 12, bottom: 12, width: 3, borderRadius: "0 3px 3px 0", background: ACCENT }} />
-          <div>
-            <p style={{ margin: 0, fontFamily: FONT_SERIF, fontSize: 18, letterSpacing: "-0.01em", color: TXT }}>{activeSection.label}</p>
-            <p style={{ margin: "2px 0 0", fontFamily: FONT_SANS, fontSize: 11, color: TXT_FAINT }}>{activeSection.subtitle}</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            {isMobileViewport ? (
+              <button
+                type="button"
+                onClick={() => setIsMobileNavOpen(true)}
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 12,
+                  border: `1px solid ${BD}`,
+                  background: BG_CARD,
+                  color: TXT_DIM,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  flexShrink: 0,
+                }}
+              >
+                <Menu size={16} />
+              </button>
+            ) : null}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+              <div
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 10,
+                  background: ACCENT,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 14px 30px rgba(220,94,94,0.28)",
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{ fontFamily: FONT_SERIF, fontSize: 16, color: "white", lineHeight: 1 }}>M</span>
+              </div>
+              <div>
+                <p style={{ margin: 0, fontFamily: FONT_SERIF, fontSize: 18, letterSpacing: "-0.01em", color: TXT }}>{dashboardCopy.brandLabel}</p>
+                <p style={{ margin: "2px 0 0", fontFamily: FONT_SANS, fontSize: 11, color: TXT_FAINT }}>{activeSection.subtitle}</p>
+              </div>
+            </div>
+            <div style={{ flex: 1 }} />
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
+              <HeaderActionButton onClick={handleConnectExtension}>
+                <Link2 size={14} />
+                Connect to extension
+              </HeaderActionButton>
+              <HeaderActionButton subtle onClick={handleSignOut}>
+                <LogOut size={14} />
+                Sign out
+              </HeaderActionButton>
+              {user.plan === "plus_beta" ? (
+                <Badge>
+                  <Crown size={10} />
+                  {dashboardCopy.betaBadge}
+                </Badge>
+              ) : null}
+            </div>
           </div>
-          <div style={{ flex: 1 }} />
-          {user.plan === "plus_beta" ? (
-            <Badge>
-              <Crown size={10} />
-              {dashboardCopy.betaBadge}
-            </Badge>
-          ) : null}
+          {!isMobileViewport ? desktopPillNav : null}
         </div>
 
         <div style={{ padding: isMobileViewport ? "22px 18px 36px" : "28px 32px 48px" }}>

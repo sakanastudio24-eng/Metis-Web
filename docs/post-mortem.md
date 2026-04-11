@@ -22,6 +22,36 @@ This problem matters because the product promise is simple: sign in on the websi
 - `/v1/extension/validate` same-origin validation route
 - Extension bridge listener, validation call, and local account snapshot storage
 
+## Bridge control lesson: preview vs production
+
+What went wrong operationally:
+
+- the repo branch, commit, and env values can all be correct in Vercel and still not control `https://metis.zward.studio`
+- preview deployments and production deployments are different control planes
+- the bridge was being verified against a preview-style deployment path while the public hostname was still serving an older production alias
+
+What must be true before calling the bridge fixed:
+
+- the deployment serving `https://metis.zward.studio` must be a production deployment
+- that production deployment must be built from the intended branch and commit
+- production env values must include the same bridge-critical values expected by the code:
+  - published extension ID
+  - optional dev IDs
+  - Supabase public config
+  - any same-origin API routing assumptions
+
+Control rule going forward:
+
+- treat preview correctness as staging evidence only
+- treat production aliasing as the final source of truth for bridge behavior
+- when the public domain looks wrong, verify production deployment target first before changing bridge code again
+
+Observed working production reference:
+
+- production source branch: `codex/perf-client-islands`
+- production commit: `d24037a`
+- production hostname: `https://metis.zward.studio`
+
 ## Not resolved yet
 
 - This issue should remain open until the production website, deployed validation route, and live extension build are verified together end to end.

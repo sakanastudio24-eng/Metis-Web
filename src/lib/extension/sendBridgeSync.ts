@@ -18,6 +18,28 @@ type SendBridgeSyncOptions = {
   queryExtensionId?: string | null;
 };
 
+export type BridgeSendStage =
+  | "origin_check"
+  | "config_check"
+  | "candidate_selection"
+  | "runtime_send"
+  | "extension_response";
+
+export type BridgeSyncDebugInfo = {
+  currentOrigin: string | null;
+  currentPath: string | null;
+  queryExtensionId: string | null;
+  configuredExtensionIds: string[];
+  candidateExtensionIds: string[];
+  attemptedExtensionId: string | null;
+  stage: BridgeSendStage;
+  detail: string;
+};
+
+export type BridgeSyncResult = (MetisBridgeSyncAck | MetisBridgeSyncFailure) & {
+  debug: BridgeSyncDebugInfo;
+};
+
 type ChromeRuntimeLike = {
   runtime?: {
     lastError?: { message?: string };
@@ -127,20 +149,49 @@ function buildFailure(
   };
 }
 
+function withDebug<T extends MetisBridgeSyncAck | MetisBridgeSyncFailure>(
+  response: T,
+  debug: BridgeSyncDebugInfo
+): BridgeSyncResult {
+  return {
+    ...response,
+    debug,
+  };
+}
+
 function sendMessageToExtension(
   extensionId: string,
-  message: MetisBridgeSyncMessage
-): Promise<MetisBridgeSyncAck | MetisBridgeSyncFailure> {
+  message: MetisBridgeSyncMessage,
+  debugBase: Omit<BridgeSyncDebugInfo, "attemptedExtensionId" | "stage" | "detail">
+): Promise<BridgeSyncResult> {
   const runtime = getChromeRuntime();
+  const sendDebug = {
+    ...debugBase,
+    attemptedExtensionId: extensionId,
+    stage: "runtime_send" as const,
+  };
 
   if (!runtime?.sendMessage) {
     return Promise.resolve(
-      buildFailure(
-        "extension_unavailable",
-        "chrome.runtime.sendMessage is not available on this page. Open the Metis website in Chrome with the extension installed."
+      withDebug(
+        buildFailure(
+          "extension_unavailable",
+          "chrome.runtime.sendMessage is not available on this page. Open the Metis website in Chrome with the extension installed."
+        ),
+        {
+          ...sendDebug,
+          detail: "chrome.runtime.sendMessage is unavailable in this browser context.",
+        }
       )
     );
   }
+
+  console.info("[Metis bridge] sending account sync to extension", {
+    extensionId,
+    origin: debugBase.currentOrigin,
+    path: debugBase.currentPath,
+    queryExtensionId: debugBase.queryExtensionId,
+  });
 
   return new Promise((resolve) => {
     runtime.sendMessage?.(extensionId, message, (response) => {
@@ -148,9 +199,15 @@ function sendMessageToExtension(
 
       if (runtimeError?.message) {
         resolve(
-          buildFailure(
-            "extension_unavailable",
-            `The website targeted extension ${extensionId}, but Chrome could not deliver the connection request. ${runtimeError.message}`
+          withDebug(
+            buildFailure(
+              "extension_unavailable",
+              `The website targeted extension ${extensionId}, but Chrome could not deliver the connection request. ${runtimeError.message}`
+            ),
+            {
+              ...sendDebug,
+              detail: runtimeError.message,
+            }
           )
         );
         return;
@@ -158,19 +215,38 @@ function sendMessageToExtension(
 
       if (isBridgeSyncAck(response)) {
         storeExtensionId(extensionId);
-        resolve(response);
+        resolve(
+          withDebug(response, {
+            ...sendDebug,
+            stage: "extension_response",
+            detail: `Extension ${extensionId} acknowledged and stored the account snapshot.`,
+          })
+        );
         return;
       }
 
       if (isBridgeSyncFailure(response)) {
-        resolve(response);
+        resolve(
+          withDebug(response, {
+            ...sendDebug,
+            stage: "extension_response",
+            detail: response.detail ?? `Extension ${extensionId} rejected the bridge request.`,
+          })
+        );
         return;
       }
 
       resolve(
-        buildFailure(
-          "unknown",
-          `Extension ${extensionId} returned an unexpected bridge response.`
+        withDebug(
+          buildFailure(
+            "unknown",
+            `Extension ${extensionId} returned an unexpected bridge response.`
+          ),
+          {
+            ...sendDebug,
+            stage: "extension_response",
+            detail: `Extension ${extensionId} returned an unexpected bridge response.`,
+          }
         )
       );
     });
@@ -180,23 +256,62 @@ function sendMessageToExtension(
 export async function sendBridgeSync({
   account,
   queryExtensionId,
-}: SendBridgeSyncOptions): Promise<MetisBridgeSyncAck | MetisBridgeSyncFailure> {
+}: SendBridgeSyncOptions): Promise<BridgeSyncResult> {
   if (typeof window === "undefined") {
-    return buildFailure("unknown", "Bridge sync can only run in the browser.");
+    return withDebug(
+      buildFailure("unknown", "Bridge sync can only run in the browser."),
+      {
+        currentOrigin: null,
+        currentPath: null,
+        queryExtensionId: queryExtensionId ?? null,
+        configuredExtensionIds: [],
+        candidateExtensionIds: [],
+        attemptedExtensionId: null,
+        stage: "origin_check",
+        detail: "Bridge sync was called outside the browser.",
+      }
+    );
   }
 
+  const currentOrigin = window.location.origin;
+  const currentPath = `${window.location.pathname}${window.location.search}`;
+
   if (!isAllowedBridgeOrigin(window.location.origin)) {
-    return buildFailure(
-      "invalid_origin",
-      `Bridge sync is only allowed from metis.zward.studio or localhost. Current origin: ${window.location.origin}.`
+    return withDebug(
+      buildFailure(
+        "invalid_origin",
+        `Bridge sync is only allowed from metis.zward.studio or localhost. Current origin: ${window.location.origin}.`
+      ),
+      {
+        currentOrigin,
+        currentPath,
+        queryExtensionId: queryExtensionId ?? null,
+        configuredExtensionIds: [],
+        candidateExtensionIds: [],
+        attemptedExtensionId: null,
+        stage: "origin_check",
+        detail: `Origin ${window.location.origin} is not allowed for the bridge.`,
+      }
     );
   }
 
   const configuredIds = getConfiguredExtensionIds();
   const candidates = buildCandidateExtensionIds(configuredIds, queryExtensionId);
+  const debugBase = {
+    currentOrigin,
+    currentPath,
+    queryExtensionId: queryExtensionId ?? null,
+    configuredExtensionIds: configuredIds,
+  };
 
   if (!Array.isArray(candidates)) {
-    return candidates;
+    return withDebug(candidates, {
+      ...debugBase,
+      candidateExtensionIds: [],
+      attemptedExtensionId: null,
+      stage: "config_check",
+      detail: candidates.detail ?? "No valid extension IDs were available for the bridge.",
+    });
   }
 
   const message: MetisBridgeSyncMessage = {
@@ -209,7 +324,10 @@ export async function sendBridgeSync({
   let lastFailure: MetisBridgeSyncFailure | null = null;
 
   for (const extensionId of candidates) {
-    const response = await sendMessageToExtension(extensionId, message);
+    const response = await sendMessageToExtension(extensionId, message, {
+      ...debugBase,
+      candidateExtensionIds: candidates,
+    });
 
     if (isBridgeSyncAck(response)) {
       return response;
@@ -223,10 +341,26 @@ export async function sendBridgeSync({
   }
 
   return (
-    lastFailure ??
-    buildFailure(
-      "extension_unavailable",
-      "The website could not find a responding allowlisted Metis extension. Verify the published extension ID is configured on the website and the extension is installed in this Chrome profile."
-    )
+    (lastFailure
+      ? withDebug(lastFailure, {
+          ...debugBase,
+          candidateExtensionIds: candidates,
+          attemptedExtensionId: null,
+          stage: "candidate_selection",
+          detail: lastFailure.detail ?? "The website exhausted the allowlisted extension IDs without a response.",
+        })
+      : withDebug(
+          buildFailure(
+            "extension_unavailable",
+            "The website could not find a responding allowlisted Metis extension. Verify the published extension ID is configured on the website and the extension is installed in this Chrome profile."
+          ),
+          {
+            ...debugBase,
+            candidateExtensionIds: candidates,
+            attemptedExtensionId: null,
+            stage: "candidate_selection",
+            detail: "The website exhausted the allowlisted extension IDs without a response.",
+          }
+        ))
   );
 }

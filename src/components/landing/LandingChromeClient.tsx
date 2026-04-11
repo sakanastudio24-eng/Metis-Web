@@ -1,31 +1,13 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
+import { ExtensionMockup } from "@/components/landing/ExtensionMockup";
 import { frontFacingCopy, mockupStates } from "@/content/frontFacingCopy";
 import { isDeletedUser } from "@/lib/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
-
-const ExtensionMockup = dynamic(
-  () => import("@/components/landing/ExtensionMockup").then((mod) => mod.ExtensionMockup),
-  {
-    ssr: false,
-    loading: () => (
-      <div
-        style={{
-          width: 380,
-          height: 520,
-          borderRadius: 16,
-          border: "1px solid rgba(255,255,255,0.07)",
-          background: "rgba(12,22,35,0.92)",
-        }}
-      />
-    ),
-  },
-);
 
 type LandingChromeClientProps = {
   mockupOnly?: boolean;

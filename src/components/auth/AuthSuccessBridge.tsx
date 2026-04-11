@@ -9,7 +9,7 @@ import { CheckCircle2, ExternalLink, LoaderCircle } from "lucide-react";
 import { authCopy } from "@/content/authCopy";
 import { METIS_AUTH_SUCCESS_PATH } from "@/lib/contracts/communication";
 import type { BridgeAccountState } from "@/lib/contracts/communication";
-import { sendBridgeSync } from "@/lib/extension/sendBridgeSync";
+import { sendBridgeSync, type BridgeSyncDebugInfo } from "@/lib/extension/sendBridgeSync";
 
 type BridgeStatus = "posting" | "acknowledged" | "error";
 
@@ -24,6 +24,7 @@ export function AuthSuccessBridge({ account, email, queryExtensionId }: AuthSucc
   const copy = authCopy.bridge;
   const [status, setStatus] = useState<BridgeStatus>("posting");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<BridgeSyncDebugInfo | null>(null);
 
   const describeFailure = useCallback(
     (reason: string, detail?: string) => {
@@ -59,14 +60,23 @@ export function AuthSuccessBridge({ account, email, queryExtensionId }: AuthSucc
     let cancelled = false;
 
     async function connectExtension() {
+      console.info("[Metis bridge] settings overlay started connect flow", {
+        origin: window.location.origin,
+        path: `${window.location.pathname}${window.location.search}`,
+        queryExtensionId,
+      });
       const response = await sendBridgeSync({
         account,
         queryExtensionId,
       });
 
+      console.info("[Metis bridge] settings overlay received connect result", response);
+
       if (cancelled) {
         return;
       }
+
+      setDebugInfo(response.debug);
 
       if (response.ok) {
         setStatus("acknowledged");
@@ -138,6 +148,19 @@ export function AuthSuccessBridge({ account, email, queryExtensionId }: AuthSucc
           <p className="mt-2">{errorMessage ?? copy.unknownFailureBody}</p>
         </div>
       ) : null}
+
+      <div className="mt-6 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4 text-sm leading-6 text-white/78">
+        <p className="font-semibold text-white">Bridge debug</p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <p className="m-0 text-white/75">Origin: {debugInfo?.currentOrigin ?? window.location.origin}</p>
+          <p className="m-0 text-white/75">Route: {debugInfo?.currentPath ?? `${window.location.pathname}${window.location.search}`}</p>
+          <p className="m-0 text-white/75">Query extensionId: {debugInfo?.queryExtensionId ?? queryExtensionId ?? "none"}</p>
+          <p className="m-0 text-white/75">Configured IDs: {debugInfo?.configuredExtensionIds.length ?? 0}</p>
+          <p className="m-0 text-white/75">Attempted ID: {debugInfo?.attemptedExtensionId ?? "none"}</p>
+          <p className="m-0 text-white/75">Stage: {debugInfo?.stage ?? "waiting"}</p>
+        </div>
+        <p className="mt-3 mb-0 text-white/55">{debugInfo?.detail ?? "Waiting for the website to attempt the external bridge."}</p>
+      </div>
     </div>
   );
 }

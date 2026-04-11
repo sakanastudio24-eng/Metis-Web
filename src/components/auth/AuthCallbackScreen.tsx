@@ -63,12 +63,25 @@ export function AuthCallbackScreen({
     }
 
     async function completeCallback() {
+      console.info("[Metis bridge] auth callback started", {
+        source: parsedSource,
+        extensionId,
+        nextPath,
+        redirectPath,
+        currentPath: `${window.location.pathname}${window.location.search}`,
+      });
+
       if (error) {
+        console.warn("[Metis bridge] auth callback received provider error", {
+          error,
+          errorDescription,
+        });
         router.replace(buildFailureHref(error === "access_denied" ? "oauth_cancelled" : "callback_failed", errorDescription));
         return;
       }
 
       if (!code) {
+        console.warn("[Metis bridge] auth callback missing code");
         router.replace(buildFailureHref("callback_failed"));
         return;
       }
@@ -76,6 +89,7 @@ export function AuthCallbackScreen({
       const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
       if (exchangeError) {
+        console.error("[Metis bridge] auth callback session exchange failed", exchangeError);
         router.replace(buildFailureHref("callback_failed"));
         return;
       }
@@ -107,6 +121,9 @@ export function AuthCallbackScreen({
         success.searchParams.set("auth", "confirmed");
         success.searchParams.set("intent", "delete-account");
       }
+      console.info("[Metis bridge] auth callback redirecting", {
+        destination: `${success.pathname}${success.search}`,
+      });
       router.replace(`${success.pathname}${success.search}`);
     }
 
