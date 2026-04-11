@@ -58,6 +58,14 @@ function getStoredExtensionId() {
   return window.localStorage.getItem(METIS_LAST_EXTENSION_ID_KEY);
 }
 
+function clearStoredExtensionId() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.removeItem(METIS_LAST_EXTENSION_ID_KEY);
+}
+
 function storeExtensionId(extensionId: string) {
   if (typeof window === "undefined") {
     return;
@@ -66,7 +74,24 @@ function storeExtensionId(extensionId: string) {
   window.localStorage.setItem(METIS_LAST_EXTENSION_ID_KEY, extensionId);
 }
 
-function buildCandidateExtensionIds(queryExtensionId?: string | null) {
+function buildCandidateExtensionIds(
+  configuredIds: string[],
+  queryExtensionId?: string | null
+): string[] | MetisBridgeSyncFailure {
+  if (!configuredIds.length) {
+    return buildFailure(
+      "invalid_extension_id",
+      "No allowed extension IDs are configured on the Metis website yet. Add the production extension ID and any local dev IDs before using the bridge."
+    );
+  }
+
+  if (queryExtensionId && !configuredIds.includes(queryExtensionId)) {
+    return buildFailure(
+      "invalid_extension_id",
+      `The requested extensionId ${queryExtensionId} is not in the website allowlist. Keep the passed ID as a routing hint only and add it to the configured allowlist first.`
+    );
+  }
+
   const candidates = new Set<string>();
 
   if (queryExtensionId) {
@@ -74,11 +99,14 @@ function buildCandidateExtensionIds(queryExtensionId?: string | null) {
   }
 
   const storedExtensionId = getStoredExtensionId();
-  if (storedExtensionId) {
+
+  if (storedExtensionId && configuredIds.includes(storedExtensionId)) {
     candidates.add(storedExtensionId);
+  } else if (storedExtensionId) {
+    clearStoredExtensionId();
   }
 
-  for (const extensionId of getConfiguredExtensionIds()) {
+  for (const extensionId of configuredIds) {
     candidates.add(extensionId);
   }
 
@@ -164,13 +192,11 @@ export async function sendBridgeSync({
     );
   }
 
-  const candidates = buildCandidateExtensionIds(queryExtensionId);
+  const configuredIds = getConfiguredExtensionIds();
+  const candidates = buildCandidateExtensionIds(configuredIds, queryExtensionId);
 
-  if (!candidates.length) {
-    return buildFailure(
-      "invalid_extension_id",
-      `No extension id is available. Start from the extension once so the website can cache ${METIS_EXTENSION_ID_QUERY_PARAM}.`
-    );
+  if (!Array.isArray(candidates)) {
+    return candidates;
   }
 
   const message: MetisBridgeSyncMessage = {
