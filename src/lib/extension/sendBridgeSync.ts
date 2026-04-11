@@ -149,8 +149,8 @@ function sendMessageToExtension(
       if (runtimeError?.message) {
         resolve(
           buildFailure(
-            "invalid_extension_id",
-            `Extension ${extensionId} did not respond. ${runtimeError.message}`
+            "extension_unavailable",
+            `The website targeted extension ${extensionId}, but Chrome could not deliver the connection request. ${runtimeError.message}`
           )
         );
         return;
@@ -224,6 +224,9 @@ export async function sendBridgeSync({
 
   return (
     lastFailure ??
-    buildFailure("extension_unavailable", "The extension did not accept the bridge request.")
+    buildFailure(
+      "extension_unavailable",
+      "The website could not find a responding allowlisted Metis extension. Verify the published extension ID is configured on the website and the extension is installed in this Chrome profile."
+    )
   );
 }

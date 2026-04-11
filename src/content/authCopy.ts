@@ -3,7 +3,7 @@ export const authCopy = {
     eyebrow: "Sign in",
     title: "Welcome back",
     intro: "Use Google, GitHub, or an email magic link to get back into your Metis account on the website.",
-    extensionIntro: "Sign in on the website, then hand the session back to the extension so connected account features can unlock there.",
+    extensionIntro: "Sign in on the website, then connect your account to the extension so connected account features can unlock there.",
     alternateLabel: "Create account",
     alternateHref: "/sign-up",
     footerPrompt: "Need an account?",
@@ -12,7 +12,7 @@ export const authCopy = {
     eyebrow: "Create account",
     title: "Start with Metis",
     intro: "Create access on the website with Google, GitHub, or an email magic link, then move straight into your first guided setup.",
-    extensionIntro: "Create access on the website, then hand that session back to the extension so the bridge can unlock connected account behavior.",
+    extensionIntro: "Create access on the website, then connect that account to the extension so the bridge can unlock connected account behavior.",
     alternateLabel: "Sign in",
     alternateHref: "/sign-in",
     footerPrompt: "Already have access?",
@@ -62,7 +62,7 @@ export const authCopy = {
     invalidOriginTitle: "Unsupported origin",
     invalidOriginBody: "This connection overlay only runs on the approved Metis website origins.",
     extensionUnavailableBody:
-      "The website posted the connection request, but the extension never replied. Check that Metis 0.14.4 or newer is reloaded in chrome://extensions, keep this settings tab open on metis.zward.studio, and then try sign-in again from the extension.",
+      "The website sent a connection request, but the extension did not answer. Check that the published Metis extension is installed, reloaded in chrome://extensions, and still on version 0.14.5 or newer before trying again.",
     endpointFailureBody:
       "The extension could not reach the Metis account validation endpoint.",
     validationRejectedBody:
@@ -177,7 +177,7 @@ export const authCopy = {
       usageSummary: "Account-backed usage",
       usageDetail: "Current account usage window",
       usageDelta: "Current window",
-      connectAppLabel: "Connect app",
+      connectAppLabel: "Connect to extension",
     },
     apiBeta: {
       title: "API Beta",
