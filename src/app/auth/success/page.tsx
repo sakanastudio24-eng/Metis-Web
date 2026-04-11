@@ -9,17 +9,32 @@ export const metadata = createPrivateMetadata({
   description: "Connect your website session to the Metis extension.",
 });
 
-export default async function AuthSuccessPage() {
+type AuthSuccessPageProps = {
+  searchParams?: Promise<{
+    extensionId?: string;
+  }>;
+};
+
+export default async function AuthSuccessPage({ searchParams }: AuthSuccessPageProps) {
   noStore();
+  const params = searchParams ? await searchParams : undefined;
   const user = await getAuthenticatedUserOrNull();
 
   if (!user) {
-    redirect("/sign-in?source=extension");
+    redirect(
+      params?.extensionId
+        ? `/sign-in?source=extension&extensionId=${encodeURIComponent(params.extensionId)}`
+        : "/sign-in?source=extension"
+    );
   }
 
   if (user.deletedAt) {
     redirect("/account-deleted");
   }
 
-  redirect("/account/settings?source=extension");
+  redirect(
+    params?.extensionId
+      ? `/account/settings?source=extension&extensionId=${encodeURIComponent(params.extensionId)}`
+      : "/account/settings?source=extension"
+  );
 }

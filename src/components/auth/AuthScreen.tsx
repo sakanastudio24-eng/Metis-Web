@@ -16,6 +16,7 @@ import { siteConfig } from "@/lib/site";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type AuthScreenProps = {
+  extensionId?: string | null;
   initialView: "signup" | "login";
   source?: MetisAuthSource | null;
   useLocalMagicLinkCallback?: boolean;
@@ -327,6 +328,7 @@ const OAUTH_PROVIDERS = [
 ] as const;
 
 export function AuthScreen({
+  extensionId = null,
   initialView,
   source = null,
   useLocalMagicLinkCallback = false,
@@ -411,7 +413,7 @@ export function AuthScreen({
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: getAuthCallbackUrl(siteConfig.url, callbackNextPath, source),
+          redirectTo: getAuthCallbackUrl(siteConfig.url, callbackNextPath, source, extensionId),
         },
       });
 
@@ -438,7 +440,12 @@ export function AuthScreen({
         options: {
           // Magic links default to the deployed site callback so the newest
           // email can be opened on another device. Localhost stays opt-in.
-          emailRedirectTo: getMagicLinkCallbackUrl(callbackNextPath, source, useLocalMagicLinkCallback),
+          emailRedirectTo: getMagicLinkCallbackUrl(
+            callbackNextPath,
+            source,
+            useLocalMagicLinkCallback,
+            extensionId
+          ),
         },
       });
 

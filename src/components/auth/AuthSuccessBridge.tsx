@@ -1,43 +1,41 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { CheckCircle2, ExternalLink, LoaderCircle } from "lucide-react";
 
 import { authCopy } from "@/content/authCopy";
-import {
-  METIS_AUTH_SUCCESS_PATH,
-  isMetisAuthFailureAck,
-  type MetisAuthSuccessMessage,
-  isAllowedBridgeOrigin,
-  isMetisAuthSuccessAck,
-} from "@/lib/contracts/communication";
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { METIS_AUTH_SUCCESS_PATH } from "@/lib/contracts/communication";
+import type { BridgeAccountState } from "@/lib/contracts/communication";
+import { sendBridgeSync } from "@/lib/extension/sendBridgeSync";
 
-type BridgeStatus = "posting" | "acknowledged" | "fallback" | "error";
+type BridgeStatus = "posting" | "acknowledged" | "error";
 
 type AuthSuccessBridgeProps = {
+  account: BridgeAccountState;
   email: string | null;
+  queryExtensionId: string | null;
 };
 
-export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
+export function AuthSuccessBridge({ account, email, queryExtensionId }: AuthSuccessBridgeProps) {
   const router = useRouter();
   const copy = authCopy.bridge;
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [status, setStatus] = useState<BridgeStatus>("posting");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const describeFailure = useCallback(
-    (reason: string, detail?: string, endpoint?: string) => {
+    (reason: string, detail?: string) => {
       switch (reason) {
-        case "validation_endpoint_unreachable":
-          return `${copy.endpointFailureBody}${endpoint ? ` Endpoint: ${endpoint}.` : ""}${detail ? ` ${detail}` : ""}`;
-        case "validation_rejected":
-          return `${copy.validationRejectedBody}${detail ? ` ${detail}` : ""}`;
-        case "invalid_account_payload":
+        case "invalid_origin":
+          return `${copy.invalidOriginBody}${detail ? ` ${detail}` : ""}`;
+        case "invalid_extension_id":
+          return `${copy.extensionUnavailableBody}${detail ? ` ${detail}` : ""}`;
+        case "invalid_payload":
           return `${copy.invalidAccountBody}${detail ? ` ${detail}` : ""}`;
+        case "unsupported_bridge_version":
+          return `${copy.unknownFailureBody}${detail ? ` ${detail}` : ""}`;
         case "storage_failed":
           return `${copy.storageFailureBody}${detail ? ` ${detail}` : ""}`;
         case "extension_unavailable":
@@ -46,128 +44,60 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
           return detail ?? copy.unknownFailureBody;
       }
     },
-    [copy.endpointFailureBody, copy.extensionUnavailableBody, copy.invalidAccountBody, copy.storageFailureBody, copy.unknownFailureBody, copy.validationRejectedBody]
+    [copy.extensionUnavailableBody, copy.invalidAccountBody, copy.invalidOriginBody, copy.storageFailureBody, copy.unknownFailureBody]
   );
 
   const closeOverlay = useCallback(() => {
     router.replace(METIS_AUTH_SUCCESS_PATH);
   }, [router]);
 
+  const retryHref = queryExtensionId
+    ? `/sign-in?source=extension&extensionId=${encodeURIComponent(queryExtensionId)}`
+    : "/sign-in?source=extension";
+
   useEffect(() => {
-    let timeoutId: number | undefined;
     let cancelled = false;
 
-    async function handoffToExtension() {
-      // The bridge only runs on the exact success route and known website
-      // origins so this page cannot become a general message relay.
-      if (!isAllowedBridgeOrigin(window.location.origin) || window.location.pathname !== METIS_AUTH_SUCCESS_PATH) {
-        setStatus("error");
-        setErrorMessage(copy.invalidOriginBody);
+    async function connectExtension() {
+      const response = await sendBridgeSync({
+        account,
+        queryExtensionId,
+      });
+
+      if (cancelled) {
         return;
       }
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!session?.access_token || !session.user) {
-        setStatus("error");
-        setErrorMessage(copy.invalidSessionBody);
+      if (response.ok) {
+        setStatus("acknowledged");
+        setErrorMessage(null);
         return;
       }
 
-      const payload: MetisAuthSuccessMessage = {
-        type: "METIS_AUTH_SUCCESS",
-        source: "metis-web",
-        version: 1,
-        session: {
-          accessToken: session.access_token,
-          expiresAt: session.expires_at ?? null,
-          user: {
-            id: session.user.id,
-            email: session.user.email ?? null,
-          },
-        },
-      };
-
-      function onMessage(event: MessageEvent) {
-        if (event.origin !== window.location.origin) {
-          return;
-        }
-
-        if (cancelled) {
-          return;
-        }
-
-        if (isMetisAuthSuccessAck(event.data)) {
-          window.clearTimeout(timeoutId);
-          setStatus("acknowledged");
-          return;
-        }
-
-        if (isMetisAuthFailureAck(event.data)) {
-          window.clearTimeout(timeoutId);
-          setStatus("error");
-          setErrorMessage(
-            describeFailure(event.data.reason, event.data.detail, event.data.endpoint)
-          );
-        }
-      }
-
-      window.addEventListener("message", onMessage);
-      window.postMessage(payload, window.location.origin);
-
-      timeoutId = window.setTimeout(() => {
-        if (!cancelled) {
-          setStatus("error");
-          setErrorMessage(
-            `${copy.extensionUnavailableBody} Expected reply on ${window.location.origin}${window.location.pathname}.`
-          );
-        }
-      }, 4500);
-
-      return () => {
-        window.removeEventListener("message", onMessage);
-        window.clearTimeout(timeoutId);
-      };
+      setStatus("error");
+      setErrorMessage(describeFailure(response.reason, response.detail));
     }
 
-    let cleanup: (() => void) | undefined;
-    void handoffToExtension().then((nextCleanup) => {
-      cleanup = nextCleanup;
-    });
+    void connectExtension();
 
     return () => {
       cancelled = true;
-      cleanup?.();
-      if (timeoutId) {
-        window.clearTimeout(timeoutId);
-      }
     };
-  }, [
-    closeOverlay,
-    copy.extensionUnavailableBody,
-    copy.invalidOriginBody,
-    copy.invalidSessionBody,
-    describeFailure,
-    supabase
-  ]);
+  }, [account, describeFailure, queryExtensionId]);
 
   const title =
     status === "acknowledged"
       ? copy.successLabel
       : status === "error"
-        ? copy.invalidSessionTitle
+        ? copy.failureTitle
         : copy.title;
 
   const body =
     status === "acknowledged"
       ? copy.successBody
-      : status === "fallback"
-        ? copy.extensionUnavailableBody
-        : status === "error"
-          ? errorMessage ?? copy.invalidSessionBody
-          : copy.body;
+      : status === "error"
+        ? errorMessage ?? copy.unknownFailureBody
+        : copy.body;
 
   return (
     <div className="w-full rounded-[30px] border border-white/10 bg-[rgba(17,29,43,0.96)] p-8 text-white shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur">
@@ -195,7 +125,7 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
           {copy.closeLabel}
         </button>
         <Link
-          href="/sign-in?source=extension"
+          href={retryHref}
           className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-5 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/8 hover:text-white"
         >
           {copy.retryLabel}

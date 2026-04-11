@@ -9,6 +9,7 @@ export const metadata = createPrivateMetadata({
 type AccountSettingsPageProps = {
   searchParams?: Promise<{
     auth?: string;
+    extensionId?: string;
     intent?: string;
     source?: string;
   }>;
@@ -20,6 +21,7 @@ export default async function AccountSettingsPage({ searchParams }: AccountSetti
     <AccountSectionPage
       section="settings"
       auth={params?.auth}
+      extensionId={params?.extensionId}
       intent={params?.intent}
       source={params?.source}
     />

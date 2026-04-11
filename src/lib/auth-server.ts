@@ -51,7 +51,10 @@ export async function requireAuthenticatedUser(): Promise<AuthenticatedUserDetai
   return user;
 }
 
-export async function redirectIfAuthenticated(source?: MetisAuthSource | null) {
+export async function redirectIfAuthenticated(
+  source?: MetisAuthSource | null,
+  extensionId?: string | null
+) {
   const user = await getAuthenticatedUserOrNull();
 
   if (user) {
@@ -59,6 +62,17 @@ export async function redirectIfAuthenticated(source?: MetisAuthSource | null) {
       redirect("/account-deleted");
     }
 
-    redirect(isExtensionAuthSource(source) ? `${METIS_AUTH_SUCCESS_PATH}?source=${source}` : "/account");
+    if (isExtensionAuthSource(source)) {
+      const url = new URL(METIS_AUTH_SUCCESS_PATH, "https://metis.zward.studio");
+      url.searchParams.set("source", source);
+
+      if (extensionId) {
+        url.searchParams.set("extensionId", extensionId);
+      }
+
+      redirect(`${url.pathname}${url.search}`);
+    }
+
+    redirect("/account");
   }
 }

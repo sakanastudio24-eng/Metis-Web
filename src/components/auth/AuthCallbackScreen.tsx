@@ -15,6 +15,7 @@ type AuthCallbackScreenProps = {
   code: string | null;
   error: string | null;
   errorDescription: string | null;
+  extensionId: string | null;
   intent: string | null;
   nextPath: string | null;
   source: string | null;
@@ -25,6 +26,7 @@ export function AuthCallbackScreen({
   code,
   error,
   errorDescription,
+  extensionId,
   intent,
   nextPath,
   source,
@@ -43,6 +45,9 @@ export function AuthCallbackScreen({
 
       if (parsedSource) {
         failure.searchParams.set("source", parsedSource);
+      }
+      if (extensionId) {
+        failure.searchParams.set("extensionId", extensionId);
       }
       if (magicLinkMode === "local") {
         failure.searchParams.set("magic_link", "local");
@@ -93,6 +98,9 @@ export function AuthCallbackScreen({
       if (parsedSource) {
         success.searchParams.set("source", parsedSource);
       }
+      if (extensionId) {
+        success.searchParams.set("extensionId", extensionId);
+      }
       // Delete re-auth returns through the shared callback so the account
       // overlay can reopen in place instead of sending people to a second page.
       if (!parsedSource && redirectPath === "/account/settings" && intent === "delete-account") {
@@ -103,7 +111,7 @@ export function AuthCallbackScreen({
     }
 
     void completeCallback();
-  }, [code, error, errorDescription, intent, magicLinkMode, nextPath, router, source, supabase]);
+  }, [code, error, errorDescription, extensionId, intent, magicLinkMode, nextPath, router, source, supabase]);
 
   return (
     <div className="auth-shell flex min-h-screen items-center justify-center px-4 py-10">
