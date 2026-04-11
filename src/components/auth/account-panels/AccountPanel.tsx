@@ -1,4 +1,4 @@
-import { Crown, Globe, LogOut, Mail, TrendingUp } from "lucide-react";
+import { Crown, Globe, Link2, LogOut, Mail, TrendingUp } from "lucide-react";
 
 import { authCopy } from "@/content/authCopy";
 import {
@@ -27,9 +27,10 @@ type AccountPanelProps = {
   user: DashboardUser;
   emailConfirmed: boolean;
   onSignOut: () => void;
+  onConnectExtension: () => void;
 };
 
-export function AccountPanel({ user, emailConfirmed, onSignOut }: AccountPanelProps) {
+export function AccountPanel({ user, emailConfirmed, onSignOut, onConnectExtension }: AccountPanelProps) {
   const copy = authCopy.dashboard.account;
 
   return (
@@ -59,26 +60,48 @@ export function AccountPanel({ user, emailConfirmed, onSignOut }: AccountPanelPr
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={onSignOut}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 7,
-              borderRadius: 10,
-              border: "1px solid rgba(255,255,255,0.08)",
-              background: "transparent",
-              padding: "9px 14px",
-              color: TXT_DIM,
-              fontFamily: FONT_SANS,
-              fontSize: 13,
-              cursor: "pointer",
-            }}
-          >
-            <LogOut size={14} />
-            Sign out
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+            <button
+              type="button"
+              onClick={onConnectExtension}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 7,
+                borderRadius: 10,
+                border: "1px solid rgba(220,94,94,0.34)",
+                background: "rgba(220,94,94,0.12)",
+                padding: "9px 14px",
+                color: TXT,
+                fontFamily: FONT_SANS,
+                fontSize: 13,
+                cursor: "pointer",
+              }}
+            >
+              <Link2 size={14} />
+              Connect to extension
+            </button>
+            <button
+              type="button"
+              onClick={onSignOut}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 7,
+                borderRadius: 10,
+                border: "1px solid rgba(255,255,255,0.08)",
+                background: "transparent",
+                padding: "9px 14px",
+                color: TXT_DIM,
+                fontFamily: FONT_SANS,
+                fontSize: 13,
+                cursor: "pointer",
+              }}
+            >
+              <LogOut size={14} />
+              Sign out
+            </button>
+          </div>
         </div>
       </Card>
 

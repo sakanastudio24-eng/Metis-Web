@@ -35,7 +35,7 @@ export async function AccountSectionPage({ section, auth, intent, source }: Acco
         authConfirmed={auth === "confirmed"}
       />
       {section === "settings" && bridgeSource ? (
-        <AuthOverlay>
+        <AuthOverlay closeHref="/account/settings">
           <AuthSuccessBridge email={user.email} />
         </AuthOverlay>
       ) : null}

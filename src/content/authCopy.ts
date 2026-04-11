@@ -62,7 +62,7 @@ export const authCopy = {
     invalidOriginTitle: "Unsupported origin",
     invalidOriginBody: "This connection overlay only runs on the approved Metis website origins.",
     extensionUnavailableBody:
-      "The extension did not respond to the connection request. Reload the extension, then try sign-in again.",
+      "The website posted the connection request, but the extension never replied. Check that Metis 0.14.4 or newer is reloaded in chrome://extensions, keep this settings tab open on metis.zward.studio, and then try sign-in again from the extension.",
     endpointFailureBody:
       "The extension could not reach the Metis account validation endpoint.",
     validationRejectedBody:

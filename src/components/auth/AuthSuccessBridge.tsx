@@ -120,7 +120,9 @@ export function AuthSuccessBridge({ email }: AuthSuccessBridgeProps) {
       timeoutId = window.setTimeout(() => {
         if (!cancelled) {
           setStatus("error");
-          setErrorMessage(copy.extensionUnavailableBody);
+          setErrorMessage(
+            `${copy.extensionUnavailableBody} Expected reply on ${window.location.origin}${window.location.pathname}.`
+          );
         }
       }, 4500);
 

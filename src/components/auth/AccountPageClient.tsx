@@ -212,6 +212,7 @@ function renderPanel({
   emailConfirmed,
   provider,
   onSignOut,
+  onConnectExtension,
   onOpenDelete,
 }: {
   active: Exclude<NavId, "api">;
@@ -219,6 +220,7 @@ function renderPanel({
   emailConfirmed: boolean;
   provider: string;
   onSignOut: () => void;
+  onConnectExtension: () => void;
   onOpenDelete: () => void;
 }) {
   // Only one dashboard panel is visible at a time, so the heavy panel modules
@@ -232,7 +234,7 @@ function renderPanel({
       return <SettingsPanel onOpenDelete={onOpenDelete} />;
     case "account":
     default:
-      return <AccountPanel user={user} emailConfirmed={emailConfirmed} onSignOut={onSignOut} />;
+      return <AccountPanel user={user} emailConfirmed={emailConfirmed} onSignOut={onSignOut} onConnectExtension={onConnectExtension} />;
   }
 }
 
@@ -315,6 +317,15 @@ export function AccountPageClient({
       await supabase.auth.signOut();
       router.replace("/sign-in");
     });
+  }
+
+  function handleConnectExtension() {
+    setActive("settings");
+    setIsMobileNavOpen(false);
+    if (deleteOpen) {
+      setDeleteOpen(false);
+    }
+    router.push("/account/settings?source=extension");
   }
 
   function openDeleteOverlay() {
@@ -563,14 +574,15 @@ export function AccountPageClient({
               exit={{ opacity: 0, y: 6 }}
               transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
             >
-              {renderPanel({
-                active,
-                user,
-                emailConfirmed,
-                provider,
-                onSignOut: handleSignOut,
-                onOpenDelete: openDeleteOverlay,
-              })}
+            {renderPanel({
+              active,
+              user,
+              emailConfirmed,
+              provider,
+              onSignOut: handleSignOut,
+              onConnectExtension: handleConnectExtension,
+              onOpenDelete: openDeleteOverlay,
+            })}
             </motion.div>
           </AnimatePresence>
 

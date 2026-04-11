@@ -7,9 +7,10 @@ import { useRouter } from "next/navigation";
 
 type AuthOverlayProps = {
   children: ReactNode;
+  closeHref?: string;
 };
 
-export function AuthOverlay({ children }: AuthOverlayProps) {
+export function AuthOverlay({ children, closeHref = "/" }: AuthOverlayProps) {
   const router = useRouter();
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export function AuthOverlay({ children }: AuthOverlayProps) {
         type="button"
         aria-label="Close auth overlay"
         className="absolute inset-0 bg-[rgba(6,1,1,0.78)] backdrop-blur-[14px]"
-        onClick={() => router.replace("/")}
+        onClick={() => router.replace(closeHref)}
       />
       <div className="relative z-10 w-full max-w-[500px]">{children}</div>
     </div>
