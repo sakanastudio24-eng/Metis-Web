@@ -79,7 +79,7 @@ export function AccountPanel({ user, emailConfirmed, onSignOut, onConnectExtensi
               }}
             >
               <Link2 size={14} />
-              Connect to extension
+              {copy.connectAppLabel}
             </button>
             <button
               type="button"

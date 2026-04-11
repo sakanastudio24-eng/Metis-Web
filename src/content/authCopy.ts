@@ -145,12 +145,8 @@ export const authCopy = {
     securityTitle: "Security",
     securityBody: "Review your secure access settings and the sign-in methods connected to this account.",
     securityCta: "Open security settings",
-    settingsSectionTitle: "Metis settings",
-    settingsSectionBody: "Account settings live here on the website. Extension controls stay in the browser extension.",
-    appSettingsTitle: "App settings",
-    appSettingsBody: "Use the browser extension for scan behavior, refresh preferences, motion, and saved history controls.",
-    appSettingsLinkLabel: "Extension settings",
-    appSettingsLinkState: "Managed in extension",
+    settingsSectionTitle: "Account controls",
+    settingsSectionBody: "Website-owned account controls live here, including connected access and account removal.",
     signOutLabel: "Sign out",
   },
   dashboard: {
@@ -163,7 +159,7 @@ export const authCopy = {
       { id: "account", label: "Account", subtitle: "Identity, verification, and connected access" },
       { id: "security", label: "Security", subtitle: "Sign-in method, 2FA preview, and staged account protection" },
       { id: "pricing", label: "Plan & Pricing", subtitle: "Free access and Plus Beta enrollment" },
-      { id: "settings", label: "Settings", subtitle: "Extension settings entry point and in-product controls" },
+      { id: "settings", label: "Settings", subtitle: "Connected access and account removal" },
       { id: "api", label: "API Beta", subtitle: "Staged API access, beta keys, and rollout status" },
     ],
     account: {
@@ -181,6 +177,7 @@ export const authCopy = {
       usageSummary: "Account-backed usage",
       usageDetail: "Current account usage window",
       usageDelta: "Current window",
+      connectAppLabel: "Connect app",
     },
     apiBeta: {
       title: "API Beta",
@@ -256,10 +253,7 @@ export const authCopy = {
     },
     settings: {
       title: "Settings",
-      body: "Keep account settings on the website and extension behavior settings inside the extension.",
-      appSettingsTitle: "App settings",
-      appSettingsBody: "The extension remains the single place for scan controls, refresh preferences, and saved-history actions.",
-      appSettingsState: "Managed in extension",
+      body: "Keep website-owned account controls here and leave extension-only behavior inside the extension itself.",
       removeAccountTitle: "Remove account",
       removeAccountBody: "Open the website danger zone when you need to confirm account removal.",
       removeAccountState: "Danger zone",

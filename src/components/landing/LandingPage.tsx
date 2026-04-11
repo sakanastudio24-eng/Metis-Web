@@ -217,18 +217,18 @@ export function LandingPage() {
                           <span style={{ fontFamily: FONT_SANS, fontSize: 13, fontWeight: 600, color: "white" }}>{title}</span>
                           {rank === 1 ? <span style={{ borderRadius: 999, padding: "2px 8px", background: "rgba(255,215,0,0.15)", color: "#ffd700", fontFamily: FONT_SANS, fontSize: 9, fontWeight: 700 }}>{copy.fixes.fixFirstLabel}</span> : null}
                         </div>
-                        <span style={{ borderRadius: 999, padding: "4px 10px", background: "rgba(34,197,94,0.15)", color: "#4ade80", fontFamily: FONT_SANS, fontSize: 11, fontWeight: 700 }}>
+                        <span style={{ borderRadius: 999, padding: "6px 12px", background: "rgba(34,197,94,0.18)", color: "#86efac", fontFamily: FONT_SANS, fontSize: 13, fontWeight: 800, letterSpacing: "-0.01em" }}>
                           {copy.fixes.saveLabel(saving)}
                         </span>
                       </div>
                       <div style={{ padding: "14px 16px 16px", background: "rgba(0,0,0,0.14)", display: "flex", flexDirection: "column", gap: 10 }}>
                         <div>
-                          <p style={{ fontFamily: FONT_SANS, fontSize: 10, color: "rgba(255,245,240,0.28)", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0, marginBottom: 4 }}>{copy.fixes.rootCauseLabel}</p>
-                          <p style={{ fontFamily: FONT_SANS, fontSize: 12, color: "rgba(255,245,240,0.55)", lineHeight: 1.55, margin: 0 }}>{rootCause}</p>
+                          <p style={{ fontFamily: FONT_SANS, fontSize: 11, color: "rgba(255,245,240,0.52)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0, marginBottom: 6, fontWeight: 700 }}>{copy.fixes.rootCauseLabel}</p>
+                          <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: "rgba(255,245,240,0.82)", lineHeight: 1.65, margin: 0 }}>{rootCause}</p>
                         </div>
                         <div style={{ borderRadius: 10, padding: "10px 12px", background: "rgba(255,255,255,0.04)", borderLeft: `3px solid ${color}` }}>
-                          <p style={{ fontFamily: FONT_SANS, fontSize: 10, color, textTransform: "uppercase", letterSpacing: "0.07em", margin: 0, marginBottom: 4 }}>{copy.fixes.fixLabel}</p>
-                          <p style={{ fontFamily: FONT_SANS, fontSize: 12, color: "rgba(255,245,240,0.7)", lineHeight: 1.55, margin: 0 }}>{fix}</p>
+                          <p style={{ fontFamily: FONT_SANS, fontSize: 11, color, textTransform: "uppercase", letterSpacing: "0.08em", margin: 0, marginBottom: 6, fontWeight: 700 }}>{copy.fixes.fixLabel}</p>
+                          <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: "rgba(255,245,240,0.84)", lineHeight: 1.65, margin: 0 }}>{fix}</p>
                         </div>
                       </div>
                     </div>
@@ -275,16 +275,12 @@ export function LandingPage() {
                     <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: TEXT_W_DIM, margin: 0, lineHeight: 1 }}>{landingAnalysis.resultSummary}</p>
                   </div>
                 </div>
-
-                <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                  <LandingPrimaryCta variant="solution" />
-                </div>
               </div>
             </section>
           </div>
 
-          <div className="hidden xl:block" style={{ width: 380, flexShrink: 0, paddingTop: 80, alignSelf: "flex-start" }}>
-            <div style={{ position: "sticky", top: 80 }}>
+          <div className="hidden lg:block" style={{ width: "min(380px, 34vw)", minWidth: 320, flexShrink: 0, paddingTop: 104, alignSelf: "flex-start" }}>
+            <div style={{ position: "sticky", top: 112 }}>
               <LandingChromeClient mockupOnly />
             </div>
           </div>
