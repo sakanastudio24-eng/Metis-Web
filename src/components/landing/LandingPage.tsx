@@ -8,9 +8,9 @@ import { frontFacingCopy, landingAnalysis } from "@/content/frontFacingCopy";
 const RED = "#dc5e5e";
 const CREAM = "#FFF5F0";
 const DARK_BLUE = "#0c1623";
-const TEXT_W = "#FFF5F0";
-const TEXT_W_DIM = "rgba(255,245,240,0.65)";
-const TEXT_W_DIM2 = "rgba(255,245,240,0.38)";
+const TEXT_W = "#FFFFFF";
+const TEXT_W_DIM = "#FFFFFF";
+const TEXT_W_DIM2 = "#FFFFFF";
 const TEXT_R = "#dc5e5e";
 const TEXT_R_DIM = "rgba(180,50,50,0.6)";
 const CARD_BG = "rgba(0,0,0,0.10)";
@@ -223,12 +223,12 @@ export function LandingPage() {
                       </div>
                       <div style={{ padding: "14px 16px 16px", background: "rgba(0,0,0,0.14)", display: "flex", flexDirection: "column", gap: 10 }}>
                         <div>
-                          <p style={{ fontFamily: FONT_SANS, fontSize: 11, color: "rgba(255,245,240,0.52)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0, marginBottom: 6, fontWeight: 700 }}>{copy.fixes.rootCauseLabel}</p>
-                          <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: "rgba(255,245,240,0.82)", lineHeight: 1.65, margin: 0 }}>{rootCause}</p>
+                          <p style={{ fontFamily: FONT_SANS, fontSize: 11, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0, marginBottom: 6, fontWeight: 700 }}>{copy.fixes.rootCauseLabel}</p>
+                          <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: "#FFFFFF", lineHeight: 1.65, margin: 0 }}>{rootCause}</p>
                         </div>
                         <div style={{ borderRadius: 10, padding: "10px 12px", background: "rgba(255,255,255,0.04)", borderLeft: `3px solid ${color}` }}>
                           <p style={{ fontFamily: FONT_SANS, fontSize: 11, color, textTransform: "uppercase", letterSpacing: "0.08em", margin: 0, marginBottom: 6, fontWeight: 700 }}>{copy.fixes.fixLabel}</p>
-                          <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: "rgba(255,245,240,0.84)", lineHeight: 1.65, margin: 0 }}>{fix}</p>
+                          <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: "#FFFFFF", lineHeight: 1.65, margin: 0 }}>{fix}</p>
                         </div>
                       </div>
                     </div>
@@ -312,7 +312,8 @@ export function LandingPage() {
                 <br />
                 {copy.footer.heading[1]}
               </h2>
-              <p style={{ fontFamily: FONT_SANS, fontSize: 16, color: "rgba(255,245,240,0.5)", lineHeight: 1.6, margin: 0, marginBottom: 36, maxWidth: 400 }}>{copy.footer.body}</p>
+              <p style={{ fontFamily: FONT_SANS, fontSize: 16, color: "#FFFFFF", lineHeight: 1.6, margin: 0, marginBottom: 36, maxWidth: 400 }}>{copy.footer.body}</p>
+
               <LandingFooterSignup />
             </div>
 
@@ -329,7 +330,7 @@ export function LandingPage() {
                     fontFamily: FONT_SANS,
                     fontSize: 16,
                     fontWeight: 500,
-                    color: "rgba(255,245,240,0.62)",
+                    color: "#FFFFFF",
                     margin: 0,
                     lineHeight: 1.6,
                     maxWidth: 420,
@@ -343,7 +344,7 @@ export function LandingPage() {
 
               <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 {copy.footer.links.map(({ label, href }) => (
-                  <Link key={label} href={href} style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: FONT_SANS, fontSize: 14, color: "rgba(255,245,240,0.45)", textDecoration: "none", padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                  <Link key={label} href={href} style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: FONT_SANS, fontSize: 14, color: "#FFFFFF", textDecoration: "none", padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                     {label}
                   </Link>
                 ))}
@@ -354,7 +355,7 @@ export function LandingPage() {
                   fontFamily: FONT_SANS,
                   fontSize: 13,
                   fontWeight: 500,
-                  color: "rgba(255,245,240,0.42)",
+                  color: "#FFFFFF",
                   margin: 0,
                 }}
               >
