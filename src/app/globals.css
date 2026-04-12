@@ -179,14 +179,31 @@
   }
 }
 
-@media (max-width: 1279px) {
+.metis-sticky-rail {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  .metis-sticky-rail {
+    display: block;
+    width: min(380px, 34vw);
+    min-width: 260px;
+    flex-shrink: 0;
+    align-self: flex-start;
+    position: sticky;
+    top: 112px;
+    height: fit-content;
+  }
+}
+
+@media (max-width: 767px) {
   .metis-shell {
     flex-direction: column;
     gap: 0 !important;
   }
 }
 
-@media (max-width: 959px) {
+@media (max-width: 767px) {
   .metis-page {
     padding-bottom: 92px;
   }
