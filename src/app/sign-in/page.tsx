@@ -11,8 +11,10 @@ export const metadata = createPrivateMetadata({
 
 type SignInPageProps = {
   searchParams?: Promise<{
+    email?: string;
     extensionId?: string;
     error?: string;
+    intent?: string;
     magic_link?: string;
     message?: string;
     source?: string;
@@ -22,11 +24,13 @@ type SignInPageProps = {
 export default async function SignInPage({ searchParams }: SignInPageProps) {
   const params = searchParams ? await searchParams : undefined;
   const source = getAuthSource(params?.source);
-  await redirectIfAuthenticated(source, params?.extensionId ?? null);
+  await redirectIfAuthenticated(source, params?.extensionId ?? null, params?.intent ?? null);
 
   return (
     <HomeWithAuthOverlay
       extensionId={params?.extensionId ?? null}
+      initialEmail={params?.email ?? null}
+      intent={params?.intent ?? null}
       initialView="login"
       source={source}
       useLocalMagicLinkCallback={isLocalMagicLinkCallbackEnabled(params?.magic_link)}

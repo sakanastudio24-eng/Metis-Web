@@ -6,6 +6,8 @@ import { LandingPage } from "@/components/landing/LandingPage";
 
 type HomeWithAuthOverlayProps = {
   extensionId?: string | null;
+  initialEmail?: string | null;
+  intent?: string | null;
   initialView: "signup" | "login";
   source?: MetisAuthSource | null;
   useLocalMagicLinkCallback?: boolean;
@@ -15,6 +17,8 @@ type HomeWithAuthOverlayProps = {
 
 export function HomeWithAuthOverlay({
   extensionId = null,
+  initialEmail = null,
+  intent = null,
   initialView,
   source = null,
   useLocalMagicLinkCallback = false,
@@ -27,6 +31,8 @@ export function HomeWithAuthOverlay({
       <AuthOverlay>
         <AuthScreen
           extensionId={extensionId}
+          initialEmail={initialEmail}
+          intent={intent}
           initialView={initialView}
           source={source}
           useLocalMagicLinkCallback={useLocalMagicLinkCallback}

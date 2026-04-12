@@ -17,7 +17,9 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type AuthScreenProps = {
   extensionId?: string | null;
+  initialEmail?: string | null;
   initialView: "signup" | "login";
+  intent?: string | null;
   source?: MetisAuthSource | null;
   useLocalMagicLinkCallback?: boolean;
   initialError?: string | null;
@@ -329,7 +331,9 @@ const OAUTH_PROVIDERS = [
 
 export function AuthScreen({
   extensionId = null,
+  initialEmail = null,
   initialView,
+  intent = null,
   source = null,
   useLocalMagicLinkCallback = false,
   initialError = null,
@@ -347,8 +351,20 @@ export function AuthScreen({
   const [sentTo, setSentTo] = useState("");
   const [isPending, startTransition] = useTransition();
   const callbackNextPath = source === METIS_EXTENSION_SOURCE ? METIS_AUTH_SUCCESS_PATH : undefined;
-  const alternateRouteHref =
-    source === METIS_EXTENSION_SOURCE ? `${routeCopy.alternateHref}?source=${METIS_EXTENSION_SOURCE}` : routeCopy.alternateHref;
+  const alternateRouteSearch = new URLSearchParams();
+  if (source === METIS_EXTENSION_SOURCE) {
+    alternateRouteSearch.set("source", METIS_EXTENSION_SOURCE);
+  }
+  if (extensionId) {
+    alternateRouteSearch.set("extensionId", extensionId);
+  }
+  if (intent) {
+    alternateRouteSearch.set("intent", intent);
+  }
+  if (initialEmail) {
+    alternateRouteSearch.set("email", initialEmail);
+  }
+  const alternateRouteHref = alternateRouteSearch.size > 0 ? `${routeCopy.alternateHref}?${alternateRouteSearch.toString()}` : routeCopy.alternateHref;
   const intro = source === METIS_EXTENSION_SOURCE ? routeCopy.extensionIntro : routeCopy.intro;
 
   useEffect(() => {
@@ -365,6 +381,12 @@ export function AuthScreen({
   }, [initialError, initialMessage]);
 
   useEffect(() => {
+    if (initialEmail) {
+      setEmail(initialEmail);
+    }
+  }, [initialEmail]);
+
+  useEffect(() => {
     let cancelled = false;
 
     void (async () => {
@@ -377,14 +399,14 @@ export function AuthScreen({
       }
 
       if (!cancelled && data.user) {
-        router.replace("/account");
+        router.replace(intent === "plus_beta" ? "/account?section=pricing" : "/account");
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [router, supabase]);
+  }, [intent, router, supabase]);
 
   function closeOverlay() {
     router.replace("/");
@@ -413,7 +435,7 @@ export function AuthScreen({
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: getAuthCallbackUrl(siteConfig.url, callbackNextPath, source, extensionId),
+          redirectTo: getAuthCallbackUrl(siteConfig.url, callbackNextPath, source, extensionId, intent),
         },
       });
 
@@ -444,7 +466,8 @@ export function AuthScreen({
             callbackNextPath,
             source,
             useLocalMagicLinkCallback,
-            extensionId
+            extensionId,
+            intent
           ),
         },
       });

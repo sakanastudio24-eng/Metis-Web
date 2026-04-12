@@ -37,7 +37,8 @@ export function getAuthCallbackUrl(
   origin?: string,
   nextPath?: string,
   source?: MetisAuthSource | null,
-  extensionId?: string | null
+  extensionId?: string | null,
+  intent?: string | null
 ): string {
   const url = new URL("/auth/callback", getAuthOrigin(origin));
 
@@ -55,6 +56,10 @@ export function getAuthCallbackUrl(
     url.searchParams.set("extensionId", extensionId);
   }
 
+  if (intent) {
+    url.searchParams.set("intent", intent);
+  }
+
   return url.toString();
 }
 
@@ -66,12 +71,13 @@ export function getMagicLinkCallbackUrl(
   nextPath?: string,
   source?: MetisAuthSource | null,
   localOverride = false,
-  extensionId?: string | null
+  extensionId?: string | null,
+  intent?: string | null
 ): string {
   // Magic links default to the real site so cross-device sign-in can finish on
   // a phone or another laptop. Localhost stays opt-in for same-browser testing.
   const url = new URL(
-    getAuthCallbackUrl(localOverride ? "http://localhost:3000" : siteConfig.url, nextPath, source, extensionId)
+    getAuthCallbackUrl(localOverride ? "http://localhost:3000" : siteConfig.url, nextPath, source, extensionId, intent)
   );
 
   if (localOverride) {

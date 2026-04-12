@@ -170,10 +170,10 @@ export const frontFacingCopy = {
     badge: "Beta Access",
     heading: ["Get early access.", "Free, always."],
     body:
-      "Create a free account on the website, complete setup there, and manage Plus Beta access from your account when beta enrollment opens.",
+      "Basic scans work without an account. Create one when you want more scans, saved usage, extension sync, and early access to Metis+ Beta.",
     emailPlaceholder: "you@company.com",
-    submitLabel: "Join beta",
-    successMessage: "You're on the list. We'll be in touch.",
+    submitLabel: "Try Metis Beta",
+    successMessage: "Metis+ Beta is now enabled for this account.",
     links: [
       { label: "zward.studio", href: siteLinks.wardStudioUrl, icon: "externalLink" },
       { label: "GitHub", href: siteLinks.repoUrl, icon: "github" },

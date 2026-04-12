@@ -53,7 +53,8 @@ export async function requireAuthenticatedUser(): Promise<AuthenticatedUserDetai
 
 export async function redirectIfAuthenticated(
   source?: MetisAuthSource | null,
-  extensionId?: string | null
+  extensionId?: string | null,
+  intent?: string | null
 ) {
   const user = await getAuthenticatedUserOrNull();
 
@@ -70,7 +71,15 @@ export async function redirectIfAuthenticated(
         url.searchParams.set("extensionId", extensionId);
       }
 
+      if (intent) {
+        url.searchParams.set("intent", intent);
+      }
+
       redirect(`${url.pathname}${url.search}`);
+    }
+
+    if (intent === "plus_beta") {
+      redirect("/account?section=pricing");
     }
 
     redirect("/account");

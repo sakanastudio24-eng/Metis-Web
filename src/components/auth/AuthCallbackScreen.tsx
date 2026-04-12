@@ -52,6 +52,9 @@ export function AuthCallbackScreen({
       if (magicLinkMode === "local") {
         failure.searchParams.set("magic_link", "local");
       }
+      if (intent) {
+        failure.searchParams.set("intent", intent);
+      }
 
       failure.searchParams.set("error", errorCode);
 
@@ -106,6 +109,20 @@ export function AuthCallbackScreen({
 
       if (user) {
         await bootstrapAccountData(supabase, user);
+
+        if (intent === "plus_beta") {
+          const response = await fetch("/api/account/plus-beta", {
+            method: "POST",
+          });
+
+          if (!response.ok) {
+            console.warn("[Metis bridge] plus beta enrollment did not complete during callback", {
+              status: response.status,
+            });
+          } else {
+            console.info("[Metis bridge] plus beta enrollment completed during callback");
+          }
+        }
       }
 
       const success = new URL(redirectPath, window.location.origin);
