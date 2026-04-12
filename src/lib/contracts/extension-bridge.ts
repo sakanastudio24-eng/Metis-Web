@@ -2,6 +2,7 @@ import type { BridgeAccountState } from "@/lib/contracts/communication";
 
 export const METIS_EXTERNAL_BRIDGE_VERSION = 1;
 export const METIS_BRIDGE_SYNC_TYPE = "METIS_BRIDGE_SYNC";
+export const METIS_BRIDGE_DISCONNECT_TYPE = "METIS_BRIDGE_DISCONNECT";
 export const METIS_BRIDGE_SYNC_ACK_TYPE = "METIS_BRIDGE_SYNC_ACK";
 export const METIS_BRIDGE_SYNC_FAILURE_TYPE = "METIS_BRIDGE_SYNC_FAILURE";
 export const METIS_EXTENSION_ID_QUERY_PARAM = "extensionId";
@@ -12,6 +13,20 @@ export type MetisBridgeSyncMessage = {
   source: "metis-web";
   bridgeVersion: 1;
   account: BridgeAccountState;
+  session?: {
+    accessToken: string;
+    expiresAt: number | null;
+    user: {
+      id: string;
+      email: string | null;
+    };
+  };
+};
+
+export type MetisBridgeDisconnectMessage = {
+  type: typeof METIS_BRIDGE_DISCONNECT_TYPE;
+  source: "metis-web";
+  bridgeVersion: 1;
 };
 
 export type MetisBridgeSyncAck = {

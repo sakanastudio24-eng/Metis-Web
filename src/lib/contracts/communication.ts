@@ -28,6 +28,7 @@ export type BridgeAccountState = {
   email: string | null;
   username: string | null;
   scansUsed: number;
+  sitesTracked: number;
   tier: MetisPlan;
   isBeta: boolean;
 };

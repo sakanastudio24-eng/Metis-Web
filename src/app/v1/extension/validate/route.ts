@@ -90,6 +90,7 @@ export async function POST(request: NextRequest) {
           email: dashboard.email,
           username: dashboard.username,
           scansUsed: dashboard.scansUsed,
+          sitesTracked: dashboard.sitesTracked,
           tier: dashboard.tier,
           isBeta: dashboard.isBeta,
         },

@@ -86,10 +86,20 @@ export interface UsageCounterRow {
   updated_at: string;
 }
 
+export interface TrackedSiteRow {
+  user_id: string;
+  origin: string;
+  last_route: string | null;
+  last_scanned_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AccountDataSnapshot {
   profile: ProfileRow;
   usage: UsageCounterRow;
   onboarding: OnboardingAnswersRow | null;
+  sitesTracked: number;
 }
 
 export interface AccountDashboardSnapshot {
@@ -99,6 +109,7 @@ export interface AccountDashboardSnapshot {
   isBeta: boolean;
   onboardingComplete: boolean;
   scansUsed: number;
+  sitesTracked: number;
   periodStart: string;
   periodEnd: string;
 }
@@ -180,9 +191,19 @@ export function getUsageWindow(now = new Date()) {
   };
 }
 
+export function normalizeAccountUsernameInput(value: string | null | undefined) {
+  const normalized = (value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return normalized;
+}
+
 function baseUsernameFromEmail(email: string | null | undefined) {
-  const local = email?.split("@", 1)[0]?.trim().toLowerCase() ?? "";
-  const sanitized = local.replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
+  const local = email?.split("@", 1)[0] ?? "";
+  const sanitized = normalizeAccountUsernameInput(local);
   return sanitized || "metis-user";
 }
 
@@ -273,6 +294,27 @@ function normalizeUsageRow(value: unknown): UsageCounterRow | null {
   };
 }
 
+function normalizeTrackedSiteRow(value: unknown): TrackedSiteRow | null {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const row = value as Record<string, unknown>;
+
+  if (typeof row.user_id !== "string" || typeof row.origin !== "string") {
+    return null;
+  }
+
+  return {
+    user_id: row.user_id,
+    origin: row.origin,
+    last_route: typeof row.last_route === "string" ? row.last_route : null,
+    last_scanned_at: typeof row.last_scanned_at === "string" ? row.last_scanned_at : new Date().toISOString(),
+    created_at: typeof row.created_at === "string" ? row.created_at : new Date().toISOString(),
+    updated_at: typeof row.updated_at === "string" ? row.updated_at : new Date().toISOString(),
+  };
+}
+
 async function getProfileRow(supabase: ClientLike, userId: string) {
   const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).maybeSingle();
 
@@ -301,6 +343,49 @@ async function getUsageRow(supabase: ClientLike, userId: string) {
   }
 
   return normalizeUsageRow(data);
+}
+
+async function getTrackedSiteCount(supabase: ClientLike, userId: string) {
+  const { data, error } = await supabase.from("tracked_sites").select("origin").eq("user_id", userId);
+
+  if (error) {
+    throw error;
+  }
+
+  return Array.isArray(data) ? data.map(normalizeTrackedSiteRow).filter(Boolean).length : 0;
+}
+
+export async function upsertTrackedSite(
+  supabase: ClientLike,
+  userId: string,
+  origin: string,
+  route?: string | null
+) {
+  const { data, error } = await supabase
+    .from("tracked_sites")
+    .upsert(
+      {
+        user_id: userId,
+        origin,
+        last_route: route ?? null,
+        last_scanned_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id,origin" }
+    )
+    .select("*")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  const row = normalizeTrackedSiteRow(data);
+
+  if (!row) {
+    throw new Error("Could not store the tracked site.");
+  }
+
+  return row;
 }
 
 function isUniqueViolation(error: { code?: string } | null | undefined) {
@@ -389,7 +474,36 @@ async function ensureUsageCounterRow(supabase: ClientLike, userId: string) {
   const existing = await getUsageRow(supabase, userId);
 
   if (existing) {
-    return existing;
+    const now = new Date();
+    const currentWindow = getUsageWindow(now);
+    const currentEnd = Date.parse(existing.period_end);
+
+    if (!Number.isNaN(currentEnd) && now.getTime() < currentEnd) {
+      return existing;
+    }
+
+    const { data, error } = await supabase
+      .from("usage_counters")
+      .update({
+        scans_used: 0,
+        period_start: currentWindow.periodStart,
+        period_end: currentWindow.periodEnd,
+      })
+      .eq("user_id", userId)
+      .select("*")
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    const row = normalizeUsageRow(data);
+
+    if (!row) {
+      throw new Error("Could not reset the usage counter row.");
+    }
+
+    return row;
   }
 
   const { periodStart, periodEnd } = getUsageWindow();
@@ -421,15 +535,17 @@ export async function bootstrapAccountData(supabase: ClientLike, user: User): Pr
   const profile = await ensureProfileRow(supabase, user);
   // Usage counters and onboarding answers are independent once the profile row
   // exists, so fetch them in parallel to avoid extra route latency.
-  const [usage, onboarding] = await Promise.all([
+  const [usage, onboarding, sitesTracked] = await Promise.all([
     ensureUsageCounterRow(supabase, user.id),
     getOnboardingRow(supabase, user.id),
+    getTrackedSiteCount(supabase, user.id),
   ]);
 
   return {
     profile,
     usage,
-    onboarding
+    onboarding,
+    sitesTracked,
   };
 }
 
@@ -441,9 +557,85 @@ export function getAccountDashboardSnapshot(data: AccountDataSnapshot): AccountD
     isBeta: data.profile.is_beta,
     onboardingComplete: data.profile.onboarding_complete,
     scansUsed: data.usage.scans_used,
+    sitesTracked: data.sitesTracked,
     periodStart: data.usage.period_start,
     periodEnd: data.usage.period_end
   };
+}
+
+export async function updateProfileUsername(supabase: ClientLike, userId: string, nextUsername: string) {
+  const normalized = normalizeAccountUsernameInput(nextUsername);
+
+  if (!normalized) {
+    throw new Error("Username must include at least one letter or number.");
+  }
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ username: normalized })
+    .eq("id", userId)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  const row = normalizeProfileRow(data);
+
+  if (!row) {
+    throw new Error("Could not update the username.");
+  }
+
+  return row;
+}
+
+export async function enrollAccountInPlusBeta(supabase: ClientLike, userId: string) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({
+      tier: "plus_beta",
+      is_beta: true,
+    })
+    .eq("id", userId)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  const row = normalizeProfileRow(data);
+
+  if (!row) {
+    throw new Error("Could not update Plus Beta access.");
+  }
+
+  return row;
+}
+
+export async function incrementUsageCounter(supabase: ClientLike, userId: string) {
+  const usage = await ensureUsageCounterRow(supabase, userId);
+  const nextScansUsed = usage.scans_used + 1;
+
+  const { data, error } = await supabase
+    .from("usage_counters")
+    .update({ scans_used: nextScansUsed })
+    .eq("user_id", userId)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  const row = normalizeUsageRow(data);
+
+  if (!row) {
+    throw new Error("Could not increment the usage counter.");
+  }
+
+  return row;
 }
 
 export async function saveOnboardingAnswers(

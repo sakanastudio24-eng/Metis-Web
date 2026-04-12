@@ -15,7 +15,6 @@ import {
   LogOut,
   Menu,
   Settings2,
-  Shield,
   Sparkles,
   UserRound,
   X,
@@ -70,13 +69,6 @@ const AccountPanel = dynamic(
   },
 );
 
-const SecurityPanel = dynamic(
-  () => import("@/components/auth/account-panels/SecurityPanel").then((mod) => mod.SecurityPanel),
-  {
-    loading: () => <PanelLoadingCard title="Loading security" />,
-  },
-);
-
 const PricingPanel = dynamic(
   () => import("@/components/auth/account-panels/PricingPanel").then((mod) => mod.PricingPanel),
   {
@@ -96,7 +88,6 @@ const dashboardCopy = authCopy.dashboard;
 const SECTION_ICONS: Record<NavId, React.ElementType> = {
   account: UserRound,
   api: Cpu,
-  security: Shield,
   pricing: Crown,
   settings: Settings2,
 };
@@ -119,6 +110,7 @@ const NAV_VISIBLE = NAV_ACTIVE.map((section) =>
 );
 
 const NAV_SOON = [
+  { icon: Sparkles, label: "Security" },
   { icon: Sparkles, label: "AI insights" },
   { icon: Globe, label: "Reports" },
   { icon: Layers, label: "Deployments" },
@@ -126,7 +118,6 @@ const NAV_SOON = [
 
 const SECTION_HREFS: Record<Exclude<NavId, "api">, string> = {
   account: "/account",
-  security: "/account?section=security",
   pricing: "/account?section=pricing",
   settings: "/account?section=settings",
 };
@@ -245,31 +236,40 @@ function renderPanel({
   active,
   user,
   emailConfirmed,
-  provider,
   onSignOut,
   onConnectExtension,
   onOpenDelete,
+  account,
+  onAccountUpdated,
 }: {
   active: Exclude<NavId, "api">;
   user: DashboardUser;
   emailConfirmed: boolean;
-  provider: string;
   onSignOut: () => void;
   onConnectExtension: () => void;
   onOpenDelete: () => void;
+  account: AccountDashboardSnapshot;
+  onAccountUpdated: (account: AccountDashboardSnapshot) => void;
 }) {
   // Only one dashboard panel is visible at a time, so the heavy panel modules
   // stay split until the matching section is actually opened.
   switch (active) {
-    case "security":
-      return <SecurityPanel provider={provider} />;
     case "pricing":
-      return <PricingPanel user={user} />;
+      return <PricingPanel user={user} onAccountUpdated={onAccountUpdated} />;
     case "settings":
       return <SettingsPanel onOpenDelete={onOpenDelete} />;
     case "account":
     default:
-      return <AccountPanel user={user} emailConfirmed={emailConfirmed} onSignOut={onSignOut} onConnectExtension={onConnectExtension} />;
+      return (
+        <AccountPanel
+          user={user}
+          account={account}
+          emailConfirmed={emailConfirmed}
+          onSignOut={onSignOut}
+          onConnectExtension={onConnectExtension}
+          onAccountUpdated={onAccountUpdated}
+        />
+      );
   }
 }
 
@@ -283,6 +283,7 @@ export function AccountPageClient({
 }: AccountPageClientProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
+  const [accountState, setAccountState] = useState(account);
   const [active, setActive] = useState<Exclude<NavId, "api">>(initialSection);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
@@ -290,23 +291,28 @@ export function AccountPageClient({
   const [isPending, startTransition] = useTransition();
 
   const user = useMemo<DashboardUser>(() => {
-    const baseName = account.username
-      ? titleCase(account.username)
-      : account.email
-        ? titleCase(account.email.split("@")[0] ?? "Metis User")
+    const baseName = accountState.username
+      ? titleCase(accountState.username)
+      : accountState.email
+        ? titleCase(accountState.email.split("@")[0] ?? "Metis User")
         : "Metis User";
 
     return {
       name: baseName,
-      email: account.email,
-      plan: account.tier,
-      isBeta: account.isBeta,
-      scansUsed: account.scansUsed,
-      periodStart: account.periodStart,
-      periodEnd: account.periodEnd,
+      email: accountState.email,
+      plan: accountState.tier,
+      isBeta: accountState.isBeta,
+      scansUsed: accountState.scansUsed,
+      sitesTracked: accountState.sitesTracked,
+      periodStart: accountState.periodStart,
+      periodEnd: accountState.periodEnd,
       provider,
     };
-  }, [account.email, account.isBeta, account.periodEnd, account.periodStart, account.scansUsed, account.tier, account.username, provider]);
+  }, [accountState.email, accountState.isBeta, accountState.periodEnd, accountState.periodStart, accountState.scansUsed, accountState.sitesTracked, accountState.tier, accountState.username, provider]);
+
+  useEffect(() => {
+    setAccountState(account);
+  }, [account]);
 
   useEffect(() => {
     setActive(initialSection);
@@ -370,7 +376,7 @@ export function AccountPageClient({
 
   function closeDeleteOverlay() {
     setDeleteOpen(false);
-    router.replace("/account?section=settings");
+    router.replace(SECTION_HREFS[active]);
   }
 
   const activeSection = NAV_ACTIVE.find((section) => section.id === active) ?? NAV_ACTIVE[0];
@@ -684,10 +690,11 @@ export function AccountPageClient({
               active,
               user,
               emailConfirmed,
-              provider,
               onSignOut: handleSignOut,
               onConnectExtension: handleConnectExtension,
               onOpenDelete: openDeleteOverlay,
+              account: accountState,
+              onAccountUpdated: setAccountState,
             })}
             </motion.div>
           </AnimatePresence>
@@ -716,8 +723,8 @@ export function AccountPageClient({
 
       {deleteOpen ? (
         <DeleteAccountOverlay
-          email={account.email}
-          username={account.username}
+          email={accountState.email}
+          username={accountState.username}
           authConfirmed={authConfirmed}
           onClose={closeDeleteOverlay}
         />

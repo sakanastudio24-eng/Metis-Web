@@ -6,6 +6,7 @@ export type DashboardUser = {
   plan: "free" | "plus_beta" | "paid";
   isBeta: boolean;
   scansUsed: number;
+  sitesTracked: number;
   periodStart: string;
   periodEnd: string;
   provider: string;

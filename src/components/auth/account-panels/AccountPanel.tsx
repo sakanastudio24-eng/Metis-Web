@@ -1,6 +1,11 @@
+"use client";
+
+import { useEffect, useMemo, useState, useTransition } from "react";
+
 import { Crown, Globe, Link2, LogOut, Mail, TrendingUp } from "lucide-react";
 
 import { authCopy } from "@/content/authCopy";
+import type { AccountDashboardSnapshot } from "@/lib/account-data";
 import {
   Avatar,
   Badge,
@@ -25,13 +30,57 @@ import {
 
 type AccountPanelProps = {
   user: DashboardUser;
+  account: AccountDashboardSnapshot;
   emailConfirmed: boolean;
   onSignOut: () => void;
   onConnectExtension: () => void;
+  onAccountUpdated: (account: AccountDashboardSnapshot) => void;
 };
 
-export function AccountPanel({ user, emailConfirmed, onSignOut, onConnectExtension }: AccountPanelProps) {
+export function AccountPanel({
+  user,
+  account,
+  emailConfirmed,
+  onSignOut,
+  onConnectExtension,
+  onAccountUpdated,
+}: AccountPanelProps) {
   const copy = authCopy.dashboard.account;
+  const [draftUsername, setDraftUsername] = useState(account.username);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setDraftUsername(account.username);
+  }, [account.username]);
+
+  const normalizedDraft = useMemo(() => draftUsername.trim().toLowerCase(), [draftUsername]);
+
+  function handleSaveUsername() {
+    setFeedback(null);
+
+    startTransition(async () => {
+      const response = await fetch("/api/account/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: normalizedDraft,
+        }),
+      });
+
+      const payload = (await response.json()) as { detail?: string; account?: AccountDashboardSnapshot };
+
+      if (!response.ok || !payload.account) {
+        setFeedback(payload.detail ?? "Could not update the username.");
+        return;
+      }
+
+      onAccountUpdated(payload.account);
+      setFeedback("Username updated.");
+    });
+  }
 
   return (
     <PanelFrame title={copy.title} body={copy.body}>
@@ -107,6 +156,60 @@ export function AccountPanel({ user, emailConfirmed, onSignOut, onConnectExtensi
 
       <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
         <Card>
+          <SectionLabel>Profile</SectionLabel>
+          <div
+            style={{
+              borderRadius: 12,
+              border: `1px solid ${BD_SOFT}`,
+              background: BG_CARD_2,
+              padding: "14px 16px",
+              marginBottom: 16,
+            }}
+          >
+            <label style={{ display: "block", margin: 0, fontFamily: FONT_SANS, fontSize: 11, color: TXT_FAINT, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Username
+            </label>
+            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", marginTop: 10 }}>
+              <input
+                value={draftUsername}
+                onChange={(event) => setDraftUsername(event.target.value)}
+                style={{
+                  flex: 1,
+                  minWidth: 180,
+                  borderRadius: 10,
+                  border: `1px solid ${BD_SOFT}`,
+                  background: "rgba(255,255,255,0.04)",
+                  color: TXT,
+                  fontFamily: FONT_SANS,
+                  fontSize: 13,
+                  padding: "10px 12px",
+                  outline: "none",
+                }}
+              />
+              <button
+                type="button"
+                onClick={handleSaveUsername}
+                disabled={isPending || normalizedDraft.length === 0 || normalizedDraft === account.username}
+                style={{
+                  borderRadius: 10,
+                  border: "1px solid rgba(220,94,94,0.34)",
+                  background: "rgba(220,94,94,0.12)",
+                  padding: "10px 14px",
+                  color: TXT,
+                  fontFamily: FONT_SANS,
+                  fontSize: 13,
+                  cursor: isPending ? "default" : "pointer",
+                  opacity: isPending || normalizedDraft.length === 0 || normalizedDraft === account.username ? 0.6 : 1,
+                }}
+              >
+                {isPending ? "Saving…" : "Save"}
+              </button>
+            </div>
+            <p style={{ margin: "8px 0 0", fontFamily: FONT_SANS, fontSize: 12, color: feedback === "Username updated." ? GREEN : TXT_FAINT }}>
+              {feedback ?? "Lowercase letters, numbers, dots, dashes, and underscores only."}
+            </p>
+          </div>
+
           <SectionLabel>{copy.connectedAccountsTitle}</SectionLabel>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
@@ -157,6 +260,21 @@ export function AccountPanel({ user, emailConfirmed, onSignOut, onConnectExtensi
               Current account window
             </Badge>
           </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12, marginBottom: 16 }}>
+            <div
+              style={{
+                borderRadius: 12,
+                border: `1px solid ${BD_SOFT}`,
+                background: BG_CARD_2,
+                padding: "14px 16px",
+              }}
+            >
+              <p style={{ margin: 0, fontFamily: FONT_SANS, fontSize: 11, color: TXT_FAINT, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                Sites tracked
+              </p>
+              <p style={{ margin: "8px 0 0", fontFamily: FONT_SERIF, fontSize: 24, letterSpacing: "-0.03em", color: TXT }}>{user.sitesTracked}</p>
+            </div>
+          </div>
           <div
             style={{
               borderRadius: 12,
@@ -169,7 +287,7 @@ export function AccountPanel({ user, emailConfirmed, onSignOut, onConnectExtensi
               Account-backed usage
             </p>
             <p style={{ margin: "8px 0 0", fontFamily: FONT_SANS, fontSize: 13, color: TXT_DIM, lineHeight: 1.6 }}>
-              Scan counts now come from the website account record instead of placeholder dashboard copy.
+              Scan usage and tracked sites now come from the website account record and sync back into the extension on reconnect.
             </p>
           </div>
         </Card>

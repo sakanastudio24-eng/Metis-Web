@@ -1,7 +1,7 @@
 import json
 from datetime import UTC, datetime, timedelta
 from json import JSONDecodeError
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -148,6 +148,58 @@ def fetch_supabase_rest_rows(
     return rows
 
 
+def write_supabase_rest(
+    config: ApiEnv,
+    table: str,
+    payload: dict[str, object] | list[dict[str, object]],
+    method: str = "POST",
+    query: str | None = None,
+    prefer: str | None = None,
+) -> dict[str, object] | list[dict[str, object]] | None:
+    body = json.dumps(payload).encode("utf-8")
+    url = f"{str(config.supabase_url).rstrip('/')}/rest/v1/{table}"
+
+    if query:
+        url = f"{url}?{query}"
+
+    headers = {
+        "Authorization": f"Bearer {config.supabase_service_role_key}",
+        "apikey": config.supabase_service_role_key,
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+
+    if prefer:
+        headers["Prefer"] = prefer
+
+    request = Request(
+        url,
+        data=body,
+        method=method,
+        headers=headers,
+    )
+
+    try:
+        with urlopen(request, timeout=5) as response:
+            raw = response.read().decode("utf-8").strip()
+    except (HTTPError, URLError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Supabase write failed upstream.",
+        ) from exc
+
+    if not raw:
+        return None
+
+    try:
+        return json.loads(raw)
+    except JSONDecodeError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Supabase write failed upstream.",
+        ) from exc
+
+
 class UsageEventPayload(BaseModel):
     type: str
     occurredAt: int
@@ -277,6 +329,148 @@ def fetch_usage_counter_row(user_id: str, config: ApiEnv) -> dict[str, object] |
     return rows[0] if rows else None
 
 
+def fetch_tracked_site_count(user_id: str, config: ApiEnv) -> int:
+    rows = fetch_supabase_rest_rows(
+        config,
+        "tracked_sites",
+        {"user_id": user_id},
+        "origin",
+    )
+    return len(rows)
+
+
+def get_usage_window() -> tuple[str, str]:
+    now = datetime.now(UTC)
+    period_start = datetime(now.year, now.month, 1, tzinfo=UTC)
+
+    if now.month == 12:
+        period_end = datetime(now.year + 1, 1, 1, tzinfo=UTC)
+    else:
+        period_end = datetime(now.year, now.month + 1, 1, tzinfo=UTC)
+
+    return (period_start.isoformat(), period_end.isoformat())
+
+
+def ensure_usage_counter_row(user_id: str, config: ApiEnv) -> dict[str, object]:
+    existing = fetch_usage_counter_row(user_id, config)
+    period_start, period_end = get_usage_window()
+
+    if existing:
+        existing_end = existing.get("period_end")
+
+        if isinstance(existing_end, str):
+            try:
+                parsed_end = datetime.fromisoformat(existing_end.replace("Z", "+00:00"))
+                if datetime.now(UTC) < parsed_end:
+                    return existing
+            except ValueError:
+                pass
+
+        response = write_supabase_rest(
+            config,
+            "usage_counters",
+            {
+                "scans_used": 0,
+                "period_start": period_start,
+                "period_end": period_end,
+            },
+            method="PATCH",
+            query=f"user_id=eq.{quote(user_id, safe='-')}&select=user_id,scans_used,period_start,period_end",
+            prefer="return=representation",
+        )
+        if isinstance(response, list) and response:
+            return response[0]
+        if isinstance(response, dict):
+            return response
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Supabase usage counter update failed upstream.",
+        )
+
+    response = write_supabase_rest(
+        config,
+        "usage_counters",
+        {
+            "user_id": user_id,
+            "scans_used": 0,
+            "period_start": period_start,
+            "period_end": period_end,
+        },
+        method="POST",
+        prefer="return=representation",
+    )
+
+    if isinstance(response, list) and response:
+        return response[0]
+    if isinstance(response, dict):
+        return response
+
+    raise HTTPException(
+        status_code=status.HTTP_502_BAD_GATEWAY,
+        detail="Supabase usage counter insert failed upstream.",
+    )
+
+
+def increment_usage_counter(user_id: str, config: ApiEnv) -> dict[str, object]:
+    existing = ensure_usage_counter_row(user_id, config)
+    next_scans_used = existing.get("scans_used")
+    next_value = next_scans_used + 1 if isinstance(next_scans_used, int) else 1
+
+    response = write_supabase_rest(
+        config,
+        "usage_counters",
+        {"scans_used": next_value},
+        method="PATCH",
+        query=f"user_id=eq.{quote(user_id, safe='-')}&select=user_id,scans_used,period_start,period_end",
+        prefer="return=representation",
+    )
+
+    if isinstance(response, list) and response:
+        return response[0]
+    if isinstance(response, dict):
+        return response
+
+    raise HTTPException(
+        status_code=status.HTTP_502_BAD_GATEWAY,
+        detail="Supabase usage counter increment failed upstream.",
+    )
+
+
+def upsert_tracked_site(user_id: str, route: str, config: ApiEnv) -> dict[str, object]:
+    parsed = urlparse(route)
+
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Route must be an absolute website URL.",
+        )
+
+    origin = f"{parsed.scheme}://{parsed.netloc}"
+    response = write_supabase_rest(
+        config,
+        "tracked_sites",
+        {
+            "user_id": user_id,
+            "origin": origin,
+            "last_route": route,
+            "last_scanned_at": datetime.now(UTC).isoformat(),
+        },
+        method="POST",
+        query="on_conflict=user_id,origin",
+        prefer="resolution=merge-duplicates,return=representation",
+    )
+
+    if isinstance(response, list) and response:
+        return response[0]
+    if isinstance(response, dict):
+        return response
+
+    raise HTTPException(
+        status_code=status.HTTP_502_BAD_GATEWAY,
+        detail="Supabase tracked site upsert failed upstream.",
+    )
+
+
 def derive_account_state(profile: dict[str, object] | None) -> dict[str, object]:
     plan_value = profile.get("tier") if isinstance(profile, dict) else None
     plan = plan_value if isinstance(plan_value, str) and plan_value in {"free", "plus_beta", "paid"} else "free"
@@ -299,6 +493,7 @@ def build_bridge_account_state(
     user: dict[str, object],
     profile: dict[str, object] | None,
     usage: dict[str, object] | None,
+    sites_tracked: int,
 ) -> dict[str, object]:
     email = user.get("email") if isinstance(user.get("email"), str) else None
     username_value = profile.get("username") if isinstance(profile, dict) else None
@@ -310,6 +505,7 @@ def build_bridge_account_state(
         "email": profile.get("email") if isinstance(profile, dict) and isinstance(profile.get("email"), str) else email,
         "username": username_value if isinstance(username_value, str) and username_value else derive_username(email),
         "scansUsed": scans_used_value if isinstance(scans_used_value, int) else 0,
+        "sitesTracked": sites_tracked,
         "tier": tier_value if isinstance(tier_value, str) and tier_value in {"free", "plus_beta", "paid"} else "free",
         "isBeta": is_beta,
     }
@@ -355,11 +551,12 @@ def extension_validate(token: str = Depends(get_bearer_token)) -> dict[str, obje
 
     profile = fetch_profile_row(user_id, config)
     usage = fetch_usage_counter_row(user_id, config)
+    sites_tracked = fetch_tracked_site_count(user_id, config)
     account = derive_account_state(profile)
 
     return {
         "account": account,
-        "bridgeAccount": build_bridge_account_state(user, profile, usage),
+        "bridgeAccount": build_bridge_account_state(user, profile, usage, sites_tracked),
     }
 
 
@@ -372,9 +569,27 @@ def api_events(payload: UsageEventPayload, token: str = Depends(get_bearer_token
 
 @app.post("/api/scan-summary")
 def api_scan_summary(payload: ScanSummaryPayload, token: str = Depends(get_bearer_token)) -> dict[str, object]:
-    user = fetch_authenticated_user(token, get_env())
+    config = get_env()
+    user = fetch_authenticated_user(token, config)
     ensure_active_account(user)
-    return {"accepted": True, "kind": "scan_summary", "route": payload.route}
+    user_id = user.get("id")
+
+    if not isinstance(user_id, str) or not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Supabase auth verification failed upstream.",
+        )
+
+    usage = increment_usage_counter(user_id, config)
+    tracked_site = upsert_tracked_site(user_id, payload.route, config)
+
+    return {
+        "accepted": True,
+        "kind": "scan_summary",
+        "route": payload.route,
+        "scans_used": usage.get("scans_used") if isinstance(usage, dict) else None,
+        "tracked_origin": tracked_site.get("origin") if isinstance(tracked_site, dict) else None,
+    }
 
 
 @app.post("/api/premium-report-request")

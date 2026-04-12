@@ -2,12 +2,14 @@ import { getWebEnv } from "@/lib/env";
 import type { BridgeAccountState } from "@/lib/contracts/communication";
 import { isAllowedBridgeOrigin } from "@/lib/contracts/communication";
 import {
+  METIS_BRIDGE_DISCONNECT_TYPE,
   METIS_BRIDGE_SYNC_TYPE,
   METIS_EXTERNAL_BRIDGE_VERSION,
   METIS_EXTENSION_ID_QUERY_PARAM,
   METIS_LAST_EXTENSION_ID_KEY,
   isBridgeSyncAck,
   isBridgeSyncFailure,
+  type MetisBridgeDisconnectMessage,
   type MetisBridgeSyncAck,
   type MetisBridgeSyncFailure,
   type MetisBridgeSyncMessage,
@@ -16,6 +18,14 @@ import {
 type SendBridgeSyncOptions = {
   account: BridgeAccountState;
   queryExtensionId?: string | null;
+  session?: {
+    accessToken: string;
+    expiresAt: number | null;
+    user: {
+      id: string;
+      email: string | null;
+    };
+  } | null;
 };
 
 export type BridgeSendStage =
@@ -161,7 +171,7 @@ function withDebug<T extends MetisBridgeSyncAck | MetisBridgeSyncFailure>(
 
 function sendMessageToExtension(
   extensionId: string,
-  message: MetisBridgeSyncMessage,
+  message: MetisBridgeSyncMessage | MetisBridgeDisconnectMessage,
   debugBase: Omit<BridgeSyncDebugInfo, "attemptedExtensionId" | "stage" | "detail">
 ): Promise<BridgeSyncResult> {
   const runtime = getChromeRuntime();
@@ -256,6 +266,7 @@ function sendMessageToExtension(
 export async function sendBridgeSync({
   account,
   queryExtensionId,
+  session,
 }: SendBridgeSyncOptions): Promise<BridgeSyncResult> {
   if (typeof window === "undefined") {
     return withDebug(
@@ -319,6 +330,7 @@ export async function sendBridgeSync({
     source: "metis-web",
     bridgeVersion: METIS_EXTERNAL_BRIDGE_VERSION,
     account,
+    session: session ?? undefined,
   };
 
   let lastFailure: MetisBridgeSyncFailure | null = null;
@@ -362,5 +374,110 @@ export async function sendBridgeSync({
             detail: "The website exhausted the allowlisted extension IDs without a response.",
           }
         ))
+  );
+}
+
+export async function sendBridgeDisconnect(queryExtensionId?: string | null): Promise<BridgeSyncResult> {
+  if (typeof window === "undefined") {
+    return withDebug(
+      buildFailure("unknown", "Bridge disconnect can only run in the browser."),
+      {
+        currentOrigin: null,
+        currentPath: null,
+        queryExtensionId: queryExtensionId ?? null,
+        configuredExtensionIds: [],
+        candidateExtensionIds: [],
+        attemptedExtensionId: null,
+        stage: "origin_check",
+        detail: "Bridge disconnect was called outside the browser.",
+      }
+    );
+  }
+
+  const currentOrigin = window.location.origin;
+  const currentPath = `${window.location.pathname}${window.location.search}`;
+
+  if (!isAllowedBridgeOrigin(currentOrigin)) {
+    return withDebug(
+      buildFailure("invalid_origin", `Bridge disconnect is not allowed from ${currentOrigin}.`),
+      {
+        currentOrigin,
+        currentPath,
+        queryExtensionId: queryExtensionId ?? null,
+        configuredExtensionIds: [],
+        candidateExtensionIds: [],
+        attemptedExtensionId: null,
+        stage: "origin_check",
+        detail: `Origin ${currentOrigin} is not allowed for the bridge.`,
+      }
+    );
+  }
+
+  const configuredIds = getConfiguredExtensionIds();
+  const candidates = buildCandidateExtensionIds(configuredIds, queryExtensionId);
+  const debugBase = {
+    currentOrigin,
+    currentPath,
+    queryExtensionId: queryExtensionId ?? null,
+    configuredExtensionIds: configuredIds,
+  };
+
+  if (!Array.isArray(candidates)) {
+    return withDebug(candidates, {
+      ...debugBase,
+      candidateExtensionIds: [],
+      attemptedExtensionId: null,
+      stage: "config_check",
+      detail: candidates.detail ?? "No valid extension IDs were available for the disconnect bridge.",
+    });
+  }
+
+  const message: MetisBridgeDisconnectMessage = {
+    type: METIS_BRIDGE_DISCONNECT_TYPE,
+    source: "metis-web",
+    bridgeVersion: METIS_EXTERNAL_BRIDGE_VERSION,
+  };
+
+  let lastFailure: MetisBridgeSyncFailure | null = null;
+
+  for (const extensionId of candidates) {
+    const response = await sendMessageToExtension(extensionId, message, {
+      ...debugBase,
+      candidateExtensionIds: candidates,
+    });
+
+    if (isBridgeSyncAck(response)) {
+      return response;
+    }
+
+    lastFailure = response;
+
+    if (response.reason !== "invalid_extension_id") {
+      return response;
+    }
+  }
+
+  return (
+    lastFailure
+      ? withDebug(lastFailure, {
+          ...debugBase,
+          candidateExtensionIds: candidates,
+          attemptedExtensionId: null,
+          stage: "candidate_selection",
+          detail: lastFailure.detail ?? "The website exhausted the allowlisted extension IDs without a disconnect response.",
+        })
+      : withDebug(
+          buildFailure(
+            "extension_unavailable",
+            "The website could not find a responding allowlisted Metis extension to disconnect."
+          ),
+          {
+            ...debugBase,
+            candidateExtensionIds: candidates,
+            attemptedExtensionId: null,
+            stage: "candidate_selection",
+            detail: "The website exhausted the allowlisted extension IDs without a disconnect response.",
+          }
+        )
   );
 }

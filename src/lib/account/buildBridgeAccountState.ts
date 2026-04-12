@@ -6,6 +6,7 @@ export function buildBridgeAccountState(account: AccountDashboardSnapshot): Brid
     email: account.email,
     username: account.username,
     scansUsed: account.scansUsed,
+    sitesTracked: account.sitesTracked,
     tier: account.tier,
     isBeta: account.isBeta,
   };

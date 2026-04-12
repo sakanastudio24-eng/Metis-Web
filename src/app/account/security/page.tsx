@@ -7,5 +7,5 @@ export const metadata = createPrivateMetadata({
 });
 
 export default async function SecurityPage() {
-  redirect("/account?section=security");
+  redirect("/account");
 }

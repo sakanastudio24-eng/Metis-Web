@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -10,6 +10,7 @@ import { authCopy } from "@/content/authCopy";
 import { METIS_AUTH_SUCCESS_PATH } from "@/lib/contracts/communication";
 import type { BridgeAccountState } from "@/lib/contracts/communication";
 import { sendBridgeSync, type BridgeSyncDebugInfo } from "@/lib/extension/sendBridgeSync";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type BridgeStatus = "posting" | "acknowledged" | "error";
 
@@ -21,6 +22,7 @@ type AuthSuccessBridgeProps = {
 
 export function AuthSuccessBridge({ account, email, queryExtensionId }: AuthSuccessBridgeProps) {
   const router = useRouter();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const copy = authCopy.bridge;
   const [status, setStatus] = useState<BridgeStatus>("posting");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -60,14 +62,29 @@ export function AuthSuccessBridge({ account, email, queryExtensionId }: AuthSucc
     let cancelled = false;
 
     async function connectExtension() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       console.info("[Metis bridge] settings overlay started connect flow", {
         origin: window.location.origin,
         path: `${window.location.pathname}${window.location.search}`,
         queryExtensionId,
+        hasSession: Boolean(session?.access_token),
       });
       const response = await sendBridgeSync({
         account,
         queryExtensionId,
+        session: session?.access_token
+          ? {
+              accessToken: session.access_token,
+              expiresAt: session.expires_at ? session.expires_at * 1000 : null,
+              user: {
+                id: session.user.id,
+                email: session.user.email ?? null,
+              },
+            }
+          : null,
       });
 
       console.info("[Metis bridge] settings overlay received connect result", response);
@@ -93,7 +110,7 @@ export function AuthSuccessBridge({ account, email, queryExtensionId }: AuthSucc
     return () => {
       cancelled = true;
     };
-  }, [account, describeFailure, queryExtensionId]);
+  }, [account, describeFailure, queryExtensionId, supabase]);
 
   const title =
     status === "acknowledged"
