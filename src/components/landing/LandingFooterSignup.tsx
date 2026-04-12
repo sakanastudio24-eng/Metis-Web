@@ -23,7 +23,14 @@ const BENEFITS = {
 
 export function LandingFooterSignup() {
   const router = useRouter();
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const supabase = useMemo(() => {
+    try {
+      return createSupabaseBrowserClient();
+    } catch (error) {
+      console.error("[Metis] landing footer auth client unavailable", error);
+      return null;
+    }
+  }, []);
   const copy = frontFacingCopy.footer;
   const [email, setEmail] = useState("");
   const [connectedEmail, setConnectedEmail] = useState<string | null>(null);
@@ -34,6 +41,10 @@ export function LandingFooterSignup() {
     let cancelled = false;
 
     void (async () => {
+      if (!supabase) {
+        return;
+      }
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -42,6 +53,12 @@ export function LandingFooterSignup() {
         setConnectedEmail(user?.email ?? null);
       }
     })();
+
+    if (!supabase) {
+      return () => {
+        cancelled = true;
+      };
+    }
 
     const {
       data: { subscription },

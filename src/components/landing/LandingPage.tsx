@@ -324,7 +324,17 @@ export function LandingPage() {
                   </div>
                   <span style={{ fontFamily: FONT_SERIF, fontSize: 24, color: CREAM, letterSpacing: "-0.02em" }}>{copy.brand.name}</span>
                 </div>
-                <p style={{ fontFamily: FONT_SANS, fontSize: 13, color: "rgba(255,245,240,0.35)", margin: 0, lineHeight: 1.5 }}>
+                <p
+                  style={{
+                    fontFamily: FONT_SANS,
+                    fontSize: 16,
+                    fontWeight: 500,
+                    color: "rgba(255,245,240,0.62)",
+                    margin: 0,
+                    lineHeight: 1.6,
+                    maxWidth: 420,
+                  }}
+                >
                   {copy.brand.footerTagline}
                   <br />
                   {copy.brand.footerSubline}
@@ -339,7 +349,15 @@ export function LandingPage() {
                 ))}
               </div>
 
-              <p style={{ fontFamily: FONT_SANS, fontSize: 11, color: "rgba(255,245,240,0.2)", margin: 0 }}>
+              <p
+                style={{
+                  fontFamily: FONT_SANS,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "rgba(255,245,240,0.42)",
+                  margin: 0,
+                }}
+              >
                 {copy.brand.footerCopyright}
               </p>
             </div>

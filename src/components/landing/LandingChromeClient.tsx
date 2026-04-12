@@ -18,7 +18,14 @@ type SectionKey = keyof typeof mockupStates;
 const SECTION_KEYS: SectionKey[] = ["hero", "product", "problem", "fixes", "solution"];
 
 export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientProps) {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const supabase = useMemo(() => {
+    try {
+      return createSupabaseBrowserClient();
+    } catch (error) {
+      console.error("[Metis] landing chrome auth client unavailable", error);
+      return null;
+    }
+  }, []);
   const [activeSection, setActiveSection] = useState<SectionKey>("hero");
   const [isSignedIn, setIsSignedIn] = useState(false);
   const isHero = activeSection === "hero";
@@ -49,6 +56,11 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
     let active = true;
 
     async function syncSession() {
+      if (!supabase) {
+        setIsSignedIn(false);
+        return;
+      }
+
       const { data } = await supabase.auth.getUser();
       if (!active) {
         return;
@@ -58,6 +70,12 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
     }
 
     syncSession().catch(() => {});
+
+    if (!supabase) {
+      return () => {
+        active = false;
+      };
+    }
 
     const {
       data: { subscription },

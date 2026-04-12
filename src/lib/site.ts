@@ -1,6 +1,21 @@
-import { getWebEnv } from "@/lib/env";
+function readOptionalPublicUrl(value: string | undefined) {
+  if (typeof value !== "string") {
+    return undefined;
+  }
 
-const env = getWebEnv();
+  const trimmed = value.trim();
+  if (trimmed.length === 0) {
+    return undefined;
+  }
+
+  try {
+    return new URL(trimmed).toString().replace(/\/$/, "");
+  } catch {
+    return undefined;
+  }
+}
+
+const publicApiBaseUrl = readOptionalPublicUrl(process.env.NEXT_PUBLIC_API_BASE_URL);
 
 export const siteConfig = {
   name: "Metis",
@@ -18,8 +33,8 @@ export const siteConfig = {
     "Metis",
   ],
   wardStudioUrl: "https://zward.studio",
-  apiBaseUrl: env.NEXT_PUBLIC_API_BASE_URL,
-  apiEnabled: Boolean(env.NEXT_PUBLIC_API_BASE_URL),
+  apiBaseUrl: publicApiBaseUrl,
+  apiEnabled: Boolean(publicApiBaseUrl),
   repoUrl: "https://github.com/sakanastudio24-eng/Metis-Web",
   extensionRepoDocsUrl: "https://github.com/sakanastudio24-eng/Metis",
 };
