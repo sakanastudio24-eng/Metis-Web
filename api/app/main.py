@@ -132,7 +132,14 @@ def fetch_supabase_rest_rows(
     try:
         with urlopen(request, timeout=5) as response:
             payload = json.loads(response.read().decode("utf-8"))
-    except (HTTPError, URLError, JSONDecodeError) as exc:
+    except HTTPError as exc:
+        if table == "tracked_sites" and _is_missing_tracked_sites_http_error(exc):
+            return []
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Supabase data lookup failed upstream.",
+        ) from exc
+    except (URLError, JSONDecodeError) as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="Supabase data lookup failed upstream.",
@@ -182,7 +189,14 @@ def write_supabase_rest(
     try:
         with urlopen(request, timeout=5) as response:
             raw = response.read().decode("utf-8").strip()
-    except (HTTPError, URLError) as exc:
+    except HTTPError as exc:
+        if table == "tracked_sites" and _is_missing_tracked_sites_http_error(exc):
+            return None
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Supabase write failed upstream.",
+        ) from exc
+    except URLError as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="Supabase write failed upstream.",
@@ -198,6 +212,25 @@ def write_supabase_rest(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="Supabase write failed upstream.",
         ) from exc
+
+
+def _is_missing_tracked_sites_http_error(exc: HTTPError) -> bool:
+    try:
+        raw = exc.read().decode("utf-8")
+    except Exception:
+        return False
+
+    try:
+        payload = json.loads(raw)
+    except JSONDecodeError:
+        return "tracked_sites" in raw and "does not exist" in raw.lower()
+
+    if not isinstance(payload, dict):
+        return False
+
+    code = str(payload.get("code", ""))
+    message = str(payload.get("message", "")).lower()
+    return code == "42P01" or ("tracked_sites" in message and "does not exist" in message)
 
 
 class UsageEventPayload(BaseModel):

@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         kind: "scan_summary",
         route: payload.route,
         scansUsed: usage.scans_used,
-        trackedOrigin: trackedSite.origin,
+        trackedOrigin: trackedSite?.origin ?? origin,
       },
       {
         headers: {

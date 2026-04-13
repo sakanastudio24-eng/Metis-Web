@@ -1,4 +1,4 @@
-import type { SupabaseClient, User } from "@supabase/supabase-js";
+import type { PostgrestError, SupabaseClient, User } from "@supabase/supabase-js";
 
 export type ProfileTier = "free" | "plus_beta" | "paid";
 
@@ -115,6 +115,14 @@ export interface AccountDashboardSnapshot {
 }
 
 type ClientLike = SupabaseClient;
+
+function isMissingTrackedSitesError(error: PostgrestError | null) {
+  if (!error) {
+    return false;
+  }
+
+  return error.code === "42P01" || error.message.toLowerCase().includes("tracked_sites");
+}
 
 export const onboardingOptions = {
   role: [
@@ -349,6 +357,11 @@ async function getTrackedSiteCount(supabase: ClientLike, userId: string) {
   const { data, error } = await supabase.from("tracked_sites").select("origin").eq("user_id", userId);
 
   if (error) {
+    // tracked_sites is additive dashboard telemetry. Missing the follow-up
+    // migration should not block auth callback completion or account access.
+    if (isMissingTrackedSitesError(error)) {
+      return 0;
+    }
     throw error;
   }
 
@@ -376,6 +389,11 @@ export async function upsertTrackedSite(
     .single();
 
   if (error) {
+    // Scan-summary writes should keep working even if tracked_sites has not
+    // been rolled out in every environment yet.
+    if (isMissingTrackedSitesError(error)) {
+      return null;
+    }
     throw error;
   }
 
