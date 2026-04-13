@@ -50,12 +50,14 @@ export function LandingPrimaryCta({ variant }: LandingPrimaryCtaProps) {
         return;
       }
 
-      const { data } = await supabase.auth.getUser();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!active) {
         return;
       }
 
-      setIsSignedIn(Boolean(data.user) && !isDeletedUser(data.user));
+      setIsSignedIn(Boolean(session?.user) && !isDeletedUser(session?.user ?? null));
     }
 
     syncSession().catch(() => {});
@@ -68,8 +70,12 @@ export function LandingPrimaryCta({ variant }: LandingPrimaryCtaProps) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async () => {
-      await syncSession();
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!active) {
+        return;
+      }
+
+      setIsSignedIn(Boolean(session?.user) && !isDeletedUser(session?.user ?? null));
     });
 
     return () => {

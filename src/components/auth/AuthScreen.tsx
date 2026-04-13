@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -340,7 +340,7 @@ export function AuthScreen({
   initialMessage = null,
 }: AuthScreenProps) {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const sharedCopy = authCopy.shared;
   const routeCopy = initialView === "signup" ? authCopy.signUp : authCopy.signIn;
   const [view, setView] = useState<ViewState>("auth");
@@ -390,15 +390,17 @@ export function AuthScreen({
     let cancelled = false;
 
     void (async () => {
-      const { data } = await supabase.auth.getUser();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      if (!cancelled && isDeletedUser(data.user)) {
+      if (!cancelled && isDeletedUser(session?.user ?? null)) {
         await supabase.auth.signOut();
         router.replace("/account-deleted");
         return;
       }
 
-      if (!cancelled && data.user) {
+      if (!cancelled && session?.user) {
         router.replace(intent === "plus_beta" ? "/account?section=pricing" : "/account");
       }
     })();

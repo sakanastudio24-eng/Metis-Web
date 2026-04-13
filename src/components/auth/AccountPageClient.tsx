@@ -238,6 +238,7 @@ function renderPanel({
   emailConfirmed,
   onSignOut,
   onConnectExtension,
+  showConnectAction = true,
   onOpenDelete,
   account,
   onAccountUpdated,
@@ -247,6 +248,7 @@ function renderPanel({
   emailConfirmed: boolean;
   onSignOut: () => void;
   onConnectExtension: () => void;
+  showConnectAction?: boolean;
   onOpenDelete: () => void;
   account: AccountDashboardSnapshot;
   onAccountUpdated: (account: AccountDashboardSnapshot) => void;
@@ -267,6 +269,7 @@ function renderPanel({
           emailConfirmed={emailConfirmed}
           onSignOut={onSignOut}
           onConnectExtension={onConnectExtension}
+          showConnectAction={showConnectAction}
           onAccountUpdated={onAccountUpdated}
         />
       );
@@ -282,7 +285,7 @@ export function AccountPageClient({
   authConfirmed,
 }: AccountPageClientProps) {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [accountState, setAccountState] = useState(account);
   const [active, setActive] = useState<Exclude<NavId, "api">>(initialSection);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -458,63 +461,29 @@ export function AccountPageClient({
   );
 
   const desktopPillNav = (
-    <div
+    <aside
       style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        padding: 6,
-        borderRadius: 999,
-        border: `1px solid ${BD}`,
-        background: BG_CARD,
-        overflowX: "auto",
+        width: 280,
+        flexShrink: 0,
+        padding: "18px 0 24px 24px",
       }}
     >
-      {NAV_VISIBLE.map((section) => {
-        const activeSectionPill = active === section.id && !section.soon;
-        return (
-          <button
-            key={section.id}
-            type="button"
-            onClick={section.soon ? undefined : () => handleSelectSection(section.id)}
-            disabled={section.soon}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              borderRadius: 999,
-              border: activeSectionPill ? `1px solid ${ACCENT_BD}` : "1px solid transparent",
-              background: activeSectionPill ? ACCENT_DIM : "transparent",
-              padding: "10px 14px",
-              color: activeSectionPill ? ACCENT : section.soon ? TXT_FAINT : TXT_DIM,
-              fontFamily: FONT_SANS,
-              fontSize: 12,
-              fontWeight: activeSectionPill ? 700 : 600,
-              whiteSpace: "nowrap",
-              cursor: section.soon ? "default" : "pointer",
-            }}
-          >
-            <section.icon size={14} />
-            <span>{section.label}</span>
-            {section.soon ? (
-              <span
-                style={{
-                  borderRadius: 999,
-                  background: BG_CARD_2,
-                  padding: "2px 7px",
-                  fontSize: 8,
-                  fontWeight: 700,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                }}
-              >
-                {dashboardCopy.navSoonLabel}
-              </span>
-            ) : null}
-          </button>
-        );
-      })}
-    </div>
+      <div
+        style={{
+          position: "sticky",
+          top: 18,
+          borderRadius: 20,
+          border: `1px solid ${BD}`,
+          background: BG_CARD,
+          padding: "0 12px 16px",
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "calc(100vh - 36px)",
+        }}
+      >
+        {navigationContent}
+      </div>
+    </aside>
   );
 
   return (
@@ -596,23 +565,31 @@ export function AccountPageClient({
         ) : null}
       </AnimatePresence>
 
-      <main style={{ minWidth: 0, overflowY: "auto" }}>
-        <div
-          style={{
-            position: "sticky",
-            top: 0,
-            zIndex: 10,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "stretch",
-            gap: 14,
-            padding: isMobileViewport ? "18px" : "18px 32px",
-            background: "#090b10ee",
-            backdropFilter: "blur(14px)",
-            WebkitBackdropFilter: "blur(14px)",
-            borderBottom: `1px solid ${BD}`,
-          }}
-        >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "stretch",
+          minHeight: "100vh",
+        }}
+      >
+        {!isMobileViewport ? desktopPillNav : null}
+        <main style={{ minWidth: 0, overflowY: "auto", flex: 1 }}>
+          <div
+            style={{
+              position: "sticky",
+              top: 0,
+              zIndex: 10,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "stretch",
+              gap: 14,
+              padding: isMobileViewport ? "18px" : "18px 32px",
+              background: "#090b10ee",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
+              borderBottom: `1px solid ${BD}`,
+            }}
+          >
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             {isMobileViewport ? (
               <button
@@ -658,10 +635,12 @@ export function AccountPageClient({
             </div>
             <div style={{ flex: 1 }} />
             <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
-              <HeaderActionButton onClick={handleConnectExtension}>
-                <Link2 size={14} />
-                Connect to extension
-              </HeaderActionButton>
+              {!isMobileViewport ? (
+                <HeaderActionButton onClick={handleConnectExtension}>
+                  <Link2 size={14} />
+                  Connect to app
+                </HeaderActionButton>
+              ) : null}
               <HeaderActionButton subtle onClick={handleSignOut}>
                 <LogOut size={14} />
                 Sign out
@@ -674,10 +653,9 @@ export function AccountPageClient({
               ) : null}
             </div>
           </div>
-          {!isMobileViewport ? desktopPillNav : null}
-        </div>
+          </div>
 
-        <div style={{ padding: isMobileViewport ? "22px 18px 36px" : "28px 32px 48px" }}>
+          <div style={{ padding: isMobileViewport ? "22px 18px 36px" : "28px 32px 48px" }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={active}
@@ -692,6 +670,7 @@ export function AccountPageClient({
               emailConfirmed,
               onSignOut: handleSignOut,
               onConnectExtension: handleConnectExtension,
+              showConnectAction: !isMobileViewport,
               onOpenDelete: openDeleteOverlay,
               account: accountState,
               onAccountUpdated: setAccountState,
@@ -718,8 +697,9 @@ export function AccountPageClient({
           ) : null}
 
           {isPending ? <div style={{ marginTop: 12, fontFamily: FONT_SANS, fontSize: 12, color: TXT_FAINT }}>Updating session…</div> : null}
-        </div>
-      </main>
+          </div>
+        </main>
+      </div>
 
       {deleteOpen ? (
         <DeleteAccountOverlay

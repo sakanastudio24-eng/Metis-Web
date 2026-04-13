@@ -43,7 +43,7 @@ export function SecurityPageClient({
   provider,
 }: SecurityPageClientProps) {
   const copy = authCopy.security;
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(true);
   const [linkedProviders, setLinkedProviders] = useState<string[]>(provider ? [provider] : []);

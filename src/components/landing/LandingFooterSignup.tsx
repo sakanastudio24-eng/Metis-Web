@@ -46,11 +46,11 @@ export function LandingFooterSignup() {
       }
 
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
+        data: { session },
+      } = await supabase.auth.getSession();
 
       if (!cancelled) {
-        setConnectedEmail(user?.email ?? null);
+        setConnectedEmail(session?.user?.email ?? null);
       }
     })();
 

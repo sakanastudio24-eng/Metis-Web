@@ -35,6 +35,7 @@ type AccountPanelProps = {
   onSignOut: () => void;
   onConnectExtension: () => void;
   onAccountUpdated: (account: AccountDashboardSnapshot) => void;
+  showConnectAction?: boolean;
 };
 
 export function AccountPanel({
@@ -44,6 +45,7 @@ export function AccountPanel({
   onSignOut,
   onConnectExtension,
   onAccountUpdated,
+  showConnectAction = true,
 }: AccountPanelProps) {
   const copy = authCopy.dashboard.account;
   const [draftUsername, setDraftUsername] = useState(account.username);
@@ -110,26 +112,28 @@ export function AccountPanel({
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-            <button
-              type="button"
-              onClick={onConnectExtension}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 7,
-                borderRadius: 10,
-                border: "1px solid rgba(220,94,94,0.34)",
-                background: "rgba(220,94,94,0.12)",
-                padding: "9px 14px",
-                color: TXT,
-                fontFamily: FONT_SANS,
-                fontSize: 13,
-                cursor: "pointer",
-              }}
-            >
-              <Link2 size={14} />
-              {copy.connectAppLabel}
-            </button>
+            {showConnectAction ? (
+              <button
+                type="button"
+                onClick={onConnectExtension}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 7,
+                  borderRadius: 10,
+                  border: "1px solid rgba(220,94,94,0.34)",
+                  background: "rgba(220,94,94,0.12)",
+                  padding: "9px 14px",
+                  color: TXT,
+                  fontFamily: FONT_SANS,
+                  fontSize: 13,
+                  cursor: "pointer",
+                }}
+              >
+                <Link2 size={14} />
+                {copy.connectAppLabel}
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={onSignOut}
