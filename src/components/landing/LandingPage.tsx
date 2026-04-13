@@ -75,6 +75,7 @@ export function LandingPage() {
         }}
       >
         <h1
+          className="metis-hero-title"
           style={{
             fontFamily: FONT_SERIF,
             fontSize: "clamp(72px, 12vw, 128px)",

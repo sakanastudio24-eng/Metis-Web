@@ -301,21 +301,26 @@
   }
 
   .metis-hero {
-    align-items: flex-start !important;
-    text-align: left !important;
+    align-items: center !important;
+    text-align: center !important;
     padding: 112px 20px 52px !important;
+  }
+
+  .metis-hero-title {
+    font-size: clamp(88px, 26vw, 112px) !important;
+    margin-bottom: 20px !important;
   }
 
   .metis-hero-stats {
     width: 100%;
-    justify-content: flex-start !important;
+    justify-content: center !important;
     gap: 16px !important;
   }
 
   .metis-hero-stats > div {
     flex: 1 1 calc(50% - 8px);
     min-width: 118px;
-    text-align: left !important;
+    text-align: center !important;
   }
 
   .metis-nav-links {

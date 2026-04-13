@@ -172,7 +172,7 @@ export const frontFacingCopy = {
     body:
       "Basic scans work without an account. Create one when you want more scans, saved usage, extension sync, and early access to Metis+ Beta.",
     emailPlaceholder: "you@company.com",
-    submitLabel: "Try Metis Beta",
+    submitLabel: "Try Metis+ Beta",
     successMessage: "Metis+ Beta is now enabled for this account.",
     links: [
       { label: "zward.studio", href: siteLinks.wardStudioUrl, icon: "externalLink" },
