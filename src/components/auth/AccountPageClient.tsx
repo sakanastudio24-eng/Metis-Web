@@ -11,8 +11,6 @@ import {
   Crown,
   Globe,
   Layers,
-  Link2,
-  LogOut,
   Menu,
   Settings2,
   Sparkles,
@@ -195,39 +193,6 @@ function NavLink({
           {dashboardCopy.navSoonLabel}
         </span>
       ) : null}
-    </button>
-  );
-}
-
-function HeaderActionButton({
-  subtle = false,
-  children,
-  onClick,
-}: {
-  subtle?: boolean;
-  children: ReactNode;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 8,
-        borderRadius: 999,
-        border: subtle ? `1px solid ${BD}` : `1px solid ${ACCENT_BD}`,
-        background: subtle ? BG_CARD : ACCENT_DIM,
-        padding: "10px 14px",
-        color: subtle ? TXT_DIM : TXT,
-        fontFamily: FONT_SANS,
-        fontSize: 12,
-        fontWeight: 700,
-        cursor: "pointer",
-      }}
-    >
-      {children}
     </button>
   );
 }
@@ -460,32 +425,6 @@ export function AccountPageClient({
     </>
   );
 
-  const desktopPillNav = (
-    <aside
-      style={{
-        width: 280,
-        flexShrink: 0,
-        padding: "18px 0 24px 24px",
-      }}
-    >
-      <div
-        style={{
-          position: "sticky",
-          top: 18,
-          borderRadius: 20,
-          border: `1px solid ${BD}`,
-          background: BG_CARD,
-          padding: "0 12px 16px",
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "calc(100vh - 36px)",
-        }}
-      >
-        {navigationContent}
-      </div>
-    </aside>
-  );
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -493,10 +432,28 @@ export function AccountPageClient({
       transition={{ duration: 0.22 }}
       style={{
         minHeight: "100vh",
+        display: "flex",
+        overflow: "hidden",
         background: "#090b10",
         color: TXT,
       }}
     >
+      {!isMobileViewport ? (
+        <aside
+          style={{
+            width: 232,
+            flexShrink: 0,
+            borderRight: `1px solid ${BD}`,
+            background: BG_CARD,
+            padding: "0 12px 16px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {navigationContent}
+        </aside>
+      ) : null}
+
       <AnimatePresence>
         {isMobileViewport && isMobileNavOpen ? (
           <>
@@ -565,32 +522,23 @@ export function AccountPageClient({
         ) : null}
       </AnimatePresence>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "stretch",
-          minHeight: "100vh",
-        }}
-      >
-        {!isMobileViewport ? desktopPillNav : null}
-        <main style={{ minWidth: 0, overflowY: "auto", flex: 1 }}>
+      <main style={{ minWidth: 0, overflowY: "auto", flex: 1 }}>
           <div
             style={{
               position: "sticky",
               top: 0,
               zIndex: 10,
               display: "flex",
-              flexDirection: "column",
-              alignItems: "stretch",
-              gap: 14,
-              padding: isMobileViewport ? "18px" : "18px 32px",
+              alignItems: "center",
+              gap: 16,
+              height: 62,
+              padding: isMobileViewport ? "0 18px" : "0 32px",
               background: "#090b10ee",
               backdropFilter: "blur(14px)",
               WebkitBackdropFilter: "blur(14px)",
               borderBottom: `1px solid ${BD}`,
             }}
           >
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             {isMobileViewport ? (
               <button
                 type="button"
@@ -612,47 +560,18 @@ export function AccountPageClient({
                 <Menu size={16} />
               </button>
             ) : null}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-              <div
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 10,
-                  background: ACCENT,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 14px 30px rgba(220,94,94,0.28)",
-                  flexShrink: 0,
-                }}
-              >
-                <span style={{ fontFamily: FONT_SERIF, fontSize: 16, color: "white", lineHeight: 1 }}>M</span>
-              </div>
-              <div>
-                <p style={{ margin: 0, fontFamily: FONT_SERIF, fontSize: 18, letterSpacing: "-0.01em", color: TXT }}>{dashboardCopy.brandLabel}</p>
-                <p style={{ margin: "2px 0 0", fontFamily: FONT_SANS, fontSize: 11, color: TXT_FAINT }}>{activeSection.subtitle}</p>
-              </div>
+            <div style={{ position: "absolute", left: 0, top: 12, bottom: 12, width: 3, borderRadius: "0 3px 3px 0", background: ACCENT }} />
+            <div>
+              <p style={{ margin: 0, fontFamily: FONT_SERIF, fontSize: 18, letterSpacing: "-0.01em", color: TXT }}>{activeSection.label}</p>
+              <p style={{ margin: "2px 0 0", fontFamily: FONT_SANS, fontSize: 11, color: TXT_FAINT }}>{activeSection.subtitle}</p>
             </div>
             <div style={{ flex: 1 }} />
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
-              {!isMobileViewport ? (
-                <HeaderActionButton onClick={handleConnectExtension}>
-                  <Link2 size={14} />
-                  Connect to app
-                </HeaderActionButton>
-              ) : null}
-              <HeaderActionButton subtle onClick={handleSignOut}>
-                <LogOut size={14} />
-                Sign out
-              </HeaderActionButton>
-              {user.plan === "plus_beta" ? (
-                <Badge>
-                  <Crown size={10} />
-                  {dashboardCopy.betaBadge}
-                </Badge>
-              ) : null}
-            </div>
-          </div>
+            {user.plan === "plus_beta" ? (
+              <Badge>
+                <Crown size={10} />
+                {dashboardCopy.betaBadge}
+              </Badge>
+            ) : null}
           </div>
 
           <div style={{ padding: isMobileViewport ? "22px 18px 36px" : "28px 32px 48px" }}>
@@ -698,8 +617,7 @@ export function AccountPageClient({
 
           {isPending ? <div style={{ marginTop: 12, fontFamily: FONT_SANS, fontSize: 12, color: TXT_FAINT }}>Updating session…</div> : null}
           </div>
-        </main>
-      </div>
+      </main>
 
       {deleteOpen ? (
         <DeleteAccountOverlay
