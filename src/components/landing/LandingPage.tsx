@@ -735,7 +735,9 @@ export function LandingPage() {
           </div>
 
           <div className="metis-sticky-rail">
-            <LandingChromeClient mockupOnly />
+            <div className="metis-sticky-card">
+              <LandingChromeClient mockupOnly />
+            </div>
           </div>
         </div>
       </div>

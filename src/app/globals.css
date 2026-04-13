@@ -190,6 +190,11 @@
     min-width: 260px;
     flex-shrink: 0;
     align-self: flex-start;
+    padding-top: clamp(220px, 18vh, 300px);
+    padding-bottom: clamp(96px, 9vh, 160px);
+  }
+
+  .metis-sticky-card {
     position: sticky;
     top: 112px;
     height: fit-content;
