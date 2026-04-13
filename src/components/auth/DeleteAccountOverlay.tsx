@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { AlertTriangle, CheckCircle2, LoaderCircle, Mail } from "lucide-react";
@@ -127,38 +127,45 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
     });
   }
 
+  function handleBackdropClick() {
+    onClose();
+  }
+
+  function handlePanelClick(event: MouseEvent<HTMLDivElement>) {
+    event.stopPropagation();
+  }
+
   return (
-    <>
-      <button
-        type="button"
-        aria-label="Close delete account overlay"
-        className="fixed inset-0 z-40 bg-[rgba(2,4,8,0.72)] backdrop-blur-[10px]"
-        onClick={onClose}
-      />
-      <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8">
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-          <div className="space-y-3 px-1 text-white">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(2,4,8,0.72)] px-4 py-8"
+      onMouseDown={handleBackdropClick}
+    >
+      <div
+        className="mx-auto flex w-full max-w-5xl flex-col gap-5 text-white"
+        onMouseDown={handlePanelClick}
+      >
+        <div className="space-y-3 px-1">
           <span className="inline-flex items-center gap-2 rounded-full border border-[#dc5e5e]/20 bg-[#dc5e5e]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#ffb8b8]">
             <AlertTriangle className="h-3.5 w-3.5" />
             {copy.eyebrow}
           </span>
           <h1 className="font-serif text-5xl leading-none tracking-[-0.05em] sm:text-6xl">{copy.title}</h1>
           <p className="max-w-2xl text-sm leading-7 text-white/70">{copy.subtitle}</p>
-          </div>
+        </div>
 
-          <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-            <section className="space-y-4 rounded-[30px] border border-[#dc5e5e]/28 bg-[rgba(13,24,37,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur sm:p-8">
+        <div className="grid gap-0 overflow-hidden rounded-[22px] border border-white/10 bg-[#0d1825] shadow-[0_28px_80px_rgba(0,0,0,0.42)] lg:grid-cols-[1.08fr_0.92fr]">
+          <section className="space-y-4 border-b border-white/8 p-6 lg:border-b-0 lg:border-r lg:border-r-white/8 sm:p-8">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#ffb8b8]">{copy.checklistLabel}</p>
             <div className="mt-4 grid gap-3">
               {copy.checklist.map((item) => (
-                <div key={item} className="flex items-start gap-3 rounded-[22px] border border-[#dc5e5e]/18 bg-[rgba(255,255,255,0.04)] px-4 py-3">
+                <div key={item} className="flex items-start gap-3 rounded-[16px] border border-white/8 bg-white/[0.03] px-4 py-3">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 text-[#ffb8b8]" />
                   <p className="text-sm text-white/82">{item}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-6 space-y-3 rounded-[22px] border border-[#dc5e5e]/18 bg-[rgba(255,255,255,0.04)] p-4">
+            <div className="mt-6 space-y-3 rounded-[16px] border border-white/8 bg-white/[0.03] p-4">
               <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">{copy.usernameLabel}</label>
               <input
                 value={typedUsername}
@@ -177,10 +184,10 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
               />
               <p className="text-sm leading-6 text-white/55">{copy.confirmHint}</p>
             </div>
-            </section>
+          </section>
 
-            <aside className="space-y-4 rounded-[30px] border border-[#dc5e5e]/28 bg-[rgba(13,24,37,0.96)] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.52)] backdrop-blur sm:p-8">
-            <div className="rounded-[22px] border border-[#dc5e5e]/18 bg-[rgba(255,255,255,0.04)] p-4">
+          <aside className="space-y-4 p-6 sm:p-8">
+            <div className="rounded-[16px] border border-white/8 bg-white/[0.03] p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#dc5e5e]/10 text-[#ffb8b8]">
                   <Mail className="h-4 w-4" />
@@ -193,7 +200,7 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
             </div>
 
             {!apiEnabled ? (
-              <div className="rounded-[22px] border border-[#dc5e5e]/18 bg-[rgba(255,255,255,0.04)] p-4">
+              <div className="rounded-[16px] border border-white/8 bg-white/[0.03] p-4">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">{copy.unavailableTitle}</p>
                 <p className="mt-2 text-sm leading-6 text-white/62">{copy.unavailableBody}</p>
               </div>
@@ -236,10 +243,9 @@ export function DeleteAccountOverlay({ email, username, authConfirmed, onClose }
               <Button type="button" variant="ghost" className="w-full rounded-full text-white/70 hover:text-white" onClick={onClose}>
                 {copy.cancelLabel}
               </Button>
-            </aside>
-          </div>
+          </aside>
         </div>
       </div>
-    </>
+    </div>
   );
 }
