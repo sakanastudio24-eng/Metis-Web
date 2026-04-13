@@ -145,6 +145,7 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
 
   return (
     <div
+      className="metis-nav-shell"
       style={{
         position: "fixed",
         top: 20,
@@ -155,6 +156,7 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
       }}
     >
       <motion.div
+        className="metis-nav-pill"
         animate={{
           backgroundColor: chromeStyles.background,
           borderColor: chromeStyles.border,
@@ -162,9 +164,9 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
         }}
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          maxWidth: 1100,
+          maxWidth: 980,
           margin: "0 auto",
-          padding: "10px 16px",
+          padding: "8px 14px",
           borderRadius: 999,
           border: "1px solid transparent",
           backdropFilter: "blur(18px)",
@@ -201,8 +203,8 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
           className="hidden md:flex"
           style={{
             alignItems: "center",
-            gap: 6,
-            padding: 4,
+            gap: 4,
+            padding: 3,
             borderRadius: 999,
             background: isHero ? "rgba(220,94,94,0.04)" : "rgba(255,245,240,0.06)",
             border: `1px solid ${isHero ? "rgba(220,94,94,0.1)" : "rgba(255,245,240,0.08)"}`,
@@ -221,7 +223,7 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
                   href={`#${section.key}`}
                   style={{
                     borderRadius: 999,
-                    padding: "9px 14px",
+                    padding: "8px 12px",
                     textDecoration: "none",
                     fontFamily: "var(--font-sans), sans-serif",
                     fontSize: 13,
@@ -259,7 +261,7 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
                 color: chromeStyles.text,
                 textDecoration: "none",
                 whiteSpace: "nowrap",
-                padding: "10px 12px",
+                padding: "8px 10px",
                 borderRadius: 999,
                 transition: "background-color 180ms ease, color 180ms ease",
                 display: "block",
@@ -287,7 +289,7 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
                 fontFamily: "var(--font-sans), sans-serif",
                 fontSize: 13,
                 fontWeight: 700,
-                padding: "10px 16px",
+                padding: "8px 14px",
                 whiteSpace: "nowrap",
                 display: "block",
                 boxShadow: "0 14px 28px rgba(220,94,94,0.28)",
