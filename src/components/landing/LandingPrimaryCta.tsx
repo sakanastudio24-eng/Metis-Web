@@ -31,13 +31,25 @@ const CTA_LABELS = {
 } as const;
 
 export function LandingPrimaryCta({ variant }: LandingPrimaryCtaProps) {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const supabase = useMemo(() => {
+    try {
+      return createSupabaseBrowserClient();
+    } catch (error) {
+      console.error("[Metis] landing primary cta auth client unavailable", error);
+      return null;
+    }
+  }, []);
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
     let active = true;
 
     async function syncSession() {
+      if (!supabase) {
+        setIsSignedIn(false);
+        return;
+      }
+
       const { data } = await supabase.auth.getUser();
       if (!active) {
         return;
@@ -47,6 +59,12 @@ export function LandingPrimaryCta({ variant }: LandingPrimaryCtaProps) {
     }
 
     syncSession().catch(() => {});
+
+    if (!supabase) {
+      return () => {
+        active = false;
+      };
+    }
 
     const {
       data: { subscription },
