@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { LandingChromeClient } from "@/components/landing/LandingChromeClient";
 import { LandingFooterSignup } from "@/components/landing/LandingFooterSignup";
+import { LandingHeroSupport } from "@/components/landing/LandingHeroSupport";
 import { LandingPrimaryCta } from "@/components/landing/LandingPrimaryCta";
 import { frontFacingCopy, landingAnalysis } from "@/content/frontFacingCopy";
 
@@ -105,6 +106,8 @@ export function LandingPage() {
           <br />
           {copy.hero.quote[1]}&rdquo;
         </p>
+
+        <LandingHeroSupport />
 
         <div
           className="metis-hero-actions"

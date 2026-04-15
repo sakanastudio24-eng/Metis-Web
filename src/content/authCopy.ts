@@ -21,7 +21,7 @@ export const authCopy = {
     googleLabel: "Google",
     githubLabel: "GitHub",
     magicLinkLabel: "Send magic link",
-    magicLinkHelper: "Use a passwordless email link if you do not want to use Google or GitHub on this device.",
+    magicLinkHelper: "We’ll send a secure sign-in link to your email.",
     magicLinkSuccess: "Magic link sent. Check your inbox and continue from the email.",
     magicLinkSentTitle: "Check your email",
     magicLinkSentBody: (email: string) => `We sent a secure sign-in link to ${email}. Open the newest email on any device to continue into Metis.`,
@@ -62,7 +62,7 @@ export const authCopy = {
     invalidOriginTitle: "Unsupported origin",
     invalidOriginBody: "This connection overlay only runs on the approved Metis website origins.",
     extensionUnavailableBody:
-      "The website sent a connection request, but the extension did not answer. Check that the published Metis extension is installed, reloaded in chrome://extensions, and still on version 0.14.5 or newer before trying again.",
+      "We couldn’t connect your extension. Try signing in again or open Metis from the extension. Check that the published Metis extension is installed, reloaded in chrome://extensions, and still on version 0.14.5 or newer before trying again.",
     endpointFailureBody:
       "The extension could not reach the Metis account validation endpoint.",
     validationRejectedBody:
@@ -72,7 +72,7 @@ export const authCopy = {
     storageFailureBody:
       "The extension could not save the connected account state locally.",
     unknownFailureBody:
-      "The extension could not finish the connection.",
+      "We couldn’t connect your extension. Try signing in again or open Metis from the extension.",
     debugTitle: "Bridge debug",
     debugOriginLabel: "Origin",
     debugRouteLabel: "Route",
@@ -96,7 +96,7 @@ export const authCopy = {
     completionBody: "Welcome to Metis. Your first setup answers are saved and your account areas are ready to review next.",
     completionBadge: "All set",
     nextStepLabel: "Next step",
-    installExtensionLabel: "Install extension. It's free.",
+    installExtensionLabel: "Install extension (free)",
     openAccountLabel: "Open account settings",
     readyItems: ["Account created", "Preferences saved", "Chrome extension ready to install", "First scan prepared"],
     questions: [
@@ -277,10 +277,11 @@ export const authCopy = {
   deleteAccount: {
     eyebrow: "Danger Zone",
     title: "Delete your account",
-    subtitle: "This removes your website access, signs you out, and blocks this account from using Metis until it is restored later.",
+    subtitle: "This will remove your account and disconnect Metis from your extension.",
     checklistLabel: "This will",
     checklist: [
       "remove your access to Metis",
+      "disconnect Metis from your extension",
       "block this account across the website and backend validation routes",
       "leave the account soft deleted so it can be hard deleted later from the backend",
     ],

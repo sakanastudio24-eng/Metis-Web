@@ -443,6 +443,9 @@ export function ExtensionMockup({
           </span>
           <ChevronRight size={11} style={{ color: "white" }} />
         </button>
+        <p style={{ margin: "10px 0 0", fontSize: 10, lineHeight: 1.6, textAlign: "center", color: "rgba(255,255,255,0.46)" }}>
+          {copy.supportingCopy}
+        </p>
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 10, justifyContent: "center" }}>
           <div
             style={{

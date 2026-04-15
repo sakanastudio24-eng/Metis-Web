@@ -167,7 +167,7 @@ export function LandingFooterSignup() {
                 opacity: isPending ? 0.7 : 1,
               }}
             >
-              {isPending ? "Upgrading…" : "Upgrade (Beta Access)"}
+              {isPending ? "Enabling…" : copy.submitLabel}
             </button>
           </div>
         ) : (

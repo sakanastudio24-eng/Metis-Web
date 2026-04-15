@@ -34,7 +34,13 @@ Header line 2: `Most teams never see the bill.`
 
 Primary CTA: `Start for free`
 
+Supporting line: `Run a scan and see where your app starts getting expensive.`
+
 Secondary CTA: `Watch a scan`
+
+Returning primary CTA: `Open Metis Dash`
+
+Returning supporting line: `Continue where you left off and review your latest scan.`
 
 Stat label: `time to first signal`
 
@@ -130,7 +136,7 @@ Header line 1: `Start free`
 
 Header line 2: `Fix in minutes`
 
-Body: `Create access on the website, manage your account there, then use the extension for the actual scan and report workflow.`
+Body: `Metis starts with simple scans and expands into deeper insights through Plus Beta and staged features.`
 
 Checklist item: `Score any running page in under 2 seconds`
 
@@ -143,6 +149,16 @@ Checklist item: `Keep account settings on the website and extension settings in 
 Result caption: `Minimal Risk`
 
 Primary CTA: `Get early access`
+
+Returning primary CTA: `Open Metis Dash`
+
+### Mockup / demo
+
+Primary CTA: `Open Full Report`
+
+Returning primary CTA: `Open Metis Dash`
+
+Supporting copy: `View detected issues, estimated cost impact, and where to focus first.`
 
 ### Footer
 
@@ -183,6 +199,8 @@ Provider button: `Google`
 Provider button: `GitHub`
 
 Provider button: `Send magic link`
+
+Supporting copy: `We’ll send a secure sign-in link to your email.`
 
 Magic link success: `Magic link sent. Check your inbox and continue from the email.`
 
@@ -232,6 +250,8 @@ Close action: `Close overlay`
 
 Retry action: `Try sign-in again`
 
+Missing-extension state: `We couldn’t connect your extension. Try signing in again or open Metis from the extension.`
+
 Debug header: `Bridge debug`
 
 Debug label: `Origin`
@@ -254,7 +274,7 @@ Eyebrow: `Danger Zone`
 
 Header: `Delete your account`
 
-Body: `This removes your website access, signs you out, and blocks this account from using Metis until it is restored later.`
+Body: `This will remove your account and disconnect Metis from your extension.`
 
 Checklist label: `This will`
 
@@ -330,7 +350,7 @@ Completion badge: `All set`
 
 Inline label: `Next step`
 
-CTA: `Install extension. It's free.`
+CTA: `Install extension (free)`
 
 CTA: `Open account settings`
 
@@ -360,11 +380,15 @@ Eyebrow: `Privacy`
 
 Header: `Privacy policy`
 
-Body: `Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls. If you create an account or use the website auth flow, the information you provide can be used to authenticate you, protect access to your account, and operate the service.`
+Body: `Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls.`
 
-Body: `The website can store account profile data, onboarding answers, usage counters, and connected-account state needed to keep the website and extension bridge coherent. The browser extension remains local-first for scan behavior in this phase unless a feature explicitly says data is being sent or saved.`
+Body: `If you create an account or use the website auth flow, the information you provide is used to authenticate you, protect access to your account, and operate the service.`
 
-Body: `Metis does not position hidden tracking, silent resale of personal information, or surprise data sharing as part of the product strategy. If debugging text, bridge diagnostics, or beta surfaces appear in the product, they are there to explain system state to the user, not to expand data collection without notice.`
+Body: `The website may store account profile data, onboarding answers, usage counters, and connection state needed to keep the website and extension bridge consistent.`
+
+Body: `The browser extension remains local-first for scan behavior in this phase unless a feature explicitly states that data is being sent or saved.`
+
+Body: `Metis does not rely on hidden tracking, silent resale of personal information, or unexpected data sharing as part of the product.`
 
 Back link: `Back to Metis`
 
@@ -374,11 +398,17 @@ Eyebrow: `Terms`
 
 Header: `Terms of use`
 
-Body: `Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, legal copy, security controls, and availability may change as the product evolves.`
+Body: `Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, security controls, and availability may change as the product evolves.`
 
-Body: `You agree not to misuse the website, interfere with auth or account security, attempt to bypass beta access controls, scrape or abuse protected routes, or use the service in a way that harms the product, its operators, or other users. You remain responsible for activity under your account.`
+Body: `You agree not to misuse the website, interfere with authentication or account security, bypass beta access controls, scrape protected routes, or use the service in a way that harms the product or its users.`
 
-Body: `Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability or exact financial outcomes. The extension remains a diagnostic tool, and website account, bridge, and beta features should be treated as released only when the product explicitly says they are live.`
+Body: `You remain responsible for activity under your account.`
+
+Body: `Unless a separate agreement states otherwise, the service is provided without guarantees of uninterrupted availability or exact financial outcomes.`
+
+Body: `Cost insights are estimates and should not be treated as financial guarantees.`
+
+Body: `The extension is a diagnostic tool, and website, bridge, and beta features should be considered active only when explicitly marked as live.`
 
 Back link: `Back to Metis`
 

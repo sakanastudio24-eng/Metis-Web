@@ -47,6 +47,7 @@ export const frontFacingCopy = {
       withIssues: (count: number) => `${count} Issues · By Severity`,
       empty: "No Issues Detected",
     },
+    supportingCopy: "View detected issues, estimated cost impact, and where to focus first.",
     reportCta: "Open Full Report",
     returningReportCta: "Open Metis Dash",
     monthlyWasteLabel: (min: number, max: number) => `~$${min}–$${max}/month est. waste`,
@@ -54,6 +55,8 @@ export const frontFacingCopy = {
   },
   hero: {
     quote: ["Every session has a price.", "Most teams never see the bill."],
+    supportingLine: "Run a scan and see where your app starts getting expensive.",
+    returningSupportingLine: "Continue where you left off and review your latest scan.",
     ctas: {
       primary: "Start for free",
       returningPrimary: "Open Metis Dash",
@@ -154,7 +157,7 @@ export const frontFacingCopy = {
     tag: "The result",
     heading: ["Start free", "Fix in minutes"],
     body:
-      "Create access on the website, manage your account there, then use the extension for the actual scan and report workflow.",
+      "Metis starts with simple scans and expands into deeper insights through Plus Beta and staged features.",
     checklist: [
       "Score any running page in under 2 seconds",
       "See exactly what's costing you, per session",
@@ -210,18 +213,23 @@ export const frontFacingCopy = {
       eyebrow: "Privacy",
       title: "Privacy policy",
       paragraphs: [
-        "Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls. If you create an account or use the website auth flow, the information you provide can be used to authenticate you, protect access to your account, and operate the service.",
-        "The website can store account profile data, onboarding answers, usage counters, and connected-account state needed to keep the website and extension bridge coherent. The browser extension remains local-first for scan behavior in this phase unless a feature explicitly says data is being sent or saved.",
-        "Metis does not position hidden tracking, silent resale of personal information, or surprise data sharing as part of the product strategy. If debugging text, bridge diagnostics, or beta surfaces appear in the product, they are there to explain system state to the user, not to expand data collection without notice.",
+        "Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls.",
+        "If you create an account or use the website auth flow, the information you provide is used to authenticate you, protect access to your account, and operate the service.",
+        "The website may store account profile data, onboarding answers, usage counters, and connection state needed to keep the website and extension bridge consistent.",
+        "The browser extension remains local-first for scan behavior in this phase unless a feature explicitly states that data is being sent or saved.",
+        "Metis does not rely on hidden tracking, silent resale of personal information, or unexpected data sharing as part of the product.",
       ],
     },
     terms: {
       eyebrow: "Terms",
       title: "Terms of use",
       paragraphs: [
-        "Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, legal copy, security controls, and availability may change as the product evolves.",
-        "You agree not to misuse the website, interfere with auth or account security, attempt to bypass beta access controls, scrape or abuse protected routes, or use the service in a way that harms the product, its operators, or other users. You remain responsible for activity under your account.",
-        "Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability or exact financial outcomes. The extension remains a diagnostic tool, and website account, bridge, and beta features should be treated as released only when the product explicitly says they are live.",
+        "Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, security controls, and availability may change as the product evolves.",
+        "You agree not to misuse the website, interfere with authentication or account security, bypass beta access controls, scrape protected routes, or use the service in a way that harms the product or its users.",
+        "You remain responsible for activity under your account.",
+        "Unless a separate agreement states otherwise, the service is provided without guarantees of uninterrupted availability or exact financial outcomes.",
+        "Cost insights are estimates and should not be treated as financial guarantees.",
+        "The extension is a diagnostic tool, and website, bridge, and beta features should be considered active only when explicitly marked as live.",
       ],
     },
     backLink: "Back to Metis",
