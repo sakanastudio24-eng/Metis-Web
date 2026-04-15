@@ -152,13 +152,13 @@ Header line 1: `Get early access.`
 
 Header line 2: `Free, always.`
 
-Body: `Create a free account on the website, complete setup there, and manage Plus Beta access from your account when beta enrollment opens.`
+Body: `Basic scans work without an account. Create one when you want saved setup, account sync, and access to Metis+ Beta when enrollment opens.`
 
 Email placeholder: `you@company.com`
 
-CTA: `Join beta`
+CTA: `Try Metis+ Beta`
 
-Success message: `You're on the list. We'll be in touch.`
+Success message: `Metis+ Beta is now enabled for this account.`
 
 Footer link: `zward.studio`
 
@@ -211,6 +211,42 @@ Security support line: `Protected access for metis.zward.studio`
 Header: `Signing you in...`
 
 Body: `Redirecting...`
+
+## Extension bridge
+
+Eyebrow: `Connection`
+
+Header: `Connecting`
+
+Body: `Stay on this settings page while the website connects your account to the extension.`
+
+Waiting label: `Connecting to extension`
+
+Success header: `Connected`
+
+Success body: `The extension confirmed the connection. You can keep working in settings.`
+
+Failure header: `Connection failed`
+
+Close action: `Close overlay`
+
+Retry action: `Try sign-in again`
+
+Debug header: `Bridge debug`
+
+Debug label: `Origin`
+
+Debug label: `Route`
+
+Debug label: `Query extensionId`
+
+Debug label: `Configured IDs`
+
+Debug label: `Attempted ID`
+
+Debug label: `Stage`
+
+Debug fallback: `Waiting for the website to attempt the external bridge.`
 
 ### Delete account overlay
 
@@ -317,6 +353,34 @@ Question helper: `We'll surface those insights first on your dashboard.`
 Options: `API costs`, `Performance`, `AI spend`, `All of it`
 
 ## Metis Dash
+
+## Privacy page
+
+Eyebrow: `Privacy`
+
+Header: `Privacy policy`
+
+Body: `Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls. If you create an account or use the website auth flow, the information you provide can be used to authenticate you, protect access to your account, and operate the service.`
+
+Body: `The website can store account profile data, onboarding answers, usage counters, and connected-account state needed to keep the website and extension bridge coherent. The browser extension remains local-first for scan behavior in this phase unless a feature explicitly says data is being sent or saved.`
+
+Body: `Metis does not position hidden tracking, silent resale of personal information, or surprise data sharing as part of the product strategy. If debugging text, bridge diagnostics, or beta surfaces appear in the product, they are there to explain system state to the user, not to expand data collection without notice.`
+
+Back link: `Back to Metis`
+
+## Terms page
+
+Eyebrow: `Terms`
+
+Header: `Terms of use`
+
+Body: `Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, legal copy, security controls, and availability may change as the product evolves.`
+
+Body: `You agree not to misuse the website, interfere with auth or account security, attempt to bypass beta access controls, scrape or abuse protected routes, or use the service in a way that harms the product, its operators, or other users. You remain responsible for activity under your account.`
+
+Body: `Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability or exact financial outcomes. The extension remains a diagnostic tool, and website account, bridge, and beta features should be treated as released only when the product explicitly says they are live.`
+
+Back link: `Back to Metis`
 
 Brand label: `Metis Dash`
 

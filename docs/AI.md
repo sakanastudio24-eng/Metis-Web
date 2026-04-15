@@ -58,6 +58,10 @@ Account deletion is a website-owned soft-delete flow. It must stay deliberate, r
 
 `src/content/frontFacingCopy.ts`
 
+`src/app/privacy/page.tsx`
+
+`src/app/terms/page.tsx`
+
 `src/lib/auth.ts`
 
 `src/lib/auth-server.ts`
@@ -113,6 +117,14 @@ If a commit turns out too broad, re-segment it right away.
 Do not inspect `.env` directly.
 
 Update `.env.example` or the docs when the contract changes.
+
+Treat copy as code. Keep the public site, auth, bridge, privacy, and terms text in the content files first, then sync the readable docs.
+
+Use `src/content/frontFacingCopy.ts` for marketing, footer, and legal-page copy.
+
+Use `src/content/authCopy.ts` for auth, onboarding, account, settings, delete-flow, and bridge debug text.
+
+Use `docs/master-copy.md` as the readable mirror of what users actually see, not as a second source of truth.
 
 Use `docs/communication-contracts/README.md` before changing communication behavior across lanes.
 

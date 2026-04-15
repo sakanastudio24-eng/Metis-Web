@@ -170,7 +170,7 @@ export const frontFacingCopy = {
     badge: "Beta Access",
     heading: ["Get early access.", "Free, always."],
     body:
-      "Basic scans work without an account. Create one when you want more scans, saved usage, extension sync, and early access to Metis+ Beta.",
+      "Basic scans work without an account. Create one when you want saved setup, account sync, and access to Metis+ Beta when enrollment opens.",
     emailPlaceholder: "you@company.com",
     submitLabel: "Try Metis+ Beta",
     successMessage: "Metis+ Beta is now enabled for this account.",
@@ -210,18 +210,18 @@ export const frontFacingCopy = {
       eyebrow: "Privacy",
       title: "Privacy policy",
       paragraphs: [
-        "Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls. If you create an account or use the website auth flow, the information you provide can be used to authenticate you, secure your account, and operate the service.",
-        "The browser extension remains local-first for scan behavior in this phase. Website account data and extension scan data are not described as fully synced unless a future feature explicitly says so.",
-        "Metis does not position hidden tracking or resale of personal information as part of the product strategy. Privacy updates should stay explicit as account, beta, and extension-connected features expand.",
+        "Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls. If you create an account or use the website auth flow, the information you provide can be used to authenticate you, protect access to your account, and operate the service.",
+        "The website can store account profile data, onboarding answers, usage counters, and connected-account state needed to keep the website and extension bridge coherent. The browser extension remains local-first for scan behavior in this phase unless a feature explicitly says data is being sent or saved.",
+        "Metis does not position hidden tracking, silent resale of personal information, or surprise data sharing as part of the product strategy. If debugging text, bridge diagnostics, or beta surfaces appear in the product, they are there to explain system state to the user, not to expand data collection without notice.",
       ],
     },
     terms: {
       eyebrow: "Terms",
       title: "Terms of use",
       paragraphs: [
-        "Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, security controls, and availability may change as the product evolves.",
-        "You agree not to misuse the website, interfere with auth or account security, attempt to bypass beta access controls, or use the service in a way that harms the product, its operators, or other users. You remain responsible for activity under your account.",
-        "Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability or exact financial outcomes. The extension remains a diagnostic tool, and any future website-to-extension account bridge should not be assumed complete until explicitly released.",
+        "Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, legal copy, security controls, and availability may change as the product evolves.",
+        "You agree not to misuse the website, interfere with auth or account security, attempt to bypass beta access controls, scrape or abuse protected routes, or use the service in a way that harms the product, its operators, or other users. You remain responsible for activity under your account.",
+        "Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability or exact financial outcomes. The extension remains a diagnostic tool, and website account, bridge, and beta features should be treated as released only when the product explicitly says they are live.",
       ],
     },
     backLink: "Back to Metis",

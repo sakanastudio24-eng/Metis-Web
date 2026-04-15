@@ -72,7 +72,15 @@ export const authCopy = {
     storageFailureBody:
       "The extension could not save the connected account state locally.",
     unknownFailureBody:
-      "The extension could not finish the connection."
+      "The extension could not finish the connection.",
+    debugTitle: "Bridge debug",
+    debugOriginLabel: "Origin",
+    debugRouteLabel: "Route",
+    debugQueryExtensionIdLabel: "Query extensionId",
+    debugConfiguredIdsLabel: "Configured IDs",
+    debugAttemptedIdLabel: "Attempted ID",
+    debugStageLabel: "Stage",
+    debugWaitingBody: "Waiting for the website to attempt the external bridge.",
   },
   loggedIn: {
     eyebrow: "Setup",

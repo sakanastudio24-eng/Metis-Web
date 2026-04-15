@@ -167,16 +167,28 @@ export function AuthSuccessBridge({ account, email, queryExtensionId }: AuthSucc
       ) : null}
 
       <div className="mt-6 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4 text-sm leading-6 text-white/78">
-        <p className="font-semibold text-white">Bridge debug</p>
+        <p className="font-semibold text-white">{copy.debugTitle}</p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          <p className="m-0 text-white/75">Origin: {debugInfo?.currentOrigin ?? window.location.origin}</p>
-          <p className="m-0 text-white/75">Route: {debugInfo?.currentPath ?? `${window.location.pathname}${window.location.search}`}</p>
-          <p className="m-0 text-white/75">Query extensionId: {debugInfo?.queryExtensionId ?? queryExtensionId ?? "none"}</p>
-          <p className="m-0 text-white/75">Configured IDs: {debugInfo?.configuredExtensionIds.length ?? 0}</p>
-          <p className="m-0 text-white/75">Attempted ID: {debugInfo?.attemptedExtensionId ?? "none"}</p>
-          <p className="m-0 text-white/75">Stage: {debugInfo?.stage ?? "waiting"}</p>
+          <p className="m-0 text-white/75">
+            {copy.debugOriginLabel}: {debugInfo?.currentOrigin ?? window.location.origin}
+          </p>
+          <p className="m-0 text-white/75">
+            {copy.debugRouteLabel}: {debugInfo?.currentPath ?? `${window.location.pathname}${window.location.search}`}
+          </p>
+          <p className="m-0 text-white/75">
+            {copy.debugQueryExtensionIdLabel}: {debugInfo?.queryExtensionId ?? queryExtensionId ?? "none"}
+          </p>
+          <p className="m-0 text-white/75">
+            {copy.debugConfiguredIdsLabel}: {debugInfo?.configuredExtensionIds.length ?? 0}
+          </p>
+          <p className="m-0 text-white/75">
+            {copy.debugAttemptedIdLabel}: {debugInfo?.attemptedExtensionId ?? "none"}
+          </p>
+          <p className="m-0 text-white/75">
+            {copy.debugStageLabel}: {debugInfo?.stage ?? "waiting"}
+          </p>
         </div>
-        <p className="mt-3 mb-0 text-white/55">{debugInfo?.detail ?? "Waiting for the website to attempt the external bridge."}</p>
+        <p className="mt-3 mb-0 text-white/55">{debugInfo?.detail ?? copy.debugWaitingBody}</p>
       </div>
     </div>
   );
