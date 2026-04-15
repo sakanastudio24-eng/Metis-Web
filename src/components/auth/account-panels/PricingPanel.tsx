@@ -114,7 +114,7 @@ export function PricingPanel({ user, onAccountUpdated }: PricingPanelProps) {
             </div>
 
             <p style={{ margin: 0, fontFamily: FONT_SERIF, fontSize: 30, letterSpacing: "-0.03em", color: TXT }}>
-              {plusEnabled ? "Advanced access is active" : "Upgrade to Metis+"}
+              {plusEnabled ? "Advanced access is active" : "Try Metis+"}
             </p>
             <p style={{ margin: "10px 0 0", fontFamily: FONT_SANS, fontSize: 13, lineHeight: 1.7, color: TXT_DIM }}>
               {plusEnabled
@@ -146,7 +146,7 @@ export function PricingPanel({ user, onAccountUpdated }: PricingPanelProps) {
               opacity: isPending ? 0.72 : 1,
             }}
           >
-            {plusEnabled ? "Current tier" : isPending ? "Upgrading…" : "Upgrade"}
+            {plusEnabled ? "Current tier" : isPending ? "Trying…" : "Try Metis+"}
           </button>
         </div>
 

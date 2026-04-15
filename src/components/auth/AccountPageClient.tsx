@@ -358,16 +358,6 @@ export function AccountPageClient({
           </div>
           <span style={{ fontFamily: FONT_SERIF, fontSize: 17, letterSpacing: "-0.02em", color: TXT }}>{dashboardCopy.brandLabel}</span>
         </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 10, borderRadius: 12, border: `1px solid ${BD}`, background: BG_CARD_2, padding: "10px 12px" }}>
-          <Avatar user={user} size={30} fontSize={12} />
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <p style={{ margin: 0, fontFamily: FONT_SANS, fontSize: 12, fontWeight: 600, color: TXT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</p>
-            <p style={{ margin: "2px 0 0", fontFamily: FONT_SANS, fontSize: 10, color: TXT_FAINT }}>
-              {formatTierLabel(user.plan, user.isBeta)}
-            </p>
-          </div>
-        </div>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -398,7 +388,40 @@ export function AccountPageClient({
 
       <div style={{ flex: 1 }} />
 
-      <div style={{ borderTop: `1px solid ${BD_SOFT}`, paddingTop: 10, marginTop: 12 }}>
+      <div style={{ borderTop: `1px solid ${BD_SOFT}`, paddingTop: 12, marginTop: 12 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            borderRadius: 12,
+            border: `1px solid ${BD}`,
+            background: BG_CARD_2,
+            padding: "10px 12px",
+            marginBottom: 10,
+          }}
+        >
+          <Avatar user={user} size={30} fontSize={12} />
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <p
+              style={{
+                margin: 0,
+                fontFamily: FONT_SANS,
+                fontSize: 12,
+                fontWeight: 600,
+                color: TXT,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {user.name}
+            </p>
+            <p style={{ margin: "2px 0 0", fontFamily: FONT_SANS, fontSize: 10, color: TXT_FAINT }}>
+              {formatTierLabel(user.plan, user.isBeta)}
+            </p>
+          </div>
+        </div>
         <button
           type="button"
           onClick={() => {
@@ -560,7 +583,6 @@ export function AccountPageClient({
                 <Menu size={16} />
               </button>
             ) : null}
-            <div style={{ position: "absolute", left: 0, top: 12, bottom: 12, width: 3, borderRadius: "0 3px 3px 0", background: ACCENT }} />
             <div>
               <p style={{ margin: 0, fontFamily: FONT_SERIF, fontSize: 18, letterSpacing: "-0.01em", color: TXT }}>{activeSection.label}</p>
               <p style={{ margin: "2px 0 0", fontFamily: FONT_SANS, fontSize: 11, color: TXT_FAINT }}>{activeSection.subtitle}</p>
