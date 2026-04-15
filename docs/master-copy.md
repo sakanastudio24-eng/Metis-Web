@@ -418,10 +418,6 @@ Badge: `Plus Beta`
 
 Section label: `Account`
 
-Section label: `API Beta`
-
-Section label: `Security`
-
 Section label: `Plan & Pricing`
 
 Section label: `Settings`
@@ -447,36 +443,6 @@ Label: `Plus Beta`
 Label: `Connected access`
 
 Label: `Scan usage`
-
-### API Beta section
-
-Nav state: `Visible in navigation as coming soon`
-
-Header: `API Beta`
-
-Body: `Preview the staged API surface for CI checks, deploy hooks, and automated scans without overstating what is live.`
-
-Label: `Beta access status`
-
-Status: `Pending unlock`
-
-Status: `Enabled for Plus Beta`
-
-Body: `API Beta is staged while endpoints, rate limits, and docs are hardened for launch.`
-
-Label: `Beta key preview`
-
-Body: `Keys stay masked until API Beta is enabled for this account.`
-
-CTA: `Join Plus Beta`
-
-CTA: `Docs coming soon`
-
-Security note: `Never paste beta keys into client-side code. Keep all tokens server-side.`
-
-Badge: `Beta gated`
-
-Support label: `Exact endpoint scope lands in docs.`
 
 ### Security section
 
@@ -506,27 +472,57 @@ Body: `These controls stay visible so the dashboard is honest about what is next
 
 Header: `Plan & Pricing`
 
-Body: `Start free, then enroll into Plus Beta when you need deeper dashboard and API access.`
+Body: `Keep Free simple, then request Metis+ Beta on the website when you want deeper access. Billing can wait.`
 
-Plan: `Free`
+Plan: `Metis Free`
 
-Plan: `Plus Beta`
+Body: `No account required to start scanning.`
 
-CTA: `Current plan`
+Pillar: `Scan & detect`
 
-CTA: `Enroll in Plus Beta`
+Pillar items: `Local page scan and analysis`, `Known stack detection`, `Top issues summary`
 
-FAQ: `Can I switch plans later?`
+Pillar: `Understand cost`
 
-Answer: `Yes. Free remains available, and Plus Beta can be enabled or removed during the staged rollout.`
+Pillar items: `Cost risk score with confidence and supporting insight`, `Supporting detail for key issues`
 
-FAQ: `What does Plus Beta unlock?`
+Pillar: `Act & improve`
 
-Answer: `It stages deeper dashboard access, API Beta, and premium rollout features as they harden.`
+Pillar items: `Compact side panel workspace`, `Full report view in-page`, `Basic export document`
 
-FAQ: `Is there a Team plan?`
+Pillar: `Optional account connection`
 
-Answer: `Not in this phase. The dashboard is focused on Free and Plus Beta only.`
+Pillar items: `Sign in to connect your account`, `Popup account status when connected`, `Local settings and scan history`
+
+Plan: `Metis+ Beta`
+
+Body: `Plus Beta unlocks deeper analysis and expanded reports.`
+
+Pillar: `Deeper analysis`
+
+Pillar items: `Full detailed issue rows`, `Cost breakdown section`, `Endpoint-level detail`
+
+Pillar: `Understand scale impact`
+
+Pillar items: `Scale modeling`, `Expanded insight depth`
+
+Pillar: `Act with direction`
+
+Pillar items: `Fix recommendations`, `Fix priority`
+
+Pillar: `Expanded reports`
+
+Pillar items: `Extended export document`, `Cost breakdown`, `Endpoint detail`, `Scale modeling`, `Fix priority`
+
+Pillar: `Access & state`
+
+Pillar items: `Plus badge in panel and report`, `Premium request eligibility`, `Degrade to Free toggle`
+
+CTA: `Try Metis+`
+
+Coming soon: `Reports`, `API Beta`
+
+Body: `Reports and API Beta stay visible here as staged product areas, not as live access claims.`
 
 ### Settings section
 

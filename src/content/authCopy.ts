@@ -219,6 +219,53 @@ export const authCopy = {
     pricing: {
       title: "Plan & Pricing",
       body: "Keep Free simple, then request Metis+ Beta on the website when you want deeper access. Billing can wait.",
+      freeTitle: "Metis Free",
+      freeBody: "No account required to start scanning.",
+      plusTitle: "Metis+ Beta",
+      plusBody: "Plus Beta unlocks deeper analysis and expanded reports.",
+      comingSoonTitle: "Coming soon",
+      comingSoonBody: "Reports and API Beta stay visible here as staged product areas, not as live access claims.",
+      freePillars: [
+        {
+          title: "Scan & detect",
+          items: ["Local page scan and analysis", "Known stack detection", "Top issues summary"],
+        },
+        {
+          title: "Understand cost",
+          items: ["Cost risk score with confidence and supporting insight", "Supporting detail for key issues"],
+        },
+        {
+          title: "Act & improve",
+          items: ["Compact side panel workspace", "Full report view in-page", "Basic export document"],
+        },
+        {
+          title: "Optional account connection",
+          items: ["Sign in to connect your account", "Popup account status when connected", "Local settings and scan history"],
+        },
+      ],
+      plusPillars: [
+        {
+          title: "Deeper analysis",
+          items: ["Full detailed issue rows", "Cost breakdown section", "Endpoint-level detail"],
+        },
+        {
+          title: "Understand scale impact",
+          items: ["Scale modeling", "Expanded insight depth"],
+        },
+        {
+          title: "Act with direction",
+          items: ["Fix recommendations", "Fix priority"],
+        },
+        {
+          title: "Expanded reports",
+          items: ["Extended export document", "Cost breakdown", "Endpoint detail", "Scale modeling", "Fix priority"],
+        },
+        {
+          title: "Access & state",
+          items: ["Plus badge in panel and report", "Premium request eligibility", "Degrade to Free toggle"],
+        },
+      ],
+      comingSoonItems: ["Reports", "API Beta"],
     },
     settings: {
       title: "Settings",

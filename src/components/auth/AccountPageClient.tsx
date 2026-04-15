@@ -106,11 +106,13 @@ const NAV_VISIBLE = NAV_ACTIVE.map((section) =>
         soon: false,
       },
 );
+const NAV_PRIMARY = NAV_VISIBLE.filter((section) => section.id !== "api");
 
 const NAV_SOON = [
+  { icon: Cpu, label: "API Beta" },
+  { icon: Globe, label: "Reports" },
   { icon: Sparkles, label: "Security" },
   { icon: Sparkles, label: "AI insights" },
-  { icon: Globe, label: "Reports" },
   { icon: Layers, label: "Deployments" },
 ];
 
@@ -361,7 +363,7 @@ export function AccountPageClient({
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        {NAV_VISIBLE.map((section) => (
+        {NAV_PRIMARY.map((section) => (
           <NavLink
             key={section.id}
             icon={section.icon}
