@@ -102,9 +102,7 @@ export function LandingPage() {
             maxWidth: 560,
           }}
         >
-          &ldquo;{copy.hero.quote[0]}
-          <br />
-          {copy.hero.quote[1]}&rdquo;
+          &ldquo;{copy.hero.quote}.&rdquo;
         </p>
 
         <LandingHeroSupport />
@@ -142,42 +140,6 @@ export function LandingPage() {
           </a>
         </div>
 
-        <div
-          className="metis-hero-stats"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 40,
-            marginTop: 52,
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          {copy.hero.stats.map(({ value, label }) => (
-            <div key={label} style={{ textAlign: "center" }}>
-              <div
-                style={{
-                  fontFamily: FONT_DISPLAY,
-                  fontSize: 26,
-                  color: RED,
-                  lineHeight: 1,
-                }}
-              >
-                {value}
-              </div>
-              <div
-                style={{
-                  fontFamily: FONT_SANS,
-                  fontSize: 12,
-                  color: TEXT_R_DIM,
-                  marginTop: 4,
-                }}
-              >
-                {label}
-              </div>
-            </div>
-          ))}
-        </div>
       </section>
 
       <div

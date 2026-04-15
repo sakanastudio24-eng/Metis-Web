@@ -28,9 +28,7 @@ Primary CTA: `Try free`
 
 ### Hero
 
-Header line 1: `Every session has a price.`
-
-Header line 2: `Most teams never see the bill.`
+Italic line: `Find what makes your app expensive before it scales`
 
 Primary CTA: `Start for free`
 
@@ -42,12 +40,6 @@ Returning primary CTA: `Open Metis Dash`
 
 Returning supporting line: `Continue where you left off and review your latest scan.`
 
-Stat label: `time to first signal`
-
-Stat label: `pages sampled in a live run`
-
-Stat label: `to understand the first report`
-
 Support copy: `keep going`
 
 ### Product
@@ -56,15 +48,15 @@ Tag: `Product`
 
 Header: `The cost layer your frontend never had`
 
-Body: `Metis was designed to feel calm on the page and serious in the report. It catches what a normal profiler rarely explains: what those requests mean for real spend.`
+Body: `Metis stays calm on the page and serious in the report. It shows what most profilers miss: what those requests mean in real cost.`
 
 Feature title: `Hover-first workflow`
 
-Feature body: `Metis stays lightweight on the page, then opens the deeper workspace in the browser side panel when you want context.`
+Feature body: `Metis stays light on the page, then opens the side panel when you want more context.`
 
 Feature title: `Cost and control`
 
-Feature body: `The product frames waste in plain language: what costs money now, what scales badly later, and what deserves attention first.`
+Feature body: `It frames waste in plain language: what costs money now, what gets worse as you scale, and what to fix first.`
 
 Feature title: `Stack-aware signals`
 
@@ -72,7 +64,7 @@ Feature body: `Frameworks, hosts, AI providers, and third-party scripts are dete
 
 Feature title: `Built for real teams`
 
-Feature body: `The website explains the product cleanly while the extension stays focused on scanning, scoring, and the side-panel workspace.`
+Feature body: `The website handles account and beta access. The extension stays focused on scans, scores, and reports.`
 
 ### Problem
 
@@ -80,7 +72,7 @@ Tag: `The Problem`
 
 Header: `Your frontend is bleeding money every session`
 
-Body: `Unoptimised requests, noisy third-party scripts, and AI-heavy interactions compound quietly. Metis exists to make that waste legible before it becomes a postmortem.`
+Body: `Extra requests, noisy third-party scripts, and AI-heavy interactions add up quietly. Metis makes that cost visible before it turns into cleanup work.`
 
 Issue summary: `5 issues detected · High Risk`
 
@@ -100,7 +92,7 @@ Tag: `How it fixes it`
 
 Header: `Here's exactly what to fix`
 
-Body: `Not vague advice. The product direction is clear: ranked fixes, grounded explanations, and a report that respects how engineering teams actually work.`
+Body: `No vague advice. You get ranked fixes, clear explanations, and a report built for how engineering teams actually work.`
 
 Label: `Root Cause`
 
@@ -136,7 +128,7 @@ Header line 1: `Start free`
 
 Header line 2: `Fix in minutes`
 
-Body: `Metis starts with simple scans and expands into deeper insights through Plus Beta and staged features.`
+Body: `Start with a scan. Go deeper through Plus Beta and staged features when you need more.`
 
 Checklist item: `Score any running page in under 2 seconds`
 
@@ -168,7 +160,7 @@ Header line 1: `Get early access.`
 
 Header line 2: `Free, always.`
 
-Body: `Basic scans work without an account. Create one when you want saved setup, account sync, and access to Metis+ Beta when enrollment opens.`
+Body: `Basic scans work without an account. Create one when you want saved setup, account sync, and access to Metis+ Beta when it opens.`
 
 Email placeholder: `you@company.com`
 

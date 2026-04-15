@@ -54,7 +54,7 @@ export const frontFacingCopy = {
     monthlyProjectionValue: (min: number) => `~$${(min * 10).toLocaleString()}/month`,
   },
   hero: {
-    quote: ["Every session has a price.", "Most teams never see the bill."],
+    quote: "Find what makes your app expensive before it scales",
     supportingLine: "Run a scan and see where your app starts getting expensive.",
     returningSupportingLine: "Continue where you left off and review your latest scan.",
     ctas: {
@@ -62,28 +62,23 @@ export const frontFacingCopy = {
       returningPrimary: "Open Metis Dash",
       secondary: "Watch a scan",
     },
-    stats: [
-      { value: "< 2s", label: "time to first signal" },
-      { value: "5+", label: "pages sampled in a live run" },
-      { value: "$0", label: "to understand the first report" },
-    ],
     scrollNudge: "keep going",
   },
   product: {
     tag: "Product",
     heading: "The cost layer your frontend never had",
     body:
-      "Metis was designed to feel calm on the page and serious in the report. It catches what a normal profiler rarely explains: what those requests mean for real spend.",
+      "Metis stays calm on the page and serious in the report. It shows what most profilers miss: what those requests mean in real cost.",
     features: [
       {
         icon: "activity",
         title: "Hover-first workflow",
-        desc: "Metis stays lightweight on the page, then opens the deeper workspace in the browser side panel when you want context.",
+        desc: "Metis stays light on the page, then opens the side panel when you want more context.",
       },
       {
         icon: "trendingDown",
         title: "Cost and control",
-        desc: "The product frames waste in plain language: what costs money now, what scales badly later, and what deserves attention first.",
+        desc: "It frames waste in plain language: what costs money now, what gets worse as you scale, and what to fix first.",
       },
       {
         icon: "zap",
@@ -93,7 +88,7 @@ export const frontFacingCopy = {
       {
         icon: "shield",
         title: "Built for real teams",
-        desc: "The website explains the product cleanly while the extension stays focused on scanning, scoring, and the side-panel workspace.",
+        desc: "The website handles account and beta access. The extension stays focused on scans, scores, and reports.",
       },
     ],
   },
@@ -101,7 +96,7 @@ export const frontFacingCopy = {
     tag: "The Problem",
     heading: "Your frontend is bleeding money every session",
     body:
-      "Unoptimised requests, noisy third-party scripts, and AI-heavy interactions compound quietly. Metis exists to make that waste legible before it becomes a postmortem.",
+      "Extra requests, noisy third-party scripts, and AI-heavy interactions add up quietly. Metis makes that cost visible before it turns into cleanup work.",
     stats: [
       { value: "24", unit: "avg", label: "API calls per page load" },
       { value: "3.2", unit: "MB", label: "avg payload per session" },
@@ -121,7 +116,7 @@ export const frontFacingCopy = {
     tag: "How it fixes it",
     heading: "Here's exactly what to fix",
     body:
-      "Not vague advice. The product direction is clear: ranked fixes, grounded explanations, and a report that respects how engineering teams actually work.",
+      "No vague advice. You get ranked fixes, clear explanations, and a report built for how engineering teams actually work.",
     rootCauseLabel: "Root Cause",
     fixLabel: "Fix",
     fixFirstLabel: "Fix First",
@@ -157,7 +152,7 @@ export const frontFacingCopy = {
     tag: "The result",
     heading: ["Start free", "Fix in minutes"],
     body:
-      "Metis starts with simple scans and expands into deeper insights through Plus Beta and staged features.",
+      "Start with a scan. Go deeper through Plus Beta and staged features when you need more.",
     checklist: [
       "Score any running page in under 2 seconds",
       "See exactly what's costing you, per session",
@@ -173,7 +168,7 @@ export const frontFacingCopy = {
     badge: "Beta Access",
     heading: ["Get early access.", "Free, always."],
     body:
-      "Basic scans work without an account. Create one when you want saved setup, account sync, and access to Metis+ Beta when enrollment opens.",
+      "Basic scans work without an account. Create one when you want saved setup, account sync, and access to Metis+ Beta when it opens.",
     emailPlaceholder: "you@company.com",
     submitLabel: "Try Metis+ Beta",
     successMessage: "Metis+ Beta is now enabled for this account.",
@@ -197,12 +192,12 @@ export const frontFacingCopy = {
       eyebrow: "Early access",
       title: "Create your Metis account",
       intro:
-        "Create access on the website, accept the legal terms here, and move straight into the onboarding flow before opening the extension.",
+        "Create your account on the website, accept the terms there, and move into setup before opening the extension.",
     },
     stack: [
       { title: "Auth today", body: "Google, GitHub, and magic link all start on the website." },
-      { title: "Account settings", body: "Billing, beta access, and security settings are managed on the website account surfaces." },
-      { title: "Extension role", body: "The browser extension stays focused on scanning, reporting, and extension-local controls." },
+      { title: "Account settings", body: "Billing, beta access, and security settings stay on the website." },
+      { title: "Extension role", body: "The extension stays focused on scanning, reporting, and local controls." },
     ],
     backToSite: "Back to the site",
     needAccount: "Need an account?",
