@@ -22,7 +22,7 @@ Supabase owns identity, sessions, provider auth, magic-link delivery, and callba
 
 The website completes auth at `/auth/callback`.
 
-When auth starts from the extension, the website preserves `source=extension`, lands on `/account/settings?source=extension`, posts the authenticated handoff payload, and waits for extension ACK before trying to close the page.
+When auth starts from the extension, the website preserves `source=extension`, lands on `/account/settings?source=extension`, and starts the direct external bridge from that overlay. The runtime payload and ACK rules live in `external-auth-bridge-contract.md`.
 
 FastAPI does not issue credentials. It verifies protected access where backend proof is needed and owns the narrow contract endpoints that the extension relies on.
 

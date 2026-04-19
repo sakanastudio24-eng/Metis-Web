@@ -1,267 +1,99 @@
 # Metis Auth Contract
 
-This is the website-side copy of the shared auth bridge contract.
+This is the website-side copy of the shared auth contract.
 
-Use this file when changing auth entry points, callback routing, success-page behavior, or backend account validation for the extension bridge.
+Use this file when changing website sign-in entry points, callback routing, auth
+intent propagation, or the account settings overlay that starts the extension
+connection flow.
 
-This is lane 2 inside the broader communication contract system.
+The direct website -> extension runtime message is owned by
+`external-auth-bridge-contract.md`.
 
-## Architecture rule
+## Ownership
 
-- `Metis-Web` owns auth
-- `Metis` owns local runtime
-- the bridge is a one-time handoff, not full sync
-
-The website must stay the identity surface. The extension must not become a second auth system.
-
-## V1 goal
-
-V1 keeps auth web-first and the extension local-first.
-
-The extension stays usable without auth. A bridged website session unlocks connected account behavior and fuller insight access, but base scanning still works locally.
+- `Metis-Web` owns auth, providers, callback routing, and account state
+- `Metis` owns the extension runtime, local storage, and connected UI
+- the website stays the identity source of truth
+- the extension must not become a second auth system
 
 ## Entry flow
 
-When the extension needs website auth, it opens:
+When the extension starts auth, it opens:
 
-- production: `https://metis.zward.studio/sign-in?source=extension`
-- development: `http://localhost:3000/sign-in?source=extension`
+- production: `https://metis.zward.studio/sign-in?source=extension&extensionId=<chrome.runtime.id>`
+- development: `http://localhost:3000/sign-in?source=extension&extensionId=<chrome.runtime.id>`
 
-If sign-up is used instead, the same query rule applies:
+If sign-up is used instead, the same query rules apply:
 
-- `/sign-up?source=extension`
+- `/sign-up?source=extension&extensionId=<chrome.runtime.id>`
+
+The website may also carry:
+
+- `intent=plus_beta`
+- `email=<prefill>`
+
+Those values are routing and UX inputs only. They are not proof of extension
+identity.
 
 ## Callback flow
 
-- website auth completes through `/auth/callback`
+- auth completes through `/auth/callback`
+- normal website auth returns to the normal website destination
 - extension-aware auth resolves into `/account/settings?source=extension`
-- `/account/settings` is the bridge-capable dashboard route for extension-started auth
-- `/auth/success` is compatibility-only and should redirect into `/account/settings?source=extension`
+- `extensionId` is preserved when present
+- `/auth/success` is compatibility-only and should redirect into
+  `/account/settings?source=extension`
 
-## Bridge method
+## Query rules
 
-The bridge uses `window.postMessage`.
+`source=extension` means:
 
-Flow:
+- preserve extension intent through the auth flow
+- callback completion should land on `/account/settings?source=extension`
+- the account settings overlay becomes the visible bridge surface
 
-1. website loads `/account/settings?source=extension`
-2. website reads the authenticated session client-side
-3. website posts `METIS_AUTH_SUCCESS`
-4. content script validates origin, path, and payload
-5. content script forwards the message to background
-6. background stores the bridged auth locally
-7. background validates account state with backend
-8. background broadcasts connected auth state to extension surfaces
-9. extension ACKs the success page so it can close
+`extensionId` means:
 
-## Allowed origins and route
+- the flow started from an installed extension
+- the website may use it only as a routing hint
+- the website must still check it against the configured allowlist before
+  sending any bridge packet
 
-Only accept messages from this exact allowlist:
+## Allowed origins and callbacks
+
+Exact allowed website origins:
 
 - `https://metis.zward.studio`
 - `http://localhost:3000`
+
+Exact callback URLs:
+
+- `https://metis.zward.studio/auth/callback`
+- `http://localhost:3000/auth/callback`
 
 Rules:
 
 - exact string match only
 - no wildcard origins
-- no preview domains
+- no preview domains unless explicitly allowlisted
 - no sibling subdomains
-- localhost is development-only
 
-Only accept auth bridge messages when the page location is:
+## Website responsibilities
 
-- `/account/settings`
+- render sign-in and sign-up
+- preserve `source`, `extensionId`, `intent`, and prefilled email when needed
+- complete auth through `/auth/callback`
+- land extension-aware auth on `/account/settings?source=extension`
+- build the current account snapshot from website-owned tables
+- start the external bridge from the account settings overlay
 
-Ignore all other origins and paths.
+## Out of scope
 
-## Query parameter rule
+This contract does not own:
 
-`source=extension` means:
+- the extension runtime message shape
+- extension storage keys
+- Chrome `externally_connectable`
+- service-worker validation rules
 
-- auth should preserve extension intent through the auth flow
-- callback completion should land on `/account/settings?source=extension`
-- normal website auth behavior should stay unchanged when the parameter is absent
-
-## Website message payload
-
-```ts
-type MetisAuthSuccessMessage = {
-  type: "METIS_AUTH_SUCCESS";
-  source: "metis-web";
-  version: 1;
-  session: {
-    accessToken: string;
-    expiresAt: number | null;
-    user: {
-      id: string;
-      email: string | null;
-    };
-  };
-};
-```
-
-## Extension ACK payload
-
-```ts
-type MetisAuthSuccessAck = {
-  type: "METIS_AUTH_SUCCESS_ACK";
-  source: "metis-extension";
-  version: 1;
-  ok: true;
-};
-```
-
-## Storage rule
-
-The extension stores bridged auth in `chrome.storage.local`.
-
-V1 stores minimal data only:
-
-- access token
-- expiry when available
-- user id
-- user email when available
-- validated account flags
-- validated account snapshot for UI
-- connection timestamp
-
-V1 does not require refresh-token rotation.
-
-Never store service-role secrets or backend-only credentials in the extension.
-
-## Backend validation contract
-
-After storing the basic bridged session, background validates it against backend.
-
-Validation endpoint:
-
-- `POST /v1/extension/validate`
-
-Expected validated state:
-
-- `plan`
-- `plus_beta_enabled`
-- `api_beta_enabled`
-- `allow_plus_ui`
-- `allow_report_email`
-- `bridgeAccount.email`
-- `bridgeAccount.username`
-- `bridgeAccount.scansUsed`
-- `bridgeAccount.tier`
-- `bridgeAccount.isBeta`
-
-Backend validation is the source of truth for extension-side entitlement behavior.
-
-## Extension storage shape
-
-```ts
-type StoredMetisWebSession = {
-  accessToken: string;
-  expiresAt: number | null;
-  user: {
-    id: string;
-    email: string | null;
-  };
-  account: {
-    plan: "free" | "plus_beta" | "paid";
-    plusBetaEnabled: boolean;
-    apiBetaEnabled: boolean;
-    allowPlusUi: boolean;
-    allowReportEmail: boolean;
-  };
-  bridgeAccount: {
-    email: string | null;
-    username: string | null;
-    scansUsed: number;
-    tier: "free" | "plus_beta" | "paid";
-    isBeta: boolean;
-  };
-  connectedAt: number;
-};
-```
-
-## Entitlement rule
-
-- all signed-in users get a connected extension session
-- Plus and API unlocks still depend on server-side flags
-- signed-in does not automatically mean Plus Beta
-- signed-in does not automatically mean API Beta
-
-## UI copy rule
-
-Signed-out connected CTA:
-
-- `Sign in to unlock full insights`
-
-Signed-in connected state:
-
-- `Connected to Metis ✓`
-
-This bridge must not create a fake billing state or imply that website and extension data are fully synced.
-
-## Success-page behavior
-
-- success page posts bridge payload
-- waits for extension ACK
-- shows a short success state
-- attempts `window.close()` after ACK
-- shows manual fallback if no ACK arrives
-
-The success page should not silently close without a verified handoff.
-
-## Failure rule
-
-Ignore and do not persist:
-
-- unknown origins
-- non-`/account/settings` pages
-- malformed payloads
-- missing tokens
-- failed backend validation responses
-
-If validation fails or the token later expires:
-
-- clear connected state
-- fall back to signed-out extension behavior
-
-## Responsibility split
-
-Website responsibilities:
-
-- auth UI
-- provider flows
-- callback completion
-- success-page bridge payload
-
-Extension responsibilities:
-
-- origin and route validation
-- local auth storage
-- connected UI state
-- fallback to signed-out behavior
-
-Backend responsibilities:
-
-- token-backed account validation
-- plan and beta-flag truth
-- future protected bridge expansion
-
-## Related contracts
-
-- `README.md`
-- `communication-build-track.md`
-- `extension-internal-contract.md`
-- `api-upload-contract.md`
-- `website-backend-contract.md`
-- `access-state-contract.md`
-
-## Done in Metis-Web
-
-- [x] `/sign-in?source=extension` and `/sign-up?source=extension` preserve extension intent
-- [x] `/auth/callback` routes extension-aware auth into `/account/settings?source=extension`
-- [x] `/account/settings?source=extension` posts `METIS_AUTH_SUCCESS`, waits for `METIS_AUTH_SUCCESS_ACK`, and shows fallback UI
-- [x] bridge origin is locked to the exact allowlist: `https://metis.zward.studio` and `http://localhost:3000`
-- [x] bridge route is private and kept out of indexing
-- [x] extension-side listener, storage, ACK, and connected UI wiring are implemented in `Metis`
-- [ ] production bridge still needs live end-to-end verification against the packaged extension
+Those belong to `external-auth-bridge-contract.md`.
