@@ -20,6 +20,8 @@ app = FastAPI(
 
 env = get_env()
 
+# Keep browser access pinned to the first-party website. The extension bridge
+# validates through website-owned state and does not need a wildcard CORS policy.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[str(env.frontend_url)],
@@ -39,7 +41,9 @@ async def add_security_headers(request: FastAPIRequest, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+    response.headers["Cross-Origin-Resource-Policy"] = "same-site"
     response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
     return response
 
 
