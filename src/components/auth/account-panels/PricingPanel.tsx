@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 
-import { CheckCircle2, Clock3, Crown, Sparkles } from "lucide-react";
+import { CheckCircle2, Crown } from "lucide-react";
 
 import { authCopy } from "@/content/authCopy";
 import type { AccountDashboardSnapshot } from "@/lib/account-data";
@@ -40,23 +40,28 @@ function FeatureCard({
   badge,
   badgeIcon,
   groups,
+  action,
 }: {
   title: string;
   body: string;
   badge?: string;
   badgeIcon?: React.ReactNode;
   groups: readonly FeatureGroup[];
+  action?: React.ReactNode;
 }) {
   return (
     <Card>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
         <p style={{ margin: 0, fontFamily: FONT_SERIF, fontSize: 28, letterSpacing: "-0.03em", color: TXT }}>{title}</p>
-        {badge ? (
-          <Badge>
-            {badgeIcon}
-            {badge}
-          </Badge>
-        ) : null}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          {badge ? (
+            <Badge>
+              {badgeIcon}
+              {badge}
+            </Badge>
+          ) : null}
+          {action}
+        </div>
       </div>
       <p style={{ margin: "0 0 18px", fontFamily: FONT_SANS, fontSize: 13, lineHeight: 1.7, color: TXT_DIM }}>{body}</p>
 
@@ -134,73 +139,42 @@ export function PricingPanel({ user, onAccountUpdated }: PricingPanelProps) {
           badge={formatTierLabel(user.plan, user.isBeta)}
           badgeIcon={<Crown size={10} />}
           groups={copy.plusPillars}
+          action={
+            <button
+              type="button"
+              disabled={plusEnabled || isPending}
+              onClick={handleUpgrade}
+              style={{
+                minWidth: 140,
+                borderRadius: 10,
+                border: plusEnabled ? `1px solid ${BD_SOFT}` : `1px solid ${ACCENT_BD}`,
+                background: plusEnabled ? BG_CARD_2 : "rgba(220,94,94,0.14)",
+                padding: "10px 14px",
+                color: TXT,
+                fontFamily: FONT_SANS,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: plusEnabled || isPending ? "default" : "pointer",
+                opacity: isPending ? 0.72 : 1,
+              }}
+            >
+              {plusEnabled ? "Current tier" : isPending ? "Trying…" : "Try Metis+"}
+            </button>
+          }
         />
       </div>
 
-      <Card>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 18, flexWrap: "wrap" }}>
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
-              <p style={{ margin: 0, fontFamily: FONT_SANS, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: ACCENT }}>
-                {copy.comingSoonTitle}
-              </p>
-              <Badge>
-                <Clock3 size={10} />
-                staged
-              </Badge>
-            </div>
+      <p style={{ margin: "2px 0 0", fontFamily: FONT_SANS, fontSize: 12, lineHeight: 1.7, color: plusEnabled ? TXT_FAINT : TXT_DIM }}>
+        {plusEnabled
+          ? "This account already has Metis+ Beta. The website stays the source of truth, and the extension picks up the upgraded tier on the next sync."
+          : "Plus Beta is gated and validated through the website. There is no billing surface here yet."}
+      </p>
 
-            <p style={{ margin: 0, fontFamily: FONT_SERIF, fontSize: 30, letterSpacing: "-0.03em", color: TXT }}>
-              Reports and API Beta
-            </p>
-            <p style={{ margin: "10px 0 0", fontFamily: FONT_SANS, fontSize: 13, lineHeight: 1.7, color: TXT_DIM }}>
-              {copy.comingSoonBody}
-            </p>
-
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 16 }}>
-              {copy.comingSoonItems.map((item) => (
-                <Badge key={item}>
-                  <Sparkles size={10} />
-                  {item}
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          <button
-            type="button"
-            disabled={plusEnabled || isPending}
-            onClick={handleUpgrade}
-            style={{
-              minWidth: 180,
-              borderRadius: 12,
-              border: plusEnabled ? `1px solid ${BD_SOFT}` : `1px solid ${ACCENT_BD}`,
-              background: plusEnabled ? BG_CARD_2 : "rgba(220,94,94,0.14)",
-              padding: "12px 16px",
-              color: TXT,
-              fontFamily: FONT_SANS,
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: plusEnabled || isPending ? "default" : "pointer",
-              opacity: isPending ? 0.72 : 1,
-            }}
-          >
-            {plusEnabled ? "Current tier" : isPending ? "Trying…" : "Try Metis+"}
-          </button>
-        </div>
-
-        <p style={{ margin: "14px 0 0", fontFamily: FONT_SANS, fontSize: 12, lineHeight: 1.7, color: plusEnabled ? TXT_FAINT : TXT_DIM }}>
-          {plusEnabled
-            ? "This account already has Metis+ Beta. The website remains the source of truth, and the extension picks up the upgraded tier on the next sync."
-            : "Plus Beta is gated and validated through the website. There is no billing surface here yet."}
+      {feedback ? (
+        <p style={{ margin: "2px 0 0", fontFamily: FONT_SANS, fontSize: 12, color: plusEnabled ? TXT_DIM : ACCENT }}>
+          {feedback}
         </p>
-
-        {feedback ? (
-          <p style={{ margin: "10px 0 0", fontFamily: FONT_SANS, fontSize: 12, color: plusEnabled ? TXT_DIM : ACCENT }}>
-            {feedback}
-          </p>
-        ) : null}
-      </Card>
+      ) : null}
     </PanelFrame>
   );
 }

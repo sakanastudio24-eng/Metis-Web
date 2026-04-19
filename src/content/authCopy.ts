@@ -178,7 +178,7 @@ export const authCopy = {
       activeState: "Active",
       connectedAccountsTitle: "Connected access",
       connectedLabel: "Connected",
-      availableLabel: "Available",
+      notConnectedLabel: "Not connected",
       primaryLabel: "Primary",
       usageTitle: "Scan usage",
       usageSummary: "Account-backed usage",
@@ -223,8 +223,6 @@ export const authCopy = {
       freeBody: "No account required to start scanning.",
       plusTitle: "Metis+ Beta",
       plusBody: "Plus Beta unlocks deeper analysis and expanded reports.",
-      comingSoonTitle: "Coming soon",
-      comingSoonBody: "Reports and API Beta stay visible here as staged product areas, not as live access claims.",
       freePillars: [
         {
           title: "Scan & detect",
@@ -265,7 +263,6 @@ export const authCopy = {
           items: ["Plus badge in panel and report", "Premium request eligibility", "Degrade to Free toggle"],
         },
       ],
-      comingSoonItems: ["Reports", "API Beta"],
     },
     settings: {
       title: "Settings",

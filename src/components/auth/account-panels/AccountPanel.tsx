@@ -218,8 +218,8 @@ export function AccountPanel({
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
               { icon: Mail, label: "Email", value: user.email, state: copy.primaryLabel, linked: true },
-              { icon: Globe, label: "GitHub", value: user.provider === "github" ? "Connected" : "Available", state: user.provider === "github" ? copy.connectedLabel : copy.availableLabel, linked: user.provider === "github" },
-              { icon: Globe, label: "Google", value: user.provider === "google" ? "Connected" : "Available", state: user.provider === "google" ? copy.connectedLabel : copy.availableLabel, linked: user.provider === "google" },
+              { icon: Globe, label: "GitHub", value: user.provider === "github" ? "Connected" : copy.notConnectedLabel, state: user.provider === "github" ? copy.connectedLabel : copy.notConnectedLabel, linked: user.provider === "github" },
+              { icon: Globe, label: "Google", value: user.provider === "google" ? "Connected" : copy.notConnectedLabel, state: user.provider === "google" ? copy.connectedLabel : copy.notConnectedLabel, linked: user.provider === "google" },
             ].map((item) => (
               <div
                 key={item.label}
