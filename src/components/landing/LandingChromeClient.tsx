@@ -2,22 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 
-import { ExtensionMockup } from "@/components/landing/ExtensionMockup";
-import { frontFacingCopy, mockupStates } from "@/content/frontFacingCopy";
+import { frontFacingCopy } from "@/content/frontFacingCopy";
 import { isDeletedUser } from "@/lib/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
-type LandingChromeClientProps = {
-  mockupOnly?: boolean;
-};
-
-type SectionKey = keyof typeof mockupStates;
+type SectionKey = "hero" | "product" | "problem" | "fixes" | "solution";
 
 const SECTION_KEYS: SectionKey[] = ["hero", "product", "problem", "fixes", "solution"];
 
-export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientProps) {
+export function LandingChromeClient() {
   const supabase = useMemo(() => {
     try {
       return createSupabaseBrowserClient();
@@ -111,7 +106,7 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
         }
       }
 
-      setActiveSection(current);
+      setActiveSection((previous) => (previous === current ? previous : current));
     }
 
     updateActiveSection();
@@ -123,31 +118,6 @@ export function LandingChromeClient({ mockupOnly = false }: LandingChromeClientP
       window.removeEventListener("resize", updateActiveSection);
     };
   }, []);
-
-  if (mockupOnly) {
-    // The sticky mockup stays client-side so the server landing shell does not
-    // have to hydrate the whole page just to react to scroll state.
-    return (
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeSection}
-          initial={{ opacity: 0, y: 18, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -12, scale: 0.98 }}
-          transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-          style={{ width: "100%" }}
-        >
-          <ExtensionMockup
-            state={mockupStates[activeSection]}
-            reportLabel={isSignedIn ? frontFacingCopy.mockup.returningReportCta : frontFacingCopy.mockup.reportCta}
-            onOpenReport={() => {
-              window.location.href = isSignedIn ? "/account" : "/sign-up";
-            }}
-          />
-        </motion.div>
-      </AnimatePresence>
-    );
-  }
 
   return (
     <div

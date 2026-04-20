@@ -182,19 +182,185 @@
 @media (min-width: 1180px) {
   .metis-landing-sticky {
     display: block;
-    width: min(390px, 34vw);
-    min-width: 280px;
+    position: sticky;
+    top: 112px;
+    width: min(410px, 34vw);
+    min-width: 300px;
+    max-height: calc(100svh - 136px);
     flex-shrink: 0;
     align-self: flex-start;
-    padding-top: clamp(300px, 30vh, 430px);
-    padding-bottom: clamp(220px, 24vh, 360px);
+    margin-top: 100px;
   }
 
   .metis-landing-sticky__card {
-    position: sticky;
-    top: 112px;
-    height: fit-content;
+    border: 1px solid rgba(255, 245, 240, 0.18);
+    border-radius: 26px;
+    background: #0c1623;
+    box-shadow: 0 32px 90px rgba(0, 0, 0, 0.22);
+    color: #fff5f0;
+    overflow: hidden;
     max-width: 100%;
+  }
+
+  .metis-landing-sticky__topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    border-bottom: 1px solid rgba(255, 245, 240, 0.1);
+    padding: 14px 18px;
+    font-family: var(--font-sans), sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 245, 240, 0.54);
+  }
+
+  .metis-landing-sticky__content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 20px;
+  }
+
+  .metis-landing-sticky__eyebrow {
+    margin: 0 0 10px;
+    font-family: var(--font-sans), sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #dc8d72;
+  }
+
+  .metis-landing-sticky h3 {
+    margin: 0;
+    font-family: var(--font-serif), serif;
+    font-size: clamp(28px, 2.5vw, 36px);
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+    color: #fff5f0;
+  }
+
+  .metis-landing-sticky p {
+    margin: 10px 0 0;
+    font-family: var(--font-sans), sans-serif;
+    font-size: 13px;
+    line-height: 1.55;
+    color: rgba(255, 245, 240, 0.68);
+  }
+
+  .metis-landing-sticky__score-row {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 10px;
+  }
+
+  .metis-landing-sticky__score,
+  .metis-landing-sticky__cost {
+    border: 1px solid rgba(255, 245, 240, 0.1);
+    border-radius: 18px;
+    background: rgba(255, 245, 240, 0.04);
+    padding: 14px;
+  }
+
+  .metis-landing-sticky__score span,
+  .metis-landing-sticky__cost strong {
+    display: block;
+    font-family: var(--font-display), sans-serif;
+    font-size: 32px;
+    line-height: 0.95;
+    color: #fff5f0;
+  }
+
+  .metis-landing-sticky__score small,
+  .metis-landing-sticky__cost small {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--font-sans), sans-serif;
+    font-size: 11px;
+    line-height: 1.35;
+    color: rgba(255, 245, 240, 0.48);
+  }
+
+  .metis-landing-sticky__meter {
+    height: 9px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 245, 240, 0.1);
+  }
+
+  .metis-landing-sticky__meter div {
+    height: 100%;
+    border-radius: inherit;
+    background: #dc5e5e;
+  }
+
+  .metis-landing-sticky__issues {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .metis-landing-sticky__section-label {
+    font-family: var(--font-sans), sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 245, 240, 0.46);
+  }
+
+  .metis-landing-sticky__issue {
+    display: grid;
+    grid-template-columns: 8px 1fr;
+    gap: 12px;
+    align-items: start;
+    border: 1px solid rgba(255, 245, 240, 0.08);
+    border-radius: 14px;
+    background: rgba(255, 245, 240, 0.035);
+    padding: 12px;
+  }
+
+  .metis-landing-sticky__issue > span {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    margin-top: 5px;
+  }
+
+  .metis-landing-sticky__issue strong,
+  .metis-landing-sticky__issue small {
+    display: block;
+    font-family: var(--font-sans), sans-serif;
+  }
+
+  .metis-landing-sticky__issue strong {
+    font-size: 13px;
+    line-height: 1.35;
+    color: #fff5f0;
+  }
+
+  .metis-landing-sticky__issue small {
+    margin-top: 4px;
+    font-size: 11px;
+    line-height: 1.45;
+    color: rgba(255, 245, 240, 0.5);
+  }
+
+  .metis-landing-sticky__link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #dc5e5e;
+    color: #fff;
+    font-family: var(--font-sans), sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
   }
 }
 
