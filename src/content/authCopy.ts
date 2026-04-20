@@ -33,7 +33,10 @@ export const authCopy = {
     providerLaunchError: "The provider sign-in could not start.",
     magicLinkError: "The magic link could not be sent.",
     magicLinkExpired: "Link expired or already used. Send a new link to keep going.",
-    legalBlurb: "Protected access for metis.zward.studio",
+    legalDisclosureLead: "By continuing, you agree to the",
+    legalDisclosureMiddle: "and",
+    legalDisclosureTail:
+      "If you sign in with Google or GitHub, Metis may use the email and basic profile information your provider shares to create and secure your account.",
     invalidEmailError: "Enter a valid email address.",
   },
   callback: {

@@ -6,21 +6,6 @@ import { useRouter } from "next/navigation";
 import { frontFacingCopy } from "@/content/frontFacingCopy";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
-const BENEFITS = {
-  guest: [
-    "basic scan works",
-    "limited scans",
-    "no saved data",
-    "no cross-device sync",
-  ],
-  account: [
-    "more scans",
-    "saved usage",
-    "extension sync",
-    "future features",
-  ],
-} as const;
-
 export function LandingFooterSignup() {
   const router = useRouter();
   const supabase = useMemo(() => {
@@ -219,53 +204,6 @@ export function LandingFooterSignup() {
           </div>
         )}
 
-        <div
-          style={{
-            display: "grid",
-            gap: 12,
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-          }}
-        >
-          <div
-            style={{
-              borderRadius: 14,
-              border: "1px solid rgba(255,255,255,0.06)",
-              background: "rgba(255,255,255,0.02)",
-              padding: "12px 14px",
-            }}
-          >
-            <p style={{ margin: 0, marginBottom: 8, fontFamily: "var(--font-sans), sans-serif", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,245,240,0.52)" }}>
-              Without account
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {BENEFITS.guest.map((item) => (
-                <p key={item} style={{ margin: 0, fontFamily: "var(--font-sans), sans-serif", fontSize: 13, color: "rgba(255,245,240,0.72)" }}>
-                  {item}
-                </p>
-              ))}
-            </div>
-          </div>
-
-          <div
-            style={{
-              borderRadius: 14,
-              border: "1px solid rgba(220,94,94,0.16)",
-              background: "rgba(220,94,94,0.06)",
-              padding: "12px 14px",
-            }}
-          >
-            <p style={{ margin: 0, marginBottom: 8, fontFamily: "var(--font-sans), sans-serif", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#ffb8b8" }}>
-              With account
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {BENEFITS.account.map((item) => (
-                <p key={item} style={{ margin: 0, fontFamily: "var(--font-sans), sans-serif", fontSize: 13, color: "#FFF5F0" }}>
-                  {item}
-                </p>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
 
       {feedback ? (

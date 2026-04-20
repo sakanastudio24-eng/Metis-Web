@@ -194,6 +194,8 @@ Provider button: `Send magic link`
 
 Supporting copy: `We’ll send a secure sign-in link to your email.`
 
+Disclosure: `By continuing, you agree to the Terms and Privacy Policy. If you sign in with Google or GitHub, Metis may use the email and basic profile information your provider shares to create and secure your account.`
+
 Magic link success: `Magic link sent. Check your inbox and continue from the email.`
 
 Magic link sent header: `Check your email`
@@ -372,15 +374,25 @@ Eyebrow: `Privacy`
 
 Header: `Privacy policy`
 
-Body: `Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls.`
+Last updated: `April 19th, 2026`
 
-Body: `If you create an account or use the website auth flow, the information you provide is used to authenticate you, protect access to your account, and operate the service.`
+Intro: `Metis is a website and browser-extension product designed to help users understand cost-risk patterns in websites and web applications.`
 
-Body: `The website may store account profile data, onboarding answers, usage counters, and connection state needed to keep the website and extension bridge consistent.`
+Section: `1. Information Metis uses`
 
-Body: `The browser extension remains local-first for scan behavior in this phase unless a feature explicitly states that data is being sent or saved.`
+Section: `2. Sign-in providers`
 
-Body: `Metis does not rely on hidden tracking, silent resale of personal information, or unexpected data sharing as part of the product.`
+Section: `3. Email address use`
+
+Section: `4. Website and extension behavior`
+
+Section: `5. Data use expectations`
+
+Section: `6. Security and account protection`
+
+Section: `7. Product changes`
+
+Section: `8. Contact`
 
 Back link: `Back to Metis`
 
@@ -390,17 +402,27 @@ Eyebrow: `Terms`
 
 Header: `Terms of use`
 
-Body: `Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, security controls, and availability may change as the product evolves.`
+Last updated: `Month Day, Year`
 
-Body: `You agree not to misuse the website, interfere with authentication or account security, bypass beta access controls, scrape protected routes, or use the service in a way that harms the product or its users.`
+Intro: `These Terms govern your use of the Metis website, account surface, and browser-extension product.`
 
-Body: `You remain responsible for activity under your account.`
+Section: `1. Product status`
 
-Body: `Unless a separate agreement states otherwise, the service is provided without guarantees of uninterrupted availability or exact financial outcomes.`
+Section: `2. Accounts and authentication`
 
-Body: `Cost insights are estimates and should not be treated as financial guarantees.`
+Section: `3. Acceptable use`
 
-Body: `The extension is a diagnostic tool, and website, bridge, and beta features should be considered active only when explicitly marked as live.`
+Section: `4. Beta access and feature availability`
+
+Section: `5. Diagnostic nature of the product`
+
+Section: `6. No guarantees`
+
+Section: `7. Suspension or removal`
+
+Section: `8. Changes`
+
+Section: `9. Contact`
 
 Back link: `Back to Metis`
 

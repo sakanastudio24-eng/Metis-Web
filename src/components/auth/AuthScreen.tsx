@@ -629,15 +629,17 @@ export function AuthScreen({
               <Link href={alternateRouteHref} style={{ color: "#ffb8b8", textDecoration: "none", fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600 }}>
                 {routeCopy.alternateLabel}
               </Link>
-              <p style={{ margin: 0, fontFamily: "Inter, sans-serif", fontSize: 11, color: TEXT_DIM_2 }}>{sharedCopy.legalBlurb}</p>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <Link href={siteLinks.termsUrl} style={{ color: "#dc8d72", textDecoration: "none", fontFamily: "Inter, sans-serif", fontSize: 12 }}>
+              <p style={{ margin: 0, maxWidth: 360, textAlign: "center", fontFamily: "Inter, sans-serif", fontSize: 11, lineHeight: 1.7, color: TEXT_DIM_2 }}>
+                {sharedCopy.legalDisclosureLead}{" "}
+                <Link href={siteLinks.termsUrl} style={{ color: "#dc8d72", textDecoration: "none" }}>
                   Terms
+                </Link>{" "}
+                {sharedCopy.legalDisclosureMiddle}{" "}
+                <Link href={siteLinks.privacyUrl} style={{ color: "#dc8d72", textDecoration: "none" }}>
+                  Privacy Policy
                 </Link>
-                <Link href={siteLinks.privacyUrl} style={{ color: "#dc8d72", textDecoration: "none", fontFamily: "Inter, sans-serif", fontSize: 12 }}>
-                  Privacy
-                </Link>
-              </div>
+                . {sharedCopy.legalDisclosureTail}
+              </p>
             </div>
           </motion.div>
         ) : null}

@@ -10,7 +10,7 @@ export type MockIssue = {
 export const siteLinks = {
   wardStudioUrl: "https://zward.studio",
   repoUrl: "https://github.com/sakanastudio24-eng/Metis-Web",
-  waitlistUrl: "/sign-up",
+  waitlistUrl: "/account?section=pricing",
   accountUrl: "/account",
   privacyUrl: "/privacy",
   termsUrl: "/terms",
@@ -207,24 +207,155 @@ export const frontFacingCopy = {
     privacy: {
       eyebrow: "Privacy",
       title: "Privacy policy",
-      paragraphs: [
-        "Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls.",
-        "If you create an account or use the website auth flow, the information you provide is used to authenticate you, protect access to your account, and operate the service.",
-        "The website may store account profile data, onboarding answers, usage counters, and connection state needed to keep the website and extension bridge consistent.",
-        "The browser extension remains local-first for scan behavior in this phase unless a feature explicitly states that data is being sent or saved.",
-        "Metis does not rely on hidden tracking, silent resale of personal information, or unexpected data sharing as part of the product.",
+      lastUpdated: "April 19th, 2026",
+      intro:
+        "Metis is a website and browser-extension product designed to help users understand cost-risk patterns in websites and web applications.",
+      sections: [
+        {
+          title: "1. Information Metis uses",
+          paragraphs: [
+            "Metis may use information you provide directly, information needed to operate authentication and account access, and product data required to run the service.",
+          ],
+          bullets: [
+            "account profile information such as email address, username, and account identifiers",
+            "authentication-related information used to sign you in and protect access to your account",
+            "onboarding answers, account settings, and beta-access status",
+            "usage counters, connected-account state, and extension bridge state needed to keep the website and extension consistent",
+            "product interaction data needed to operate core features, security controls, and support flows",
+          ],
+        },
+        {
+          title: "2. Sign-in providers",
+          paragraphs: [
+            "Metis may allow sign-in through third-party authentication providers such as Google, GitHub, or email-based sign-in.",
+            "If you sign in through a provider, Metis may receive basic account information that the provider makes available to the application, such as your email address, display name, profile image, and provider identifier, depending on the provider and permissions granted.",
+            "Metis uses this information to:",
+          ],
+          bullets: [
+            "create or access your account",
+            "authenticate you",
+            "protect account access",
+            "manage settings and connected-account state",
+            "operate beta access and account recovery flows",
+            "support the website-to-extension connection flow",
+          ],
+        },
+        {
+          title: "3. Email address use",
+          paragraphs: [
+            "If your sign-in method provides an email address, Metis may use that email address to:",
+          ],
+          bullets: [
+            "identify your account",
+            "send sign-in links or security notices",
+            "communicate about account access or account changes",
+            "manage beta access, product access, or recovery flows",
+          ],
+          trailing:
+            "Metis does not treat access to your provider email address as permission to send unrelated marketing without notice.",
+        },
+        {
+          title: "4. Website and extension behavior",
+          paragraphs: [
+            "Metis uses the website to manage sign-in, onboarding, account settings, beta access, and security controls.",
+            "The website may store account profile data, onboarding answers, usage counters, and connected-account state needed to keep the website and extension bridge coherent.",
+            "The browser extension remains local-first for scan behavior in this phase unless a feature explicitly says data is being sent or saved.",
+          ],
+        },
+        {
+          title: "5. Data use expectations",
+          paragraphs: [
+            "Metis does not position hidden tracking, silent resale of personal information, or surprise data sharing as part of the product strategy.",
+            "If debugging text, bridge diagnostics, or beta surfaces appear in the product, they are there to explain system state to the user, not to expand data collection without notice.",
+          ],
+        },
+        {
+          title: "6. Security and account protection",
+          paragraphs: [
+            "Metis uses reasonable measures to protect account access, authentication state, and product operation. No system can guarantee absolute security or uninterrupted availability.",
+            "Users remain responsible for maintaining access to their sign-in method and for activity under their account.",
+          ],
+        },
+        {
+          title: "7. Product changes",
+          paragraphs: [
+            "Metis is an evolving product. Features, beta access, account flows, and connected-extension behavior may change as the service develops.",
+          ],
+        },
+        {
+          title: "8. Contact",
+          paragraphs: ["For privacy or account questions, contact: [your email]"],
+        },
       ],
     },
     terms: {
       eyebrow: "Terms",
       title: "Terms of use",
-      paragraphs: [
-        "Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, security controls, and availability may change as the product evolves.",
-        "You agree not to misuse the website, interfere with authentication or account security, bypass beta access controls, scrape protected routes, or use the service in a way that harms the product or its users.",
-        "You remain responsible for activity under your account.",
-        "Unless a separate agreement states otherwise, the service is provided without guarantees of uninterrupted availability or exact financial outcomes.",
-        "Cost insights are estimates and should not be treated as financial guarantees.",
-        "The extension is a diagnostic tool, and website, bridge, and beta features should be considered active only when explicitly marked as live.",
+      lastUpdated: "Month Day, Year",
+      intro:
+        "These Terms govern your use of the Metis website, account surface, and browser-extension product.",
+      sections: [
+        {
+          title: "1. Product status",
+          paragraphs: [
+            "Metis is provided as a developing website, account surface, and browser-extension product. Features, beta access, legal copy, security controls, and availability may change as the product evolves.",
+          ],
+        },
+        {
+          title: "2. Accounts and authentication",
+          paragraphs: [
+            "You may access Metis using supported sign-in methods, including third-party providers and email-based sign-in.",
+            "By using provider-based sign-in, you authorize Metis to receive and use the account information made available through that provider as needed to authenticate you, operate your account, support account security, and run the service.",
+            "You are responsible for activity under your account and for maintaining access to the sign-in method you use.",
+          ],
+        },
+        {
+          title: "3. Acceptable use",
+          paragraphs: ["You agree not to:"],
+          bullets: [
+            "misuse the website or extension",
+            "interfere with authentication, account security, or connected-account flows",
+            "attempt to bypass beta access controls or entitlement checks",
+            "scrape, probe, or abuse protected routes or protected product surfaces",
+            "use the service in a way that harms the product, its operators, or other users",
+          ],
+        },
+        {
+          title: "4. Beta access and feature availability",
+          paragraphs: [
+            "Metis Free and Metis+ Beta may have different capabilities and access rules.",
+            "Signing in does not automatically grant access to every feature. Access to beta surfaces, expanded reports, API Beta, and related functionality may depend on website-validated account state and may change as the product evolves.",
+          ],
+        },
+        {
+          title: "5. Diagnostic nature of the product",
+          paragraphs: [
+            "Metis is a diagnostic and estimation tool. Reports, cost signals, and related outputs are directional and should not be treated as guarantees of technical outcomes, financial outcomes, or exact future costs.",
+          ],
+        },
+        {
+          title: "6. No guarantees",
+          paragraphs: [
+            "Unless a separate commercial agreement says otherwise, the site and service are offered without guarantees of uninterrupted availability, exact financial outcomes, or permanent feature availability.",
+            "The extension, website account features, bridge flows, and beta surfaces should be treated as released only when the product explicitly says they are live.",
+          ],
+        },
+        {
+          title: "7. Suspension or removal",
+          paragraphs: [
+            "Metis may limit, suspend, or remove access where necessary to protect the product, enforce these Terms, respond to abuse, or maintain security.",
+          ],
+        },
+        {
+          title: "8. Changes",
+          paragraphs: [
+            "These Terms may be updated as the product evolves. Continued use of Metis after updates means you accept the revised Terms.",
+          ],
+        },
+        {
+          title: "9. Contact",
+          paragraphs: ["For legal or account questions, contact: [your email]"],
+        },
       ],
     },
     backLink: "Back to Metis",
