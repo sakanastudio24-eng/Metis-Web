@@ -4,6 +4,7 @@ import { LandingChromeClient } from "@/components/landing/LandingChromeClient";
 import { LandingFooterSignup } from "@/components/landing/LandingFooterSignup";
 import { LandingHeroSupport } from "@/components/landing/LandingHeroSupport";
 import { LandingPrimaryCta } from "@/components/landing/LandingPrimaryCta";
+import { LandingStickyMockup } from "@/components/landing/LandingStickyMockup";
 import { frontFacingCopy, landingAnalysis } from "@/content/frontFacingCopy";
 
 const RED = "#dc5e5e";
@@ -700,11 +701,7 @@ export function LandingPage() {
             </section>
           </div>
 
-          <div className="metis-sticky-rail">
-            <div className="metis-sticky-card">
-              <LandingChromeClient mockupOnly />
-            </div>
-          </div>
+          <LandingStickyMockup />
         </div>
       </div>
 

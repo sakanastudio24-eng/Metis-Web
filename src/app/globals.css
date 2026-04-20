@@ -175,25 +175,26 @@
   }
 }
 
-.metis-sticky-rail {
+.metis-landing-sticky {
   display: none;
 }
 
 @media (min-width: 1180px) {
-  .metis-sticky-rail {
+  .metis-landing-sticky {
     display: block;
-    width: min(380px, 34vw);
-    min-width: 260px;
+    width: min(390px, 34vw);
+    min-width: 280px;
     flex-shrink: 0;
     align-self: flex-start;
-    padding-top: clamp(220px, 18vh, 300px);
-    padding-bottom: clamp(96px, 9vh, 160px);
+    padding-top: clamp(300px, 30vh, 430px);
+    padding-bottom: clamp(220px, 24vh, 360px);
   }
 
-  .metis-sticky-card {
+  .metis-landing-sticky__card {
     position: sticky;
     top: 112px;
     height: fit-content;
+    max-width: 100%;
   }
 }
 
