@@ -190,6 +190,7 @@
     flex-shrink: 0;
     align-self: flex-start;
     margin-top: 100px;
+    margin-bottom: clamp(96px, 12vh, 180px);
   }
 
   .metis-sidepanel-preview {
@@ -550,8 +551,8 @@
   .metis-sidepanel-preview__footer a {
     flex-shrink: 0;
     border-radius: 999px;
-    background: #22c55e;
-    color: #04110a;
+    background: #dc5e5e;
+    color: #ffffff;
     font-family: var(--font-sans), sans-serif;
     font-size: 11px;
     font-weight: 700;
