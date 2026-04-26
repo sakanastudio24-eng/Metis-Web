@@ -532,7 +532,7 @@ Pillar: `Access & state`
 
 Pillar items: `Plus badge in panel and report`, `Premium request eligibility`, `Degrade to Free toggle`
 
-CTA: `Try Metis+`
+CTA: `Try Metis+ Beta`
 
 Coming soon: `Reports`, `API Beta`
 

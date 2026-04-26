@@ -18,14 +18,6 @@ import {
 type SendBridgeSyncOptions = {
   account: BridgeAccountState;
   queryExtensionId?: string | null;
-  session?: {
-    accessToken: string;
-    expiresAt: number | null;
-    user: {
-      id: string;
-      email: string | null;
-    };
-  } | null;
 };
 
 export type BridgeSendStage =
@@ -266,7 +258,6 @@ function sendMessageToExtension(
 export async function sendBridgeSync({
   account,
   queryExtensionId,
-  session,
 }: SendBridgeSyncOptions): Promise<BridgeSyncResult> {
   if (typeof window === "undefined") {
     return withDebug(
@@ -330,7 +321,6 @@ export async function sendBridgeSync({
     source: "metis-web",
     bridgeVersion: METIS_EXTERNAL_BRIDGE_VERSION,
     account,
-    session: session ?? undefined,
   };
 
   let lastFailure: MetisBridgeSyncFailure | null = null;

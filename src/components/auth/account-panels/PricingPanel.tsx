@@ -158,7 +158,7 @@ export function PricingPanel({ user, onAccountUpdated }: PricingPanelProps) {
                 opacity: isPending ? 0.72 : 1,
               }}
             >
-              {plusEnabled ? "Current tier" : isPending ? "Trying…" : "Try Metis+"}
+              {plusEnabled ? "Current tier" : isPending ? "Trying…" : "Try Metis+ Beta"}
             </button>
           }
         />

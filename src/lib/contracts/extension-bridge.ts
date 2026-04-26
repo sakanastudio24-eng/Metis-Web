@@ -13,14 +13,6 @@ export type MetisBridgeSyncMessage = {
   source: "metis-web";
   bridgeVersion: 1;
   account: BridgeAccountState;
-  session?: {
-    accessToken: string;
-    expiresAt: number | null;
-    user: {
-      id: string;
-      email: string | null;
-    };
-  };
 };
 
 export type MetisBridgeDisconnectMessage = {
