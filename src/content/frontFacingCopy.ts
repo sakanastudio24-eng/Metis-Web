@@ -12,6 +12,7 @@ export const siteLinks = {
   repoUrl: "https://github.com/sakanastudio24-eng/Metis-Web",
   waitlistUrl: "/account?section=pricing",
   accountUrl: "/account",
+  supportUrl: "/support",
   privacyUrl: "/privacy",
   termsUrl: "/terms",
 } as const;
@@ -176,6 +177,7 @@ export const frontFacingCopy = {
       { label: "zward.studio", href: siteLinks.wardStudioUrl, icon: "externalLink" },
       { label: "GitHub", href: siteLinks.repoUrl, icon: "github" },
       { label: "Get early access", href: siteLinks.waitlistUrl, icon: "externalLink" },
+      { label: "Support", href: siteLinks.supportUrl, icon: null },
       { label: "Privacy", href: siteLinks.privacyUrl, icon: null },
       { label: "Terms", href: siteLinks.termsUrl, icon: null },
     ],
@@ -204,6 +206,59 @@ export const frontFacingCopy = {
     alreadyHaveAccess: "Already have access?",
   },
   legal: {
+    support: {
+      eyebrow: "Support",
+      title: "Metis Support",
+      intro:
+        "Metis is a browser extension that scans the current page for likely cost-risk patterns and presents local, directional insights.",
+      sections: [
+        {
+          title: "Troubleshooting",
+          items: [
+            {
+              title: "Extension does not open",
+              body: "Make sure Metis is enabled in chrome://extensions and try refreshing the current page.",
+            },
+            {
+              title: "Scan does not run",
+              body: "Open the extension from the toolbar and run a basic scan again. Some browser pages, internal Chrome pages, and restricted sites cannot be scanned.",
+            },
+            {
+              title: "Side panel does not show",
+              body: "Open Metis from the toolbar again or refresh the page. If the side panel is disabled in your browser, use the popup or in-page report view.",
+            },
+            {
+              title: "Account connection does not work",
+              body: "Sign in at https://metis.zward.studio and use Connect extension from the account area. You can also start from the extension using Sign in / Connect account.",
+            },
+            {
+              title: "Magic link did not arrive",
+              body: "Check spam, confirm the email address, then request a new magic link.",
+            },
+            {
+              title: "Permissions",
+              body: "Basic scans work with user-triggered access. Deeper scan features may ask for additional site access so Metis can analyze more of the current site.",
+            },
+          ],
+        },
+        {
+          title: "Beta note",
+          paragraphs: [
+            "Metis is currently in early release. Some beta features may change, be limited, or appear as preview surfaces.",
+          ],
+        },
+        {
+          title: "Contact",
+          paragraphs: ["For support, email hello@zward.studio."],
+        },
+      ],
+      links: [
+        { label: "Privacy Policy", href: siteLinks.privacyUrl },
+        { label: "Terms of Use", href: siteLinks.termsUrl },
+        { label: "Homepage", href: "/" },
+        { label: "Account dashboard", href: siteLinks.accountUrl },
+      ],
+    },
     privacy: {
       eyebrow: "Privacy",
       title: "Privacy policy",
@@ -284,7 +339,7 @@ export const frontFacingCopy = {
         },
         {
           title: "8. Contact",
-          paragraphs: ["For privacy or account questions, contact: [your email]"],
+          paragraphs: ["For privacy or account questions, contact: hello@zward.studio"],
         },
       ],
     },
@@ -354,7 +409,7 @@ export const frontFacingCopy = {
         },
         {
           title: "9. Contact",
-          paragraphs: ["For legal or account questions, contact: [your email]"],
+          paragraphs: ["For legal or account questions, contact: hello@zward.studio"],
         },
       ],
     },
