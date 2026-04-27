@@ -51,8 +51,7 @@ def serialize_env(config: ApiEnv) -> dict[str, object]:
     return {
         "api_port": config.api_port,
         "frontend_url": str(config.frontend_url),
-        "has_database_url": bool(config.database_url),
-        "has_supabase_service_role_key": bool(config.supabase_service_role_key),
+        "has_supabase_secret_key": bool(config.supabase_secret_key),
         "has_resend_api_key": bool(config.resend_api_key),
     }
 
@@ -82,7 +81,7 @@ def fetch_authenticated_user(token: str, config: ApiEnv) -> dict[str, object]:
         f"{str(config.supabase_url).rstrip('/')}/auth/v1/user",
         headers={
             "Authorization": f"Bearer {token}",
-            "apikey": config.supabase_service_role_key,
+            "apikey": config.supabase_secret_key,
             "Accept": "application/json",
         },
     )
@@ -127,8 +126,9 @@ def fetch_supabase_rest_rows(
     request = Request(
         f"{str(config.supabase_url).rstrip('/')}/rest/v1/{table}?{'&'.join(query_parts)}",
         headers={
-            "Authorization": f"Bearer {config.supabase_service_role_key}",
-            "apikey": config.supabase_service_role_key,
+            # Supabase secret keys are opaque API keys, not JWTs. Send them only
+            # in the apikey header and let the gateway mint the upstream token.
+            "apikey": config.supabase_secret_key,
             "Accept": "application/json",
         },
     )
@@ -174,8 +174,8 @@ def write_supabase_rest(
         url = f"{url}?{query}"
 
     headers = {
-        "Authorization": f"Bearer {config.supabase_service_role_key}",
-        "apikey": config.supabase_service_role_key,
+        # Secret keys cannot be used as Authorization bearer tokens.
+        "apikey": config.supabase_secret_key,
         "Accept": "application/json",
         "Content-Type": "application/json",
     }
@@ -329,8 +329,9 @@ def admin_update_user_metadata(user: dict[str, object], config: ApiEnv, updates:
         data=payload,
         method="PUT",
         headers={
-            "Authorization": f"Bearer {config.supabase_service_role_key}",
-            "apikey": config.supabase_service_role_key,
+            # Admin routes accept the secret key via apikey; the gateway handles
+            # the internal Authorization substitution upstream.
+            "apikey": config.supabase_secret_key,
             "Content-Type": "application/json",
             "Accept": "application/json",
         },

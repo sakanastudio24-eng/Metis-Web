@@ -6,9 +6,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class ApiEnv(BaseSettings):
     api_port: int = Field(alias="API_PORT", default=8000)
-    database_url: str = Field(alias="DATABASE_URL")
     supabase_url: AnyHttpUrl = Field(alias="SUPABASE_URL")
-    supabase_service_role_key: str = Field(alias="SUPABASE_SERVICE_ROLE_KEY")
+    supabase_secret_key: str = Field(alias="SUPABASE_SECRET_KEY")
     resend_api_key: str = Field(alias="RESEND_API_KEY")
     frontend_url: AnyHttpUrl = Field(alias="FRONTEND_URL")
 

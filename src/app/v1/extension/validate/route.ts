@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
   }
 
   const env = getWebEnv();
-  const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+  const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
     global: {
       headers: {
         Authorization: `Bearer ${token}`,
